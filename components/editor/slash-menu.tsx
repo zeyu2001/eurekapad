@@ -8,8 +8,9 @@ import {
   SuggestionMenuController,
 } from "@blocknote/react";
 
-import { insertMathBlock } from "./math";
-import { CustomEditor } from "./schema";
+import { insertMathBlock } from "@/components/editor/math";
+import { CustomEditor } from "@/components/editor/schema";
+import { insertTranscriptionBlock } from "@/components/editor/transcription";
 
 interface CustomSlashMenuProps {
   editor: CustomEditor;
@@ -21,7 +22,11 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
       triggerCharacter={"/"}
       getItems={async (query) =>
         filterSuggestionItems(
-          [...getDefaultReactSlashMenuItems(editor), insertMathBlock(editor)],
+          [
+            ...getDefaultReactSlashMenuItems(editor),
+            insertMathBlock(editor),
+            insertTranscriptionBlock(editor),
+          ],
           query
         )
       }

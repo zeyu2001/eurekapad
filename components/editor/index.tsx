@@ -8,10 +8,9 @@ import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useTheme } from "next-themes";
 
+import { customSchema } from "@/components/editor/schema";
+import { CustomSlashMenu } from "@/components/editor/slash-menu";
 import { useEdgeStore } from "@/lib/edgestore";
-
-import { customSchema } from "./schema";
-import { CustomSlashMenu } from "./slash-menu";
 
 interface EditorProps {
   onChange: (value: string) => void;

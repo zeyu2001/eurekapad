@@ -15,6 +15,7 @@ import "mathlive";
 import {
   defaultProps,
   InlineContentSchema,
+  StyledText,
   StyleSchema,
 } from "@blocknote/core";
 import {
@@ -29,38 +30,30 @@ import { CustomEditor } from "./schema";
 
 interface MathBlockConfig {
   type: "math";
-  content: "none";
-  readonly propSchema: typeof defaultProps & {
-    latex: {
-      default: string;
-    };
-  };
+  readonly propSchema: typeof defaultProps;
+  content: "inline";
 }
 
 const mathBlockConfig: MathBlockConfig = {
   type: "math",
   propSchema: {
     ...defaultProps,
-    latex: {
-      default: "",
-    },
   },
-  content: "none",
+  content: "inline",
 };
 
 const MathBlock: FC<
   ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor, contentRef }) => {
-  const [latex, setLatex] = useState(block.props.latex || "");
+  const content = block.content[0] as StyledText<StyleSchema>;
+  const [latex, setLatex] = useState(content?.text || "");
 
   return (
     <math-field
       onInput={(evt) => {
         setLatex((evt.target as HTMLInputElement).value);
         editor.updateBlock(block, {
-          props: {
-            latex: (evt.target as HTMLInputElement).value,
-          },
+          content: (evt.target as HTMLInputElement).value,
         });
       }}
       style={{ backgroundColor: "transparent", width: "100%" }}
