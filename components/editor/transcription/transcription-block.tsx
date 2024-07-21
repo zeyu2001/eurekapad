@@ -22,7 +22,6 @@ export const TranscriptionBlock: FC<
     StyleSchema
   >
 > = ({ block, editor, contentRef }) => {
-  const [text, setText] = useState(block.props.text || "");
   const [open, setOpen] = useState(false);
 
   return (

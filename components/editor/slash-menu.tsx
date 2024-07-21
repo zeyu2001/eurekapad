@@ -30,7 +30,8 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
             insertTranscriptionBlock(editor),
           ].sort((a, b) => {
             return (
-              groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group) ||
+              groupOrder.indexOf(a.group || "") -
+                groupOrder.indexOf(b.group || "") ||
               a.title.localeCompare(b.title)
             );
           }),
