@@ -1,0 +1,3 @@
+# EurekaPad
+
+Notion but better.
