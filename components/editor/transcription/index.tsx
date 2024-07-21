@@ -46,7 +46,7 @@ export const transcriptionBlockSpec = createReactBlockSpec<
 >(transcriptionBlockConfig, transcriptionBlockImpl);
 
 export const insertTranscriptionBlock = (editor: CustomEditor) => ({
-  title: "Transcribe Audio",
+  title: "Transcribe",
   onItemClick: () => {
     const currentBlock = editor.getTextCursorPosition().block;
     editor.insertBlocks(
@@ -61,5 +61,6 @@ export const insertTranscriptionBlock = (editor: CustomEditor) => ({
   },
   icon: <AiOutlineAudio />,
   aliases: ["transcribe", "microphone", "audio", "voice"],
+  group: "Advanced",
   subtext: "Transcribe audio from your microphone",
 });

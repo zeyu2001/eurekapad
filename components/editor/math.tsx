@@ -78,7 +78,7 @@ export const mathBlockSpec = createReactBlockSpec<
 >(mathBlockConfig, mathBlockImpl);
 
 export const insertMathBlock = (editor: CustomEditor) => ({
-  title: "Insert Equation",
+  title: "Block Equation",
   onItemClick: () => {
     const currentBlock = editor.getTextCursorPosition().block;
     editor.insertBlocks(
@@ -95,5 +95,6 @@ export const insertMathBlock = (editor: CustomEditor) => ({
   },
   icon: <BiMath />,
   aliases: ["math", "equation", "latex"],
-  subtext: "Used to display an equation from LaTeX",
+  group: "Advanced",
+  subtext: "Display a standalone equation",
 });

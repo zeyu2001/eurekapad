@@ -16,6 +16,8 @@ interface CustomSlashMenuProps {
   editor: CustomEditor;
 }
 
+const groupOrder = ["Headings", "Basic blocks", "Advanced", "Media", "Others"];
+
 export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
   return (
     <SuggestionMenuController
@@ -26,7 +28,12 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
             ...getDefaultReactSlashMenuItems(editor),
             insertMathBlock(editor),
             insertTranscriptionBlock(editor),
-          ],
+          ].sort((a, b) => {
+            return (
+              groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group) ||
+              a.title.localeCompare(b.title)
+            );
+          }),
           query
         )
       }
