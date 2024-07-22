@@ -4,9 +4,8 @@ import {
   AudioConfig,
   ResultReason,
   SpeechConfig,
-  SpeechRecognizer,
 } from "microsoft-cognitiveservices-speech-sdk";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { AiOutlineAudio } from "react-icons/ai";
 import { FaMagic, FaRegStopCircle } from "react-icons/fa";
 
@@ -27,6 +26,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSpeechToken } from "@/hooks/use-speech-token";
+import { SingletonSpeechRecognizer } from "@/lib/singleton-recognizer";
 
 const TranscriptionComponent = ({
   token,
@@ -53,30 +53,30 @@ const TranscriptionComponent = ({
     console.log("Recognized:", e.result.text);
   };
 
-  const recognizerRef = useRef<SpeechRecognizer>(null);
-
   const handleListen = useCallback(() => {
-    let recognizer = recognizerRef.current;
+    const recognizer = SingletonSpeechRecognizer.getInstance(
+      speechConfig,
+      audioConfig
+    );
 
     if (isListening) {
-      recognizer = new SpeechRecognizer(speechConfig, audioConfig);
-      recognizer.startContinuousRecognitionAsync();
+      recognizer.startListening();
 
-      recognizer.recognizing = (s, e) => {
+      recognizer.setRecognizingHandler((s, e) => {
         console.log("Recognizing:", e.result.text);
         handleRecognizing(e);
-      };
+      });
 
-      recognizer.recognized = async (s, e) => {
+      recognizer.setRecognizedHandler(async (s, e) => {
         if (e.result.reason == ResultReason.RecognizedSpeech) {
           console.log("Recognized:", e.result.text);
           handleRecognized(e);
         } else if (e.result.reason == ResultReason.NoMatch) {
           console.log("NOMATCH: Speech could not be recognized.");
         }
-      };
+      });
 
-      recognizer.canceled = (s, e) => {
+      recognizer.setCanceledHandler((s, e) => {
         console.log(`CANCELED: Reason=${e.reason}`);
 
         if (e.reason == sdk.CancellationReason.Error) {
@@ -87,17 +87,18 @@ const TranscriptionComponent = ({
           );
         }
 
-        recognizer.stopContinuousRecognitionAsync();
+        recognizer.stopListening();
         setIsListening(false);
-      };
+      });
 
-      recognizer.sessionStopped = (s, e) => {
+      recognizer.setSessionStoppedHandler((s, e) => {
         console.log("\n    Session stopped event.");
-        recognizer.stopContinuousRecognitionAsync();
+
+        recognizer.stopListening();
         setIsListening(false);
-      };
+      });
     } else {
-      recognizer?.close();
+      recognizer.stopListening();
     }
   }, [isListening, speechConfig, audioConfig]);
 
