@@ -10,9 +10,9 @@ export const useSpeechToken = () => {
   const getSpeechToken = useAction(api.speech.getToken);
 
   useEffect(() => {
-    getSpeechToken().then((response) => {
+    getSpeechToken({}).then((response) => {
       setToken(response.token);
-      setRegion(response.region);
+      setRegion(response.region ?? "eastus");
     });
   }, [getSpeechToken]);
 

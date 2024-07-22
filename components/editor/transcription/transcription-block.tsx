@@ -2,10 +2,14 @@ import { InlineContentSchema, StyleSchema } from "@blocknote/core";
 import { ReactCustomBlockRenderProps } from "@blocknote/react";
 import {
   AudioConfig,
+  CancellationDetails,
+  CancellationReason,
+  Recognizer,
   ResultReason,
   SpeechConfig,
+  SpeechRecognitionEventArgs,
 } from "microsoft-cognitiveservices-speech-sdk";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, LegacyRef, useCallback, useEffect, useState } from "react";
 import { AiOutlineAudio } from "react-icons/ai";
 import { FaMagic, FaRegStopCircle } from "react-icons/fa";
 
@@ -35,7 +39,7 @@ const TranscriptionComponent = ({
 }: {
   token: string;
   region: string;
-  contentRef: HTMLElement | null;
+  contentRef: LegacyRef<HTMLDivElement> | undefined;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
@@ -45,11 +49,11 @@ const TranscriptionComponent = ({
 
   const audioConfig = AudioConfig.fromDefaultMicrophoneInput();
 
-  const handleRecognizing = (e) => {
+  const handleRecognizing = (e: SpeechRecognitionEventArgs) => {
     console.log("Recognizing:", e.result.text);
   };
 
-  const handleRecognized = async (e) => {
+  const handleRecognized = async (e: SpeechRecognitionEventArgs) => {
     console.log("Recognized:", e.result.text);
   };
 
@@ -79,7 +83,7 @@ const TranscriptionComponent = ({
       recognizer.setCanceledHandler((s, e) => {
         console.log(`CANCELED: Reason=${e.reason}`);
 
-        if (e.reason == sdk.CancellationReason.Error) {
+        if (e.reason == CancellationReason.Error) {
           console.log(`"CANCELED: ErrorCode=${e.errorCode}`);
           console.log(`"CANCELED: ErrorDetails=${e.errorDetails}`);
           console.log(
