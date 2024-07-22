@@ -1,5 +1,6 @@
 import "./globals.css";
 
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
@@ -47,9 +48,11 @@ export default function RootLayout({
               disableTransitionOnChange
               storageKey="eurekapad-theme-2"
             >
-              <Toaster position="bottom-center" />
-              <ModalProvider />
-              {children}
+              <TooltipProvider>
+                <Toaster position="bottom-center" />
+                <ModalProvider />
+                {children}
+              </TooltipProvider>
             </ThemeProvider>
           </EdgeStoreProvider>
         </ConvexClientProvider>
