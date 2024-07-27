@@ -1,15 +1,19 @@
-import { InlineContentSchema, StyleSchema } from "@blocknote/core";
+import {
+  BlockNoteEditor,
+  BlockSchemaWithBlock,
+  InlineContentSchema,
+  StyledText,
+  StyleSchema,
+} from "@blocknote/core";
 import { ReactCustomBlockRenderProps } from "@blocknote/react";
 import {
   AudioConfig,
-  CancellationDetails,
   CancellationReason,
-  Recognizer,
   ResultReason,
   SpeechConfig,
   SpeechRecognitionEventArgs,
 } from "microsoft-cognitiveservices-speech-sdk";
-import { FC, LegacyRef, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { AiOutlineAudio } from "react-icons/ai";
 import { FaMagic, FaRegStopCircle } from "react-icons/fa";
 
@@ -30,16 +34,25 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSpeechToken } from "@/hooks/use-speech-token";
+import { NEW_TRANSCRIPTION_TEXT } from "@/lib/constants";
 import { SingletonSpeechRecognizer } from "@/lib/singleton-recognizer";
 
 const TranscriptionComponent = ({
   token,
   region,
   contentRef,
+  blockId,
+  editor,
 }: {
   token: string;
   region: string;
-  contentRef: LegacyRef<HTMLDivElement> | undefined;
+  contentRef: (node: HTMLElement | null) => void;
+  blockId: string;
+  editor: BlockNoteEditor<
+    BlockSchemaWithBlock<"transcription", TranscriptionBlockConfig>,
+    InlineContentSchema,
+    StyleSchema
+  >;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
@@ -49,13 +62,32 @@ const TranscriptionComponent = ({
 
   const audioConfig = AudioConfig.fromDefaultMicrophoneInput();
 
-  const handleRecognizing = (e: SpeechRecognitionEventArgs) => {
+  const handleRecognizing = useCallback((e: SpeechRecognitionEventArgs) => {
     console.log("Recognizing:", e.result.text);
-  };
+  }, []);
 
-  const handleRecognized = async (e: SpeechRecognitionEventArgs) => {
-    console.log("Recognized:", e.result.text);
-  };
+  const handleRecognized = useCallback(
+    (e: SpeechRecognitionEventArgs) => {
+      console.log("Recognized:", e.result.text);
+
+      const block = editor.getBlock(blockId);
+      if (!block) throw new Error("Block not found");
+
+      const content = block.content as StyledText<StyleSchema>[];
+      const currText = content[0]?.text || "";
+
+      editor.updateBlock(blockId, {
+        content: [
+          {
+            type: "text",
+            text: `${currText}\n${e.result.text}`,
+            styles: {},
+          },
+        ],
+      });
+    },
+    [editor, blockId]
+  );
 
   const handleListen = useCallback(() => {
     const recognizer = SingletonSpeechRecognizer.getInstance(
@@ -67,13 +99,11 @@ const TranscriptionComponent = ({
       recognizer.startListening();
 
       recognizer.setRecognizingHandler((s, e) => {
-        console.log("Recognizing:", e.result.text);
         handleRecognizing(e);
       });
 
       recognizer.setRecognizedHandler(async (s, e) => {
         if (e.result.reason == ResultReason.RecognizedSpeech) {
-          console.log("Recognized:", e.result.text);
           handleRecognized(e);
         } else if (e.result.reason == ResultReason.NoMatch) {
           console.log("NOMATCH: Speech could not be recognized.");
@@ -97,14 +127,17 @@ const TranscriptionComponent = ({
 
       recognizer.setSessionStoppedHandler((s, e) => {
         console.log("\n    Session stopped event.");
-
-        recognizer.stopListening();
-        setIsListening(false);
       });
     } else {
       recognizer.stopListening();
     }
-  }, [isListening, speechConfig, audioConfig]);
+  }, [
+    isListening,
+    speechConfig,
+    audioConfig,
+    handleRecognized,
+    handleRecognizing,
+  ]);
 
   useEffect(() => {
     handleListen();
@@ -114,25 +147,25 @@ const TranscriptionComponent = ({
     <>
       <Alert>
         <div className="flex items-center justify-between">
-          <Button
-            className="mb-4"
-            variant="outline"
-            size="icon"
-            onClick={() => setIsListening((l) => !l)}
-          >
-            <Tooltip>
-              <TooltipTrigger>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                className="mb-4"
+                variant="outline"
+                size="icon"
+                onClick={() => setIsListening((l) => !l)}
+              >
                 {isListening ? (
                   <FaRegStopCircle color="red" className="h-4 w-4" />
                 ) : (
                   <AiOutlineAudio className="h-4 w-4" />
                 )}
-              </TooltipTrigger>
-              <TooltipContent>
-                {isListening ? "Stop recording" : "Start recording"}
-              </TooltipContent>
-            </Tooltip>
-          </Button>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isListening ? "Stop recording" : "Start recording"}
+            </TooltipContent>
+          </Tooltip>
           <Button
             className="mb-4"
             variant="outline"
@@ -142,7 +175,7 @@ const TranscriptionComponent = ({
           </Button>
         </div>
         <AlertDescription className="w-full max-h-52 overflow-y-scroll my-4">
-          <div ref={contentRef}></div>
+          <div ref={contentRef} className="w-full"></div>
         </AlertDescription>
       </Alert>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -182,6 +215,8 @@ export const TranscriptionBlock: FC<
       token={token}
       region={region}
       contentRef={contentRef}
+      blockId={block.id}
+      editor={editor}
     />
   );
 };

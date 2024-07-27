@@ -53,7 +53,6 @@ export const insertTranscriptionBlock = (editor: CustomEditor) => ({
       [
         {
           type: "transcription",
-          content: "New transcription",
         },
       ],
       currentBlock
