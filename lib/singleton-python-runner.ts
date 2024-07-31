@@ -14,26 +14,13 @@ import { RefObject } from "react";
 export class SingletonPythonRunner {
   private static instance: SingletonPythonRunner;
   private pyodide!: PyodideInterface;
-  private stderr: (msg: string) => void;
-  private stdout: (msg: string) => void;
+  private loaded: boolean = false;
 
-  private constructor(
-    onStderr: (msg: string) => void,
-    onStdout: (msg: string) => void
-  ) {
-    this.stderr = onStderr;
-    this.stdout = onStdout;
-  }
+  private constructor() {}
 
-  public static getInstance(
-    onStderr: (msg: string) => void,
-    onStdout: (msg: string) => void
-  ) {
+  public static getInstance() {
     if (!SingletonPythonRunner.instance) {
-      SingletonPythonRunner.instance = new SingletonPythonRunner(
-        onStderr,
-        onStdout
-      );
+      SingletonPythonRunner.instance = new SingletonPythonRunner();
     }
     return SingletonPythonRunner.instance;
   }
@@ -44,23 +31,37 @@ export class SingletonPythonRunner {
     await this.pyodide.loadPackage("matplotlib");
   }
 
-  public async initPyodide() {
-    this.pyodide = await window.loadPyodide({
-      stderr: this.stderr,
-      stdout: this.stdout,
-    });
-
-    await this.loadPackages();
+  public isLoaded() {
+    return this.loaded;
   }
 
-  public runPython(code: string, mplTargetRef: RefObject<HTMLDivElement>) {
+  public async initPyodide() {
+    this.pyodide = await window.loadPyodide();
+
+    await this.loadPackages();
+    this.loaded = true;
+  }
+
+  public runPython(
+    code: string,
+    mplTargetRef: RefObject<HTMLDivElement>,
+    stdout: (msg: string) => void,
+    stderr: (msg: string) => void
+  ) {
+    this.pyodide.setStdout({ batched: stdout });
+    this.pyodide.setStderr({ batched: stderr });
+
     if (!mplTargetRef.current) {
-      this.stderr("No target found for matplotlib");
+      stderr("No target found for matplotlib");
       return;
     }
+
     document.pyodideMplTarget = mplTargetRef.current;
-    this.pyodide.runPythonAsync(code).catch((err) => {
-      this.stderr(err.message);
-    });
+
+    try {
+      this.pyodide.runPython(code);
+    } catch (err) {
+      stderr((err as Error).message);
+    }
   }
 }

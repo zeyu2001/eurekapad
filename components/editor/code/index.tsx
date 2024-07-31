@@ -26,6 +26,10 @@ export interface CodeBlockConfig {
     code: {
       default: string;
     };
+    hasRun: {
+      default: boolean;
+      values: boolean[];
+    };
   };
   content: "none";
 }
@@ -41,6 +45,10 @@ const codeBlockConfig: CodeBlockConfig = {
     },
     code: {
       default: "",
+    },
+    hasRun: {
+      default: false,
+      values: [true, false],
     },
   },
   content: "none",

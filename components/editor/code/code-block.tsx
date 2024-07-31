@@ -9,9 +9,11 @@ import ReactCodeMirror from "@uiw/react-codemirror";
 import clsx from "clsx";
 import { Check, ChevronsDown, Play } from "lucide-react";
 import { useTheme } from "next-themes";
-import { FC, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { set } from "zod";
 
+import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -111,7 +113,16 @@ export const CodeBlock: FC<
   const [stderr, setStderr] = useState<string>("");
   const [hasRun, setHasRun] = useState(false);
 
-  const { runner, loaded } = usePythonRunner(setStderr, setStdout);
+  const stdoutHandler = useCallback(
+    (msg: string) => setStdout((prev: string) => `${prev}\r\n${msg}`),
+    []
+  );
+  const stderrHandler = useCallback(
+    (msg: string) => setStderr((prev: string) => `${prev}\r\n${msg}`),
+    []
+  );
+
+  const { runner, loaded } = usePythonRunner();
 
   const onInputChange = (val: string) => {
     editor.updateBlock(block.id, {
@@ -121,6 +132,39 @@ export const CodeBlock: FC<
       },
     });
   };
+
+  const runCode = useCallback(async () => {
+    if (!runner || !loaded) {
+      toast.error("Hang on, the runner is still loading...");
+      return;
+    }
+
+    setStdout("");
+    setStderr("");
+
+    runner.runPython(code, mplTargetRef, stdoutHandler, stderrHandler);
+
+    setHasRun(true);
+  }, [runner, loaded, code, stdoutHandler, stderrHandler]);
+
+  useEffect(() => {
+    if (!runner || !loaded) return;
+    if (block.props.hasRun && !hasRun) {
+      // this block was ran before saving,
+      // so when rendering, we should run it again
+      runCode().then(() => setHasRun(true));
+    }
+  }, [block.props.hasRun, hasRun, runner, loaded, runCode]);
+
+  useEffect(() => {
+    editor.updateBlock(block.id, {
+      props: {
+        ...block.props,
+        language: language,
+        hasRun: hasRun || block.props.hasRun,
+      },
+    });
+  }, [language, hasRun, editor, block]);
 
   const { theme } = useTheme();
   const editorTheme =
@@ -145,20 +189,7 @@ export const CodeBlock: FC<
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
         <LanguageDropdown language={language} onChange={setLanguage} />
         {runnable && (
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => {
-              if (!runner || !loaded) {
-                toast.error("Hang on, the runner is still loading...");
-                return;
-              }
-              setStdout("");
-              setStderr("");
-              runner.runPython(code, mplTargetRef);
-              setHasRun(true);
-            }}
-          >
+          <Button size="icon" variant="ghost" onClick={runCode}>
             <Play size={16} />
           </Button>
         )}
