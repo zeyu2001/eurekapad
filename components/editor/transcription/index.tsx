@@ -9,7 +9,7 @@ import {
   createReactBlockSpec,
   ReactCustomBlockImplementation,
 } from "@blocknote/react";
-import { AiOutlineAudio } from "react-icons/ai";
+import { Mic } from "lucide-react";
 
 import { CustomEditor } from "@/components/editor/schema";
 
@@ -58,7 +58,7 @@ export const insertTranscriptionBlock = (editor: CustomEditor) => ({
       currentBlock
     );
   },
-  icon: <AiOutlineAudio />,
+  icon: <Mic size={16} />,
   aliases: ["transcribe", "microphone", "audio", "voice"],
   group: "Advanced",
   subtext: "Transcribe audio from your microphone",

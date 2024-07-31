@@ -23,8 +23,8 @@ import {
   ReactCustomBlockImplementation,
   ReactCustomBlockRenderProps,
 } from "@blocknote/react";
+import { Radical } from "lucide-react";
 import { FC, useState } from "react";
-import { BiMath } from "react-icons/bi";
 
 import { CustomEditor } from "./schema";
 
@@ -93,7 +93,7 @@ export const insertMathBlock = (editor: CustomEditor) => ({
       currentBlock
     );
   },
-  icon: <BiMath />,
+  icon: <Radical size={16} />,
   aliases: ["math", "equation", "latex"],
   group: "Advanced",
   subtext: "Display a standalone equation",

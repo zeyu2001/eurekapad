@@ -8,6 +8,7 @@ import {
   SuggestionMenuController,
 } from "@blocknote/react";
 
+import { insertCodeBlock } from "@/components/editor/code";
 import { insertMathBlock } from "@/components/editor/math";
 import { CustomEditor } from "@/components/editor/schema";
 import { insertTranscriptionBlock } from "@/components/editor/transcription";
@@ -27,6 +28,7 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
           [
             ...getDefaultReactSlashMenuItems(editor),
             insertMathBlock(editor),
+            insertCodeBlock(editor),
             insertTranscriptionBlock(editor),
           ].sort((a, b) => {
             return (

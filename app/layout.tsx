@@ -3,6 +3,7 @@ import "./globals.css";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { Toaster } from "sonner";
 
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
@@ -39,6 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <Script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js" />
         <ConvexClientProvider>
           <EdgeStoreProvider>
             <ThemeProvider

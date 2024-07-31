@@ -34,7 +34,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSpeechToken } from "@/hooks/use-speech-token";
-import { NEW_TRANSCRIPTION_TEXT } from "@/lib/constants";
 import { SingletonSpeechRecognizer } from "@/lib/singleton-recognizer";
 
 const TranscriptionComponent = ({
@@ -174,7 +173,7 @@ const TranscriptionComponent = ({
             <FaMagic className="mr-2" /> Summary
           </Button>
         </div>
-        <AlertDescription className="w-full max-h-52 overflow-y-scroll my-4">
+        <AlertDescription className="w-full max-h-52 overflow-y-scroll my-4 bg-background">
           <div ref={contentRef} className="w-full"></div>
         </AlertDescription>
       </Alert>
