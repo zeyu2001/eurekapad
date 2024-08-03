@@ -7,11 +7,10 @@ import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode";
 import { vscodeLightInit } from "@uiw/codemirror-theme-vscode";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import clsx from "clsx";
-import { Check, ChevronsDown, Play } from "lucide-react";
+import { Check, ChevronsDown, CircleAlert, Play } from "lucide-react";
 import { useTheme } from "next-themes";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { set } from "zod";
 
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePythonRunner } from "@/hooks/use-python-runner";
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
 
 import { CodeBlockConfig } from ".";
 import { RUNNABLE_LANGUAGES } from "./constants";
@@ -112,13 +111,14 @@ export const CodeBlock: FC<
   const [stdout, setStdout] = useState<string>("");
   const [stderr, setStderr] = useState<string>("");
   const [hasRun, setHasRun] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   const stdoutHandler = useCallback(
-    (msg: string) => setStdout((prev: string) => `${prev}\r\n${msg}`),
+    (msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()),
     []
   );
   const stderrHandler = useCallback(
-    (msg: string) => setStderr((prev: string) => `${prev}\r\n${msg}`),
+    (msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()),
     []
   );
 
@@ -135,16 +135,20 @@ export const CodeBlock: FC<
 
   const runCode = useCallback(async () => {
     if (!runner || !loaded) {
-      toast.error("Hang on, the runner is still loading...");
+      toast.error("Hang tight, Python kernel is still getting ready...");
       return;
     }
 
     setStdout("");
     setStderr("");
+    mplTargetRef.current?.replaceChildren();
 
-    runner.runPython(code, mplTargetRef, stdoutHandler, stderrHandler);
+    setIsRunning(true);
 
+    await runner.runPython(code, mplTargetRef, stdoutHandler, stderrHandler);
     setHasRun(true);
+
+    setIsRunning(false);
   }, [runner, loaded, code, stdoutHandler, stderrHandler]);
 
   useEffect(() => {
@@ -168,16 +172,16 @@ export const CodeBlock: FC<
 
   const { theme } = useTheme();
   const editorTheme =
-    theme === "dark"
-      ? vscodeDarkInit({
+    theme === "light"
+      ? vscodeLightInit({
           settings: {
-            caret: "#c6c6c6",
+            caret: "#000000",
             fontFamily: "monospace",
           },
         })
-      : vscodeLightInit({
+      : vscodeDarkInit({
           settings: {
-            caret: "#000000",
+            caret: "#c6c6c6",
             fontFamily: "monospace",
           },
         });
@@ -190,7 +194,7 @@ export const CodeBlock: FC<
         <LanguageDropdown language={language} onChange={setLanguage} />
         {runnable && (
           <Button size="icon" variant="ghost" onClick={runCode}>
-            <Play size={16} />
+            {isRunning ? <Spinner /> : <Play size={16} />}
           </Button>
         )}
       </div>
@@ -210,26 +214,33 @@ export const CodeBlock: FC<
       />
       <div>
         {stdout && (
-          <div className="font-mono p-4 bg-background rounded-b-lg">
+          <div
+            className={clsx(
+              "font-mono p-4 bg-background border-green-600 border-l-4",
+              stderr || "rounded-b-lg"
+            )}
+          >
             {stdout.split("\n").map((line, index) => (
-              <div key={index}>{line}</div>
+              <div key={index}>{ansiToSpans(line)}</div>
             ))}
           </div>
         )}
         {stderr && (
-          <div className="font-mono text-red-500 p-4 bg-background rounded-b-lg">
+          <div className="font-mono p-4 bg-background rounded-b-lg border-red-600 border-l-4">
             {stderr.split("\n").map((line, index) => (
-              <div key={index}>{line}</div>
+              <div key={index}>
+                {index === 0 && (
+                  <CircleAlert className="mr-4 my-2 inline-block text-red-600" />
+                )}
+                {ansiToSpans(line)}
+              </div>
             ))}
           </div>
         )}
       </div>
       <div
         ref={mplTargetRef}
-        className={clsx(
-          "w-full",
-          hasRun && code.includes("matplotlib") ? "block" : "hidden"
-        )}
+        className="w-full flex items-center justify-center"
       />
     </div>
   );
