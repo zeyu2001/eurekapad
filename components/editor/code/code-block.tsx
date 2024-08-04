@@ -7,11 +7,14 @@ import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode";
 import { vscodeLightInit } from "@uiw/codemirror-theme-vscode";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import clsx from "clsx";
-import { Check, ChevronsDown, CircleAlert, Play } from "lucide-react";
+import { Check, ChevronsDown, CircleAlert, Delete, Play } from "lucide-react";
 import { useTheme } from "next-themes";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { CodeBlockConfig } from "@/components/editor/code";
+import { RUNNABLE_LANGUAGES } from "@/components/editor/code/constants";
+import { Images, imagesJSONSchema } from "@/components/editor/code/schemas";
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,11 +30,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { usePythonRunner } from "@/hooks/use-python-runner";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
-
-import { CodeBlockConfig } from ".";
-import { RUNNABLE_LANGUAGES } from "./constants";
 
 const LanguageDropdown = ({
   language,
@@ -102,32 +107,51 @@ export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor, contentRef }) => {
   const code = block.props.code || "";
-  const mplTargetRef = useRef<HTMLDivElement>(null);
+  const mediaTargetRef = useRef<HTMLDivElement>(null);
 
-  const [language, setLanguage] = useState<string>(
-    block.props.language || "python"
-  );
+  const language = block.props.language || "python";
 
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
   const [stderr, setStderr] = useState<string>(block.props.stderr || "");
+  const [images, setImages] = useState<Images>(
+    imagesJSONSchema.parse(block.props.images)
+  );
   const [isRunning, setIsRunning] = useState(false);
 
   const stdoutHandler = useCallback(
     (msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()),
     []
   );
+
   const stderrHandler = useCallback(
     (msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()),
     []
   );
 
+  const imageHandler = useCallback((format: string, b64Data: string) => {
+    setImages((prev) => [
+      ...prev,
+      {
+        format,
+        b64Data,
+      },
+    ]);
+  }, []);
+
   const { runner, loaded } = usePythonRunner();
 
-  const onInputChange = (val: string) => {
+  const handleInputChange = ({
+    code,
+    language,
+  }: {
+    code?: string;
+    language?: string;
+  }) => {
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
-        code: val,
+        language: language ?? block.props.language,
+        code: code ?? block.props.code,
       },
     });
   };
@@ -140,25 +164,43 @@ export const CodeBlock: FC<
 
     setStdout("");
     setStderr("");
-    mplTargetRef.current?.replaceChildren();
+    setImages([]);
 
     setIsRunning(true);
 
-    await runner.runPython(code, mplTargetRef, stdoutHandler, stderrHandler);
+    await runner.runPython(
+      code,
+      mediaTargetRef,
+      stdoutHandler,
+      stderrHandler,
+      imageHandler
+    );
 
     setIsRunning(false);
-  }, [runner, loaded, code, stdoutHandler, stderrHandler]);
+  }, [runner, loaded, code, stdoutHandler, stderrHandler, imageHandler]);
 
   useEffect(() => {
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
-        language: language,
         stdout: stdout,
         stderr: stderr,
+        images: JSON.stringify(images),
       },
     });
-  }, [language, stdout, stderr, editor, block.id, block.props]);
+  }, [stdout, stderr, images, editor, block.id, block.props]);
+
+  useEffect(() => {
+    if (!mediaTargetRef?.current) {
+      return;
+    }
+    mediaTargetRef.current.replaceChildren();
+    images.forEach(({ format, b64Data }) => {
+      const img = document.createElement("img");
+      img.src = `data:${format};base64,${b64Data}`;
+      mediaTargetRef.current?.appendChild(img);
+    });
+  }, [images, mediaTargetRef]);
 
   const { theme } = useTheme();
   const editorTheme =
@@ -181,11 +223,37 @@ export const CodeBlock: FC<
   return (
     <div className="w-full">
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
-        <LanguageDropdown language={language} onChange={setLanguage} />
+        <LanguageDropdown
+          language={language}
+          onChange={(lang) => handleInputChange({ language: lang })}
+        />
         {runnable && (
-          <Button size="icon" variant="ghost" onClick={runCode}>
-            {isRunning ? <Spinner /> : <Play size={16} />}
-          </Button>
+          <div>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button size="icon" variant="ghost" onClick={runCode}>
+                  {isRunning ? <Spinner /> : <Play size={16} />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Run code</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => {
+                    setStdout("");
+                    setStderr("");
+                    setImages([]);
+                  }}
+                >
+                  <Delete size={16} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Clear output</TooltipContent>
+            </Tooltip>
+          </div>
         )}
       </div>
       <ReactCodeMirror
@@ -200,7 +268,7 @@ export const CodeBlock: FC<
         editable={editor.isEditable}
         width="100%"
         height="200px"
-        onChange={onInputChange}
+        onChange={(value) => handleInputChange({ code: value })}
       />
       <div>
         {stdout && (
@@ -229,8 +297,11 @@ export const CodeBlock: FC<
         )}
       </div>
       <div
-        ref={mplTargetRef}
-        className="w-full flex items-center justify-center"
+        ref={mediaTargetRef}
+        className={clsx(
+          "w-full place-items-center grid",
+          images.length >= 2 ? "grid-cols-2" : "grid-cols-1"
+        )}
       />
     </div>
   );

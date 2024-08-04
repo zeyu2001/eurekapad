@@ -32,6 +32,9 @@ export interface CodeBlockConfig {
     stderr: {
       default: string;
     };
+    images: {
+      default: string;
+    };
   };
   content: "none";
 }
@@ -53,6 +56,9 @@ const codeBlockConfig: CodeBlockConfig = {
     },
     stderr: {
       default: "",
+    },
+    images: {
+      default: JSON.stringify([]),
     },
   },
   content: "none",

@@ -38,7 +38,7 @@ export class SingletonPythonRunner {
   private idle: Promise<void> = Promise.resolve();
   private stdout: (msg: string) => void = () => {};
   private stderr: (msg: string) => void = () => {};
-  private mplTargetRef: RefObject<HTMLDivElement> | null = null;
+  private image: (format: string, b64Data: string) => void = () => {};
 
   private constructor() {}
 
@@ -93,18 +93,13 @@ export class SingletonPythonRunner {
         }
         case "display_data": {
           const content = msg.content as DisplayDataContent;
-          if (!this.mplTargetRef?.current) {
-            throw new Error("No target found for matplotlib");
-          }
           const formats = Object.keys(content.data).filter((key) =>
             key.startsWith("image/")
           );
           if (formats.length > 0) {
             const format = formats[0];
-            const data = content.data[format];
-            const img = document.createElement("img");
-            img.src = `data:${format};base64,${data}`;
-            this.mplTargetRef.current.appendChild(img);
+            const data = content.data[format] as string;
+            this.image(format, data);
           }
           break;
         }
@@ -114,13 +109,14 @@ export class SingletonPythonRunner {
 
   private async _runPython(
     code: string,
-    mplTargetRef: RefObject<HTMLDivElement>,
+    mediaTargetRef: RefObject<HTMLDivElement>,
     stdout: (msg: string) => void,
-    stderr: (msg: string) => void
+    stderr: (msg: string) => void,
+    image: (format: string, b64Data: string) => void
   ) {
     this.stdout = stdout;
     this.stderr = stderr;
-    this.mplTargetRef = mplTargetRef;
+    this.image = image;
 
     const result = await this.kernel.executeRequest({
       code: code,
@@ -138,20 +134,18 @@ export class SingletonPythonRunner {
 
   public async runPython(
     code: string,
-    mplTargetRef: RefObject<HTMLDivElement>,
+    mediaTargetRef: RefObject<HTMLDivElement>,
     stdout: (msg: string) => void,
-    stderr: (msg: string) => void
+    stderr: (msg: string) => void,
+    image: (format: string, b64Data: string) => void
   ) {
     if (!this.loaded) {
       throw new Error("Pyodide is not loaded yet");
     }
 
-    if (!mplTargetRef.current) {
-      throw new Error("No target found for matplotlib");
-    }
-
+    // Ensure that only one execution is running at a time
     this.idle = this.idle.then(() =>
-      this._runPython(code, mplTargetRef, stdout, stderr)
+      this._runPython(code, mediaTargetRef, stdout, stderr, image)
     );
     return this.idle;
   }
