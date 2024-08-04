@@ -108,9 +108,8 @@ export const CodeBlock: FC<
     block.props.language || "python"
   );
 
-  const [stdout, setStdout] = useState<string>("");
-  const [stderr, setStderr] = useState<string>("");
-  const [hasRun, setHasRun] = useState(false);
+  const [stdout, setStdout] = useState<string>(block.props.stdout || "");
+  const [stderr, setStderr] = useState<string>(block.props.stderr || "");
   const [isRunning, setIsRunning] = useState(false);
 
   const stdoutHandler = useCallback(
@@ -146,29 +145,20 @@ export const CodeBlock: FC<
     setIsRunning(true);
 
     await runner.runPython(code, mplTargetRef, stdoutHandler, stderrHandler);
-    setHasRun(true);
 
     setIsRunning(false);
   }, [runner, loaded, code, stdoutHandler, stderrHandler]);
-
-  useEffect(() => {
-    if (!runner || !loaded) return;
-    if (block.props.hasRun && !hasRun) {
-      // this block was ran before saving,
-      // so when rendering, we should run it again
-      runCode().then(() => setHasRun(true));
-    }
-  }, [block.props.hasRun, hasRun, runner, loaded, runCode]);
 
   useEffect(() => {
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
         language: language,
-        hasRun: hasRun || block.props.hasRun,
+        stdout: stdout,
+        stderr: stderr,
       },
     });
-  }, [language, hasRun, editor, block]);
+  }, [language, stdout, stderr, editor, block.id, block.props]);
 
   const { theme } = useTheme();
   const editorTheme =
