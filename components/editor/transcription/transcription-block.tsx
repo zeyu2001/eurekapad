@@ -22,12 +22,10 @@ import { Spinner } from "@/components/spinner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
@@ -53,7 +51,6 @@ const TranscriptionComponent = ({
     StyleSchema
   >;
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
 
   const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
@@ -143,52 +140,48 @@ const TranscriptionComponent = ({
   }, [isListening, handleListen]);
 
   return (
-    <>
-      <Alert>
-        <div className="flex items-center justify-between">
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                className="mb-4"
-                variant="outline"
-                size="icon"
-                onClick={() => setIsListening((l) => !l)}
-              >
-                {isListening ? (
-                  <FaRegStopCircle color="red" className="h-4 w-4" />
-                ) : (
-                  <AiOutlineAudio className="h-4 w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              {isListening ? "Stop recording" : "Start recording"}
-            </TooltipContent>
-          </Tooltip>
-          <Button
-            className="mb-4"
-            variant="outline"
-            onClick={() => setOpen((o) => !o)}
-          >
-            <FaMagic className="mr-2" /> Summary
-          </Button>
-        </div>
-        <AlertDescription className="w-full max-h-52 overflow-y-scroll my-4 bg-background">
-          <div ref={contentRef} className="w-full"></div>
-        </AlertDescription>
-      </Alert>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="w-full sm:w-1/2 sm:max-w-full z-[99999]">
-          <SheetHeader>
-            <SheetTitle>Transcription</SheetTitle>
-            <SheetDescription>
-              Make changes to your profile here.
-            </SheetDescription>
-          </SheetHeader>
-          <div className="grid gap-4 py-4">this will be the summary</div>
-        </SheetContent>
-      </Sheet>
-    </>
+    <Alert>
+      <div className="flex items-center justify-between">
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              className="mb-4"
+              variant="outline"
+              size="icon"
+              onClick={() => setIsListening((l) => !l)}
+            >
+              {isListening ? (
+                <FaRegStopCircle color="red" className="h-4 w-4" />
+              ) : (
+                <AiOutlineAudio className="h-4 w-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {isListening ? "Stop recording" : "Start recording"}
+          </TooltipContent>
+        </Tooltip>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button className="mb-4" variant="outline">
+              <FaMagic className="mr-2" /> Summary
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full">
+            <div className="space-y-2">
+              <h4 className="font-medium leading-none">Stay tuned!</h4>
+              <p className="text-sm text-muted-foreground">
+                AI features are coming soon.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      <AlertDescription className="w-full max-h-52 overflow-y-scroll my-4 bg-background">
+        <div ref={contentRef} className="w-full"></div>
+      </AlertDescription>
+    </Alert>
   );
 };
 
