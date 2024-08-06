@@ -1,0 +1,19 @@
+[
+  {
+    "type": "heading",
+    "props": {
+      "level": 1
+    },
+    "content": "/math"
+  },
+  {
+    "type": "math",
+    "content": [
+      {
+        "type": "text",
+        "text": "\\begin{align*}\nx&=y           &  w &=z              &  a&=b+c\\\\\n2x&=-y         &  3w&=\\frac{1}{2}z   &  a&=b\\\\\n-4 + 5x&=2+y   &  w+2&=-1+w          &  ab&=cb\n\\end{align*}",
+        "styles": {}
+      }
+    ]
+  }
+]

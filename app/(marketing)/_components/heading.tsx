@@ -8,12 +8,14 @@ import Link from "next/link";
 
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
+import cambridgeImage from "@/images/cambridge.png";
+import imperialImage from "@/images/imperial.png";
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
   return (
-    <>
+    <div className="text-center">
       <div className="h-screen flex justify-center items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div>
           <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight text-slate-900 sm:text-7xl dark:text-slate-100">
@@ -60,7 +62,7 @@ export const Heading = () => {
           </div>
         </div>
       </div>
-      <div>
+      <div className="pb-16 container">
         <p className="font-display text-base text-slate-900 dark:text-slate-100">
           Built by students from Cambridge, and trusted by students from
         </p>
@@ -69,8 +71,8 @@ export const Heading = () => {
           className="mt-8 flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0"
         >
           {[
-            [{ name: "University of Cambridge", logo: "/cambridge.png" }],
-            [{ name: "Imperial College London", logo: "/imperial.png" }],
+            [{ name: "University of Cambridge", logo: cambridgeImage }],
+            [{ name: "Imperial College London", logo: imperialImage }],
           ].map((group, groupIndex) => (
             <li key={groupIndex}>
               <ul
@@ -92,6 +94,6 @@ export const Heading = () => {
           ))}
         </ul>
       </div>
-    </>
+    </div>
   );
 };

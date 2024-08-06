@@ -6,7 +6,9 @@ import "@blocknote/mantine/style.css";
 import { PartialBlock } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
+import { useConvexAuth } from "convex/react";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 import { customSchema } from "@/components/editor/schema";
 import { CustomSlashMenu } from "@/components/editor/slash-menu";
@@ -21,8 +23,14 @@ interface EditorProps {
 const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   const { resolvedTheme } = useTheme();
   const { edgestore } = useEdgeStore();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
   const handleUpload = async (file: File) => {
+    if (!isAuthenticated || isLoading) {
+      toast.error("You must be logged in to upload files.");
+      return "";
+    }
+
     const response = await edgestore.publicFiles.upload({
       file,
     });

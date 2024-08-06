@@ -1,8 +1,9 @@
 import "./globals.css";
 
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import clsx from "clsx";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lexend } from "next/font/google";
 import Script from "next/script";
 import { Toaster } from "sonner";
 
@@ -11,7 +12,17 @@ import { ModalProvider } from "@/components/providers/modal-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const lexend = Lexend({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-lexend",
+});
 
 export const metadata: Metadata = {
   title: "EurekaPad",
@@ -39,7 +50,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={clsx(inter.className, lexend.variable)}>
         <Script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js" />
         <ConvexClientProvider>
           <EdgeStoreProvider>
