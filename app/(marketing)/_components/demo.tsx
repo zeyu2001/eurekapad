@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 
 import Editor from "@/components/editor";
 import backgroundImage from "@/images/background-features.jpg";
+import codeBlockImage from "@/images/code-block.png";
+import mathBlockImage from "@/images/math-block.png";
 
 import codeBlockDemo from "./codeBlockDemo.json";
 import mathBlockDemo from "./mathBlockDemo.json";
@@ -17,12 +19,14 @@ const features = [
     description:
       "Lightning fast, runnable code blocks. Support for matplotlib, numpy, pandas, and more.",
     initialContent: JSON.stringify(codeBlockDemo),
+    image: codeBlockImage,
   },
   {
     title: "/math",
     description:
       "Interactive math blocks. Write LaTeX or use the built-in math keyboard.",
     initialContent: JSON.stringify(mathBlockDemo),
+    image: mathBlockImage,
   },
 ];
 
@@ -32,12 +36,14 @@ export function Demo() {
   );
 
   const [isMounted, setIsMounted] = useState(false);
+  const [isLg, setIsLg] = useState(false);
 
   useEffect(() => {
     let lgMediaQuery = window.matchMedia("(min-width: 1024px)");
 
     function onMediaQueryChange({ matches }: { matches: boolean }) {
       setTabOrientation(matches ? "vertical" : "horizontal");
+      setIsLg(matches);
     }
 
     onMediaQueryChange(lgMediaQuery);
@@ -134,12 +140,28 @@ export function Demo() {
                         {feature.description}
                       </p>
                     </div>
-                    <div className="mt-10 overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 bg-background dark:bg-[#1F1F1F] p-4">
-                      <Editor
-                        initialContent={feature.initialContent}
-                        onChange={() => {}}
-                        editable={true}
-                      />
+                    <div
+                      className={clsx(
+                        "mt-10 overflow-hidden rounded-xl shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0",
+                        isLg
+                          ? "bg-white dark:bg-[#1F1F1F] p-4"
+                          : "mt-10 w-[45rem] overflow-hidden sm:w-auto"
+                      )}
+                    >
+                      {isLg ? (
+                        <Editor
+                          initialContent={feature.initialContent}
+                          onChange={() => {}}
+                          editable={true}
+                        />
+                      ) : (
+                        <Image
+                          src={feature.image}
+                          alt={feature.title}
+                          width={800}
+                          height={600}
+                        />
+                      )}
                     </div>
                   </TabPanel>
                 ))}
