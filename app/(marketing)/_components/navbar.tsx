@@ -34,7 +34,9 @@ export const Navbar = () => {
               </Button>
             </SignInButton>
             <SignInButton mode="modal">
-              <Button size="sm">Get EurekaPad free</Button>
+              <Button className="rounded-full" size="sm">
+                Get EurekaPad free
+              </Button>
             </SignInButton>
           </>
         )}
