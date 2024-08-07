@@ -143,7 +143,7 @@ const TranscriptionComponent = ({
     <Alert>
       <div className="flex items-center justify-between">
         <Tooltip>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
             <Button
               className="mb-4"
               variant="outline"

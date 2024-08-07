@@ -230,7 +230,7 @@ export const CodeBlock: FC<
         {runnable && (
           <div>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Button size="icon" variant="ghost" onClick={runCode}>
                   {isRunning ? <Spinner /> : <Play size={16} />}
                 </Button>
@@ -238,7 +238,7 @@ export const CodeBlock: FC<
               <TooltipContent>Run code</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Button
                   size="icon"
                   variant="ghost"

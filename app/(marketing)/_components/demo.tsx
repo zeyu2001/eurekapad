@@ -58,11 +58,6 @@ export function Demo() {
     setIsMounted(true);
   }, []);
 
-  // Editor requires document to be defined
-  if (!isMounted) {
-    return null;
-  }
-
   return (
     <section
       id="features"
@@ -148,20 +143,23 @@ export function Demo() {
                           : "mt-10 w-[45rem] overflow-hidden sm:w-auto"
                       )}
                     >
-                      {isLg ? (
-                        <Editor
-                          initialContent={feature.initialContent}
-                          onChange={() => {}}
-                          editable={true}
-                        />
-                      ) : (
-                        <Image
-                          src={feature.image}
-                          alt={feature.title}
-                          width={800}
-                          height={600}
-                        />
-                      )}
+                      <div>
+                        {isLg && isMounted ? (
+                          <Editor
+                            initialContent={feature.initialContent}
+                            onChange={() => {}}
+                            editable={true}
+                          />
+                        ) : (
+                          <Image
+                            className="w-full relative z-10"
+                            src={feature.image}
+                            alt={feature.title}
+                            priority
+                            sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem"
+                          />
+                        )}
+                      </div>
                     </div>
                   </TabPanel>
                 ))}
