@@ -185,7 +185,10 @@ export const CodeBlock: FC<
         ...block.props,
         stdout: stdout,
         stderr: stderr,
-        images: JSON.stringify(images),
+        // TODO: use EdgeStore / UploadThing to store the plots, store URL in block props
+        // Note: don't store images for now because it's taking up too much database bandwidth
+        // images: JSON.stringify(images),
+        images: JSON.stringify([]),
       },
     });
   }, [stdout, stderr, images, editor, block.id, block.props]);

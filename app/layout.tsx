@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={clsx(inter.className, lexend.variable)}>
-        <Script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js" />
+        <Script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6" />
         <ConvexClientProvider>
           <EdgeStoreProvider>
             <ThemeProvider

@@ -9,3 +9,5 @@ export const PYODIDE = {
   ALL_JSON_URL: "/_next/static/pypi/all.json",
   PIPLITE_WHEEL_URL: "/_next/static/pypi/piplite-0.4.1-py3-none-any.whl",
 };
+
+export const UPDATE_THROTTLE_DELAY = 1000;

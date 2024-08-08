@@ -2,16 +2,18 @@
 
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import Editor from "@/components/editor";
 import backgroundImage from "@/images/background-features.jpg";
 import codeBlockImage from "@/images/code-block.png";
 import mathBlockImage from "@/images/math-block.png";
 
 import codeBlockDemo from "./codeBlockDemo.json";
 import mathBlockDemo from "./mathBlockDemo.json";
+
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 const features = [
   {
@@ -35,7 +37,6 @@ export function Demo() {
     "horizontal"
   );
 
-  const [isMounted, setIsMounted] = useState(false);
   const [isLg, setIsLg] = useState(false);
 
   useEffect(() => {
@@ -52,10 +53,6 @@ export function Demo() {
     return () => {
       lgMediaQuery.removeEventListener("change", onMediaQueryChange);
     };
-  }, []);
-
-  useEffect(() => {
-    setIsMounted(true);
   }, []);
 
   return (
@@ -144,7 +141,7 @@ export function Demo() {
                       )}
                     >
                       <div>
-                        {isLg && isMounted ? (
+                        {isLg ? (
                           <Editor
                             initialContent={feature.initialContent}
                             onChange={() => {}}

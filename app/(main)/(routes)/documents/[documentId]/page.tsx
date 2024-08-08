@@ -9,6 +9,8 @@ import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { UPDATE_THROTTLE_DELAY } from "@/lib/constants";
+import { throttle } from "@/lib/utils";
 
 interface DocumentIdPageProps {
   params: {

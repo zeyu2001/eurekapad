@@ -13,6 +13,8 @@ import { insertMathBlock } from "@/components/editor/math";
 import { CustomEditor } from "@/components/editor/schema";
 import { insertTranscriptionBlock } from "@/components/editor/transcription";
 
+import { insertGraphBlock } from "./graph";
+
 interface CustomSlashMenuProps {
   editor: CustomEditor;
 }
@@ -30,6 +32,7 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
             insertMathBlock(editor),
             insertCodeBlock(editor),
             insertTranscriptionBlock(editor),
+            insertGraphBlock(editor),
           ].sort((a, b) => {
             return (
               groupOrder.indexOf(a.group || "") -
