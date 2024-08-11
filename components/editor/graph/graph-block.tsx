@@ -14,14 +14,14 @@ export const GraphBlock: FC<
   >
 > = ({ block, editor, contentRef }) => {
   const graphRef = useRef<HTMLDivElement>(null);
-  const [graphState, setGraphState] = useState(block.props.state);
-  const [lastUpdated, setLastUpdated] = useState(Date.now());
+  const [graphState, setGraphState] = useState<string>(block.props.state);
+  const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
 
   const updateEditor = () => {
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
-        state: JSON.stringify(graphState),
+        state: graphState,
       },
     });
   };
@@ -36,7 +36,7 @@ export const GraphBlock: FC<
       calculator.setState(JSON.parse(block.props.state));
 
     calculator.observeEvent("change", () => {
-      setGraphState(calculator.getState());
+      setGraphState(JSON.stringify(calculator.getState()));
     });
 
     // on subsequent callbacks, a duplicate graph is appended to the graphRef
