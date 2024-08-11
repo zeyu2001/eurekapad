@@ -11,5 +11,9 @@
     "props": {
       "state": "{\"version\":7,\"graph\":{\"viewport\":{\"xmin\":-14.311325761262063,\"ymin\":-36.91633226690121,\"xmax\":12.263068702405759,\"ymax\":7.374325172545166},\"showGrid\":false,\"xAxisNumbers\":false,\"yAxisNumbers\":false,\"polarNumbers\":false,\"squareAxes\":false},\"randomSeed\":\"8390efb20379abbb9302b24cd0c32833\",\"expressions\":{\"list\":[{\"type\":\"expression\",\"id\":\"13\",\"color\":\"#6042a6\",\"latex\":\"\\\\left(\\\\frac{y}{x}+x\\\\right)^{2}<a\\\\sin\\\\left(wt-kx\\\\right)\",\"polarDomain\":{\"min\":\"\",\"max\":\"\\\\left|t\\\\right|\"}},{\"type\":\"expression\",\"id\":\"21\",\"color\":\"#388c46\",\"latex\":\"t=7.54\",\"hidden\":true,\"slider\":{\"hardMin\":true,\"hardMax\":true,\"playDirection\":-1,\"isPlaying\":true,\"min\":\"0\"}},{\"type\":\"expression\",\"id\":\"19\",\"color\":\"#c74440\",\"latex\":\"a=0.4\",\"hidden\":true},{\"type\":\"expression\",\"id\":\"20\",\"color\":\"#2d70b3\",\"latex\":\"w=1\",\"hidden\":true},{\"type\":\"expression\",\"id\":\"22\",\"color\":\"#6042a6\",\"latex\":\"k=0.5\",\"hidden\":true}]}}"
     }
+  },
+  {
+    "type": "paragraph",
+    "content": ""
   }
 ]
