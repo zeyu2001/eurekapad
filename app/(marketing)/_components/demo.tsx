@@ -155,7 +155,7 @@ export function Demo() {
                             editable={true}
                           />
                         )}
-                        {!isLg && feature.img && (
+                        {!isLg && feature.image && (
                           <Image
                             className="w-full relative z-10"
                             src={feature.image}
