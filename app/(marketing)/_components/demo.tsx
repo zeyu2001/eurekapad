@@ -11,6 +11,7 @@ import codeBlockImage from "@/images/code-block.png";
 import mathBlockImage from "@/images/math-block.png";
 
 import codeBlockDemo from "./codeBlockDemo.json";
+import graphBlockDemo from "./graphBlockDemo.json";
 import mathBlockDemo from "./mathBlockDemo.json";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -29,6 +30,12 @@ const features = [
       "Interactive math blocks. Write LaTeX or use the built-in math keyboard.",
     initialContent: JSON.stringify(mathBlockDemo),
     image: mathBlockImage,
+  },
+  {
+    title: "/graph",
+    description: "Interactive graphs within your notes, powered by Desmos.",
+    initialContent: JSON.stringify(graphBlockDemo),
+    video: "/graph-block.webm",
   },
 ];
 
@@ -141,19 +148,30 @@ export function Demo() {
                       )}
                     >
                       <div>
-                        {isLg ? (
+                        {isLg && (
                           <Editor
                             initialContent={feature.initialContent}
                             onChange={() => {}}
                             editable={true}
                           />
-                        ) : (
+                        )}
+                        {!isLg && feature.img && (
                           <Image
                             className="w-full relative z-10"
                             src={feature.image}
                             alt={feature.title}
                             priority
                             sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem"
+                          />
+                        )}
+                        {!isLg && feature.video && (
+                          <video
+                            className="w-full relative z-10"
+                            src={feature.video}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
                           />
                         )}
                       </div>
