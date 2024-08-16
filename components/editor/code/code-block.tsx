@@ -261,7 +261,6 @@ export const CodeBlock: FC<
       </div>
       <ReactCodeMirror
         id={block?.id}
-        autoFocus
         placeholder={"Write your code here..."}
         style={{ width: "100%", resize: "vertical" }}
         //@ts-ignore
