@@ -44,7 +44,7 @@ export const Heading = () => {
               </div>
             )}
             {isAuthenticated && !isLoading && (
-              <Button asChild>
+              <Button asChild className="rounded-full">
                 <Link href="/documents">
                   Enter EurekaPad
                   <ArrowRight className="h-4 w-4 ml-2" />
