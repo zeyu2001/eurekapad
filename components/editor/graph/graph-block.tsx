@@ -2,9 +2,12 @@ import "desmos";
 
 import { InlineContentSchema, StyleSchema } from "@blocknote/core";
 import { ReactCustomBlockRenderProps } from "@blocknote/react";
+import Script from "next/script";
 import { FC, useEffect, useRef, useState } from "react";
 
 import { GraphBlockConfig } from ".";
+import { graphStateJSONSchema } from "./schemas";
+import { GraphState } from "./types";
 
 export const GraphBlock: FC<
   ReactCustomBlockRenderProps<
@@ -13,44 +16,54 @@ export const GraphBlock: FC<
     StyleSchema
   >
 > = ({ block, editor, contentRef }) => {
+  const result = graphStateJSONSchema.safeParse(block.props.state);
+
   const graphRef = useRef<HTMLDivElement>(null);
-  const [graphState, setGraphState] = useState<string>(block.props.state);
-  const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [graphState, setGraphState] = useState<GraphState | null>(
+    result.error ? null : result.data
+  );
 
   const updateEditor = () => {
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
-        state: graphState,
+        state: JSON.stringify(graphState),
       },
     });
   };
 
   // can only initialize GraphingCalculator after graphRef is mounted
   useEffect(() => {
-    if (!graphRef.current) return;
+    if (!loaded || !graphRef.current) return;
 
     const calculator = Desmos.GraphingCalculator(graphRef.current);
 
-    if (block.props.state !== "{}")
-      calculator.setState(JSON.parse(block.props.state));
+    if (graphState) calculator.setState(graphState);
 
     calculator.observeEvent("change", () => {
-      setGraphState(JSON.stringify(calculator.getState()));
+      setGraphState(calculator.getState() as GraphState);
     });
 
     // on subsequent callbacks, a duplicate graph is appended to the graphRef
     // this is a workaround to remove the duplicate graphs
-    graphRef.current.replaceChildren(graphRef.current.children[0]);
-  }, [editor, block.id, block.props]);
+    while (graphRef.current.children.length > 1)
+      graphRef.current.removeChild(graphRef.current.lastChild as ChildNode);
+  }, [loaded, graphRef, graphState]);
 
   return (
-    <div
-      ref={graphRef}
-      // update when Desmos input loses focus,
-      // otherwise interactive element will lose focus while user is still typing
-      onBlur={updateEditor}
-      className="w-full h-96"
-    ></div>
+    <>
+      <Script
+        src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
+        onLoad={() => setLoaded(true)}
+      />
+      <div
+        ref={graphRef}
+        // update when Desmos input loses focus,
+        // otherwise interactive element will lose focus while user is still typing
+        onBlur={updateEditor}
+        className="w-full h-96"
+      ></div>
+    </>
   );
 };

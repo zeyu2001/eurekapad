@@ -4,7 +4,6 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter, Lexend } from "next/font/google";
-import Script from "next/script";
 import { Toaster } from "sonner";
 
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
@@ -51,7 +50,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={clsx(inter.className, lexend.variable)}>
-        <Script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6" />
         <ConvexClientProvider>
           <EdgeStoreProvider>
             <ThemeProvider
