@@ -50,23 +50,23 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={clsx(inter.className, lexend.variable)}>
-        <ConvexClientProvider>
-          <EdgeStoreProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="eurekapad-theme-2"
-            >
+        <EdgeStoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="eurekapad-theme-2"
+          >
+            <ConvexClientProvider>
               <TooltipProvider>
                 <Toaster position="bottom-center" />
                 <ModalProvider />
                 {children}
               </TooltipProvider>
-            </ThemeProvider>
-          </EdgeStoreProvider>
-        </ConvexClientProvider>
+            </ConvexClientProvider>
+          </ThemeProvider>
+        </EdgeStoreProvider>
       </body>
     </html>
   );
