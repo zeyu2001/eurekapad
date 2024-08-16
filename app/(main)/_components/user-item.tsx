@@ -1,6 +1,6 @@
 "use client";
 
-import { SignOutButton, useUser } from "@clerk/clerk-react";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import { ChevronsLeftRight } from "lucide-react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
