@@ -59,7 +59,7 @@ export default function Content({ params }: { params: { slug: string } }) {
               <BreadcrumbLink href="/help">Help Center</BreadcrumbLink>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Privacy Policy</BreadcrumbPage>
+                <BreadcrumbPage>{content.meta.title}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
