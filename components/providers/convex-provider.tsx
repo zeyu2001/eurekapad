@@ -12,7 +12,6 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
   const { resolvedTheme } = useTheme();
   const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
-  console.log(resolvedTheme);
 
   const themeMap = {
     dark: [dark],

@@ -1,6 +1,8 @@
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
-import { Logo } from "./logo"
+import { Button } from "@/components/ui/button";
+
+import { Logo } from "./logo";
 
 export const Footer = () => {
   return (
@@ -8,12 +10,15 @@ export const Footer = () => {
       <Logo />
       <div className="md:ml-auto w-full justify-between md:justify-end flex items-center gap-x-2 text-muted-foreground">
         <Button variant="ghost" size="sm">
-          Privacy Policy
+          <Link href="/help">Help Center</Link>
         </Button>
         <Button variant="ghost" size="sm">
-          Terms & Conditions
+          <Link href="/help/privacy-policy">Privacy Policy</Link>
+        </Button>
+        <Button variant="ghost" size="sm">
+          <Link href="/help/terms-and-conditions">Terms & Conditions</Link>
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
