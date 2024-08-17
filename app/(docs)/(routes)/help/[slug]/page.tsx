@@ -72,7 +72,7 @@ export default function Content({ params }: { params: { slug: string } }) {
         </h1>
         <div
           className="mt-10 space-y-4 prose-headings:mt-8 
-                    prose-headings:font-semibold prose-headings:text-black 
+                    prose-headings:font-bold prose-headings:text-black prose-headings:tracking-tight
                     prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg 
                     dark:prose-headings:text-white
                     prose-ul:list-disc prose-ul:ml-8 prose-ol:list-decimal prose-ol:ml-8
