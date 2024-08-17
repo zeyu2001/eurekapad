@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { UPDATE_THROTTLE_DELAY } from "@/lib/constants";
-import { throttle } from "@/lib/utils";
+import { getTitle } from "@/lib/utils";
 
 interface DocumentIdPageProps {
   params: {
@@ -58,13 +58,16 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   }
 
   return (
-    <div className="pb-40">
-      <Cover url={document.coverImage} />
-      <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
-        <Toolbar initialData={document} />
-        <Editor onChange={onChange} initialContent={document.content} />
+    <>
+      <title>{getTitle(document.title)}</title>
+      <div className="pb-40">
+        <Cover url={document.coverImage} />
+        <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
+          <Toolbar initialData={document} />
+          <Editor onChange={onChange} initialContent={document.content} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
