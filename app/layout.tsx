@@ -9,6 +9,7 @@ import { Toaster } from "sonner";
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import Scroll from "@/components/scroll";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 
 const inter = Inter({
@@ -35,6 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Scroll />
       <body className={clsx(inter.className, lexend.variable)}>
         <EdgeStoreProvider>
           <ThemeProvider

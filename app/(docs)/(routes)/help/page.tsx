@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { glob } from "glob";
 import Link from "next/link";
 
@@ -12,7 +11,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-dayjs.extend(relativeTime);
+import { Time } from "./time";
 
 export default function Help() {
   const posts = glob
@@ -24,8 +23,7 @@ export default function Help() {
         id: slug,
         title: data.meta.title,
         href: `/help/${slug}`,
-        date: dayjs(data.meta.lastUpdated).fromNow(),
-        dateTime: dayjs(data.meta.lastUpdated).toISOString(),
+        dateTime: data.meta.lastUpdated,
       };
     })
     .sort((a, b) => dayjs(b.dateTime).unix() - dayjs(a.dateTime).unix());
@@ -56,11 +54,11 @@ export default function Help() {
                 </Link>
               </p>
               <div className="mt-1 flex items-center gap-x-2 text-sm leading-5 text-gray-500 dark:text-gray-400">
-                <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-                  <circle r={1} cx={1} cy={1} />
-                </svg>
                 <p>
-                  <time dateTime={posts.dateTime}>{posts.date}</time>
+                  Updated{" "}
+                  <span>
+                    <Time dateTime={posts.dateTime} />
+                  </span>
                 </p>
               </div>
             </div>
