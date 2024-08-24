@@ -10,7 +10,7 @@ const nextConfig = {
     },
   webpack: (config, options) => {
     config.module.rules.push({
-      test: /pypi\/.*/,
+      test: /\.whl$/,
       type: 'asset/resource',
       use: [
         {
