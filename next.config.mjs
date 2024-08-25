@@ -10,17 +10,11 @@ const nextConfig = {
     },
   webpack: (config, options) => {
     config.module.rules.push({
-      test: /\.whl$/,
+      test: /(all.json|\.whl)$/,
       type: 'asset/resource',
-      use: [
-        {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: "/static/pypi",
-          }
-        }
-      ]
+      generator: {
+        filename: 'static/pypi/[name][ext]'
+      }
     })
     return config
   },
