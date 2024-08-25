@@ -1,6 +1,8 @@
 import "./globals.css";
 
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter, Lexend } from "next/font/google";
@@ -37,6 +39,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <Scroll />
+      <Analytics />
+      <SpeedInsights />
       <body className={clsx(inter.className, lexend.variable)}>
         <EdgeStoreProvider>
           <ThemeProvider
