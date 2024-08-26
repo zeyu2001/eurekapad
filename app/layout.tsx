@@ -12,7 +12,6 @@ import { ConvexClientProvider } from "@/components/providers/convex-provider";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import Scroll from "@/components/scroll";
-import { EdgeStoreProvider } from "@/lib/edgestore";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,23 +41,21 @@ export default function RootLayout({
       <Analytics />
       <SpeedInsights />
       <body className={clsx(inter.className, lexend.variable)}>
-        <EdgeStoreProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            storageKey="eurekapad-theme-2"
-          >
-            <ConvexClientProvider>
-              <TooltipProvider>
-                <Toaster position="bottom-center" />
-                <ModalProvider />
-                {children}
-              </TooltipProvider>
-            </ConvexClientProvider>
-          </ThemeProvider>
-        </EdgeStoreProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="eurekapad-theme-2"
+        >
+          <ConvexClientProvider>
+            <TooltipProvider>
+              <Toaster position="bottom-center" />
+              <ModalProvider />
+              {children}
+            </TooltipProvider>
+          </ConvexClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

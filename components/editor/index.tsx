@@ -6,13 +6,14 @@ import "@blocknote/mantine/style.css";
 import { PartialBlock } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
-import { useConvexAuth } from "convex/react";
+import { useAction, useConvexAuth } from "convex/react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 import { customSchema } from "@/components/editor/schema";
 import { CustomSlashMenu } from "@/components/editor/slash-menu";
-import { useEdgeStore } from "@/lib/edgestore";
+import { api } from "@/convex/_generated/api";
+import { upload } from "@/lib/client-uploads";
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -22,8 +23,9 @@ interface EditorProps {
 
 const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   const { resolvedTheme } = useTheme();
-  const { edgestore } = useEdgeStore();
   const { isAuthenticated, isLoading } = useConvexAuth();
+
+  const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const handleUpload = async (file: File) => {
     if (!isAuthenticated || isLoading) {
@@ -31,11 +33,16 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
       return "";
     }
 
-    const response = await edgestore.publicFiles.upload({
-      file,
-    });
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(
+        "File size must be less than 10MB. Support for larger files coming soon!"
+      );
+      return "";
+    }
 
-    return response.url;
+    const url = await upload(file, getUploadUrl);
+
+    return url?.href ?? "";
   };
 
   const editor = useCreateBlockNote({

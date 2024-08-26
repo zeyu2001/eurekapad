@@ -4,10 +4,13 @@ import createMDX from '@next/mdx'
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   images: {
-      domains: [
-        "files.edgestore.dev"
-      ]
-    },
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.blob.core.windows.net",
+      },
+    ],
+  },
   webpack: (config, options) => {
     config.module.rules.push({
       test: /(all.json|\.whl)$/,
