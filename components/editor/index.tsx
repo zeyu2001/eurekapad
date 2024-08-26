@@ -3,16 +3,17 @@
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 
+import { BlockBlobClient } from "@azure/storage-blob";
 import { PartialBlock } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
-import { useConvexAuth } from "convex/react";
+import { useAction, useConvexAuth } from "convex/react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 import { customSchema } from "@/components/editor/schema";
 import { CustomSlashMenu } from "@/components/editor/slash-menu";
-import { useEdgeStore } from "@/lib/edgestore";
+import { api } from "@/convex/_generated/api";
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -22,8 +23,9 @@ interface EditorProps {
 
 const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   const { resolvedTheme } = useTheme();
-  const { edgestore } = useEdgeStore();
   const { isAuthenticated, isLoading } = useConvexAuth();
+
+  const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const handleUpload = async (file: File) => {
     if (!isAuthenticated || isLoading) {
@@ -31,11 +33,26 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
       return "";
     }
 
-    const response = await edgestore.publicFiles.upload({
-      file,
-    });
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(
+        "File size must be less than 10MB. Support for larger files coming soon!"
+      );
+      return "";
+    }
 
-    return response.url;
+    const uploadUrl = await getUploadUrl({});
+    const blobServiceClient = new BlockBlobClient(uploadUrl);
+    const response = await blobServiceClient.uploadBrowserData(file);
+
+    if (response.errorCode) {
+      toast.error("Failed to upload file.");
+      return "";
+    }
+
+    return new URL(
+      new URL(blobServiceClient.url).pathname,
+      new URL(blobServiceClient.url).origin
+    ).href;
   };
 
   const editor = useCreateBlockNote({
