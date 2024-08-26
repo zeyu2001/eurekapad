@@ -3,7 +3,6 @@
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 
-import { BlockBlobClient } from "@azure/storage-blob";
 import { PartialBlock } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
@@ -14,6 +13,7 @@ import { toast } from "sonner";
 import { customSchema } from "@/components/editor/schema";
 import { CustomSlashMenu } from "@/components/editor/slash-menu";
 import { api } from "@/convex/_generated/api";
+import { upload } from "@/lib/client-uploads";
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -40,19 +40,9 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
       return "";
     }
 
-    const uploadUrl = await getUploadUrl({});
-    const blobServiceClient = new BlockBlobClient(uploadUrl);
-    const response = await blobServiceClient.uploadBrowserData(file);
+    const url = await upload(file, getUploadUrl);
 
-    if (response.errorCode) {
-      toast.error("Failed to upload file.");
-      return "";
-    }
-
-    return new URL(
-      new URL(blobServiceClient.url).pathname,
-      new URL(blobServiceClient.url).origin
-    ).href;
+    return url?.href ?? "";
   };
 
   const editor = useCreateBlockNote({

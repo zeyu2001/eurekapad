@@ -8,7 +8,6 @@ import {
   generateBlobSASQueryParameters,
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
-import axios from "axios";
 
 import { action } from "./_generated/server";
 

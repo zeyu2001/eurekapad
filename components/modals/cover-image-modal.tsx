@@ -1,6 +1,5 @@
 "use client";
 
-import { BlockBlobClient } from "@azure/storage-blob";
 import { useAction, useMutation } from "convex/react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -10,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/use-cover-image";
+import { upload } from "@/lib/client-uploads";
 
 import { SingleImageDropzone } from "../single-age-dropzone";
 
@@ -41,21 +41,11 @@ export const CoverImageModal = () => {
         return;
       }
 
-      const uploadUrl = await getUploadUrl({});
-      const blobServiceClient = new BlockBlobClient(uploadUrl);
-      const response = await blobServiceClient.uploadBrowserData(file);
-
-      if (response.errorCode) {
-        toast.error("Failed to upload file.");
-        return;
-      }
+      const url = await upload(file, getUploadUrl);
 
       await update({
         id: params.documentId as Id<"documents">,
-        coverImage: new URL(
-          new URL(blobServiceClient.url).pathname,
-          new URL(blobServiceClient.url).origin
-        ).href,
+        coverImage: url?.href ?? undefined,
       });
 
       onClose();

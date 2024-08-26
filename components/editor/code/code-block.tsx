@@ -7,9 +7,10 @@ import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode";
 import { vscodeLightInit } from "@uiw/codemirror-theme-vscode";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import clsx from "clsx";
+import { useAction } from "convex/react";
 import { Check, ChevronsDown, CircleAlert, Delete, Play } from "lucide-react";
 import { useTheme } from "next-themes";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { CodeBlockConfig } from "@/components/editor/code";
@@ -35,7 +36,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { api } from "@/convex/_generated/api";
 import { usePythonRunner } from "@/hooks/use-python-runner";
+import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
 
 const LanguageDropdown = ({
@@ -107,7 +110,6 @@ export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor, contentRef }) => {
   const code = block.props.code || "";
-  const mediaTargetRef = useRef<HTMLDivElement>(null);
 
   const language = block.props.language || "python";
 
@@ -117,6 +119,9 @@ export const CodeBlock: FC<
     imagesJSONSchema.parse(block.props.images)
   );
   const [isRunning, setIsRunning] = useState(false);
+  const [isProcessingMedia, setisProcessingMedia] = useState(false);
+
+  const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const stdoutHandler = useCallback(
     (msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()),
@@ -128,15 +133,29 @@ export const CodeBlock: FC<
     []
   );
 
-  const imageHandler = useCallback((format: string, b64Data: string) => {
-    setImages((prev) => [
-      ...prev,
-      {
-        format,
-        b64Data,
-      },
-    ]);
-  }, []);
+  const imageHandler = useCallback(
+    (format: string, b64Data: string) => {
+      const toAzBlob = async (format: string, b64Data: string) => {
+        setisProcessingMedia(true);
+
+        const url = `data:${format};base64,${b64Data}`;
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], "image.png", { type: blob.type });
+
+        const azBlobUrl = await upload(file, getUploadUrl);
+
+        setisProcessingMedia(false);
+
+        return azBlobUrl;
+      };
+
+      toAzBlob(format, b64Data).then(
+        (azBlobUrl) => azBlobUrl && setImages((prev) => [...prev, azBlobUrl])
+      );
+    },
+    [getUploadUrl]
+  );
 
   const { runner, loaded } = usePythonRunner();
 
@@ -168,13 +187,7 @@ export const CodeBlock: FC<
 
     setIsRunning(true);
 
-    await runner.runPython(
-      code,
-      mediaTargetRef,
-      stdoutHandler,
-      stderrHandler,
-      imageHandler
-    );
+    await runner.runPython(code, stdoutHandler, stderrHandler, imageHandler);
 
     setIsRunning(false);
   }, [runner, loaded, code, stdoutHandler, stderrHandler, imageHandler]);
@@ -185,25 +198,10 @@ export const CodeBlock: FC<
         ...block.props,
         stdout: stdout,
         stderr: stderr,
-        // TODO: use EdgeStore / UploadThing to store the plots, store URL in block props
-        // Note: don't store images for now because it's taking up too much database bandwidth
-        // images: JSON.stringify(images),
-        images: JSON.stringify([]),
+        images: JSON.stringify(images),
       },
     });
   }, [stdout, stderr, images, editor, block.id, block.props]);
-
-  useEffect(() => {
-    if (!mediaTargetRef?.current) {
-      return;
-    }
-    mediaTargetRef.current.replaceChildren();
-    images.forEach(({ format, b64Data }) => {
-      const img = document.createElement("img");
-      img.src = `data:${format};base64,${b64Data}`;
-      mediaTargetRef.current?.appendChild(img);
-    });
-  }, [images, mediaTargetRef]);
 
   const { theme } = useTheme();
   const editorTheme =
@@ -299,12 +297,20 @@ export const CodeBlock: FC<
         )}
       </div>
       <div
-        ref={mediaTargetRef}
         className={clsx(
           "w-full place-items-center grid",
-          images.length >= 2 ? "grid-cols-2" : "grid-cols-1"
+          images.length >= 2 ? "grid-cols-2" : "grid-cols-1",
+          isProcessingMedia && "h-64"
         )}
-      />
+      >
+        {isProcessingMedia ? (
+          <Spinner />
+        ) : (
+          images.map((url, index) => (
+            <img key={index} src={url.href} alt="Image output" />
+          ))
+        )}
+      </div>
     </div>
   );
 };

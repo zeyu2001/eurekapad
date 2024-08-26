@@ -8,7 +8,6 @@ import { type IMimeBundle } from "@jupyterlab/nbformat";
 import { ContentsManager, type KernelMessage } from "@jupyterlab/services";
 import { PyodideKernel } from "@jupyterlite/pyodide-kernel";
 import { type PartialJSONObject } from "@lumino/coreutils";
-import { RefObject } from "react";
 
 import { PYODIDE } from "./constants";
 
@@ -109,7 +108,6 @@ export class SingletonPythonRunner {
 
   private async _runPython(
     code: string,
-    mediaTargetRef: RefObject<HTMLDivElement>,
     stdout: (msg: string) => void,
     stderr: (msg: string) => void,
     image: (format: string, b64Data: string) => void
@@ -134,7 +132,6 @@ export class SingletonPythonRunner {
 
   public async runPython(
     code: string,
-    mediaTargetRef: RefObject<HTMLDivElement>,
     stdout: (msg: string) => void,
     stderr: (msg: string) => void,
     image: (format: string, b64Data: string) => void
@@ -145,7 +142,7 @@ export class SingletonPythonRunner {
 
     // Ensure that only one execution is running at a time
     this.idle = this.idle.then(() =>
-      this._runPython(code, mediaTargetRef, stdout, stderr, image)
+      this._runPython(code, stdout, stderr, image)
     );
     return this.idle;
   }

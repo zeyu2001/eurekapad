@@ -65,7 +65,7 @@ export function Demo() {
   return (
     <section
       id="features"
-      aria-label="Features for running your books"
+      aria-label="The last note-taking app you'll ever need."
       className="relative overflow-hidden bg-blue-600 pb-28 pt-20 sm:py-32"
     >
       <Image

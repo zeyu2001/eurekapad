@@ -1,10 +1,12 @@
 import { z } from "zod";
 
 const imagesSchema = z.array(
-  z.object({
-    format: z.string(),
-    b64Data: z.string(),
-  })
+  z
+    .string()
+    .url()
+    .transform((val, ctx) => {
+      return new URL(val);
+    })
 );
 
 export const imagesJSONSchema = z
