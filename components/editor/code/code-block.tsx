@@ -46,7 +46,7 @@ const LanguageDropdown = ({
   onChange,
 }: Readonly<{
   language: string;
-  onChange: (lang: string) => void;
+  onChange: (_lang: string) => void;
 }>) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(language);
@@ -108,7 +108,7 @@ const LanguageDropdown = ({
 
 export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
-> = ({ block, editor, contentRef }) => {
+> = ({ block, editor }) => {
   const code = block.props.code || "";
 
   const language = block.props.language || "python";

@@ -1,4 +1,5 @@
 declare global {
+  // eslint-disable-next-line unused-imports/no-unused-vars
   interface Document {
     pyodideMplTarget: HTMLDivElement;
   }
@@ -35,9 +36,9 @@ export class SingletonPythonRunner {
   private kernel!: PyodideKernel;
   private loaded: boolean = false;
   private idle: Promise<void> = Promise.resolve();
-  private stdout: (msg: string) => void = () => {};
-  private stderr: (msg: string) => void = () => {};
-  private image: (format: string, b64Data: string) => void = () => {};
+  private stdout: (_msg: string) => void = () => {};
+  private stderr: (_msg: string) => void = () => {};
+  private image: (_format: string, _b64Data: string) => void = () => {};
 
   private constructor() {}
 
@@ -108,9 +109,9 @@ export class SingletonPythonRunner {
 
   private async _runPython(
     code: string,
-    stdout: (msg: string) => void,
-    stderr: (msg: string) => void,
-    image: (format: string, b64Data: string) => void
+    stdout: (_msg: string) => void,
+    stderr: (_msg: string) => void,
+    image: (_format: string, _b64Data: string) => void
   ) {
     this.stdout = stdout;
     this.stderr = stderr;
@@ -132,9 +133,9 @@ export class SingletonPythonRunner {
 
   public async runPython(
     code: string,
-    stdout: (msg: string) => void,
-    stderr: (msg: string) => void,
-    image: (format: string, b64Data: string) => void
+    stdout: (_msg: string) => void,
+    stderr: (_msg: string) => void,
+    image: (_format: string, _b64Data: string) => void
   ) {
     if (!this.loaded) {
       throw new Error("Pyodide is not loaded yet");

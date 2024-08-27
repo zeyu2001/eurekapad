@@ -43,7 +43,7 @@ const TranscriptionComponent = ({
 }: {
   token: string;
   region: string;
-  contentRef: (node: HTMLElement | null) => void;
+  contentRef: (_node: HTMLElement | null) => void;
   blockId: string;
   editor: BlockNoteEditor<
     BlockSchemaWithBlock<"transcription", TranscriptionBlockConfig>,
@@ -121,7 +121,7 @@ const TranscriptionComponent = ({
         setIsListening(false);
       });
 
-      recognizer.setSessionStoppedHandler((s, e) => {
+      recognizer.setSessionStoppedHandler(() => {
         console.log("\n    Session stopped event.");
       });
     } else {

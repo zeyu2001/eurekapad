@@ -290,7 +290,7 @@ export const update = mutation({
 
     const { id, ...rest } = args;
 
-    const existingDocument = await ctx.db.get(args.id);
+    const existingDocument = await ctx.db.get(id);
 
     if (!existingDocument) {
       throw new Error("Not found");

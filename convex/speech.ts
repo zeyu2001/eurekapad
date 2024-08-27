@@ -3,7 +3,7 @@ import axios from "axios";
 import { action } from "./_generated/server";
 
 export const getToken = action({
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {

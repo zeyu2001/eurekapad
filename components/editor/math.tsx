@@ -1,5 +1,7 @@
 declare global {
+  // eslint-disable-next-line unused-imports/no-unused-vars
   namespace JSX {
+    // eslint-disable-next-line unused-imports/no-unused-vars
     interface IntrinsicElements {
       "math-field": React.DetailedHTMLProps<
         React.HTMLAttributes<MathMLElement>,
@@ -44,7 +46,7 @@ const mathBlockConfig: MathBlockConfig = {
 
 const MathBlock: FC<
   ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSchema, StyleSchema>
-> = ({ block, editor, contentRef }) => {
+> = ({ block, editor }) => {
   const content = block.content[0] as StyledText<StyleSchema>;
   const [latex, setLatex] = useState(content?.text || "");
 

@@ -4,7 +4,7 @@ const imagesSchema = z.array(
   z
     .string()
     .url()
-    .transform((val, ctx) => {
+    .transform((val) => {
       return new URL(val);
     })
 );

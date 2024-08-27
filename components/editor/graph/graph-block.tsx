@@ -15,7 +15,7 @@ export const GraphBlock: FC<
     InlineContentSchema,
     StyleSchema
   >
-> = ({ block, editor, contentRef }) => {
+> = ({ block, editor }) => {
   const result = graphStateJSONSchema.safeParse(block.props.state);
 
   const graphRef = useRef<HTMLDivElement>(null);

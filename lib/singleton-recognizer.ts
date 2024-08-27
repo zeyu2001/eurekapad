@@ -9,18 +9,18 @@ import {
 } from "microsoft-cognitiveservices-speech-sdk";
 
 type RecognizerEventHandler = (
-  s: Recognizer,
-  e: SpeechRecognitionEventArgs
+  _s: Recognizer,
+  _e: SpeechRecognitionEventArgs
 ) => void;
 
 type RecognizerCanceledEventHandler = (
-  s: Recognizer,
-  e: SpeechRecognitionCanceledEventArgs
+  _s: Recognizer,
+  _e: SpeechRecognitionCanceledEventArgs
 ) => void;
 
 type RecognizerSessionStoppedEventHandler = (
-  s: Recognizer,
-  e: SessionEventArgs
+  _s: Recognizer,
+  _e: SessionEventArgs
 ) => void;
 
 export class SingletonSpeechRecognizer {

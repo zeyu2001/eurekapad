@@ -3,8 +3,8 @@ import { create } from "zustand";
 type EditorContextStore = {
   authenticated: boolean;
   savable: boolean;
-  setAuthenticated: (authenticated: boolean) => void;
-  setSavable: (savable: boolean) => void;
+  setAuthenticated: (_authenticated: boolean) => void;
+  setSavable: (_savable: boolean) => void;
 };
 
 export const useEditorContext = create<EditorContextStore>((set) => ({

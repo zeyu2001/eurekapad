@@ -18,7 +18,7 @@ import { useEditorContext } from "@/hooks/use-editor-context";
 import { upload } from "@/lib/client-uploads";
 
 interface EditorProps {
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
   initialContent?: string;
   editable?: boolean;
   savable?: boolean;
