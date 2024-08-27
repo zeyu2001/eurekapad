@@ -8,27 +8,41 @@ import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useAction, useConvexAuth } from "convex/react";
 import { useTheme } from "next-themes";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { customSchema } from "@/components/editor/schema";
 import { CustomSlashMenu } from "@/components/editor/slash-menu";
 import { api } from "@/convex/_generated/api";
+import { useEditorContext } from "@/hooks/use-editor-context";
 import { upload } from "@/lib/client-uploads";
 
 interface EditorProps {
   onChange: (value: string) => void;
   initialContent?: string;
   editable?: boolean;
+  savable?: boolean;
 }
 
-const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
+const Editor = ({
+  onChange,
+  initialContent,
+  editable,
+  savable,
+}: EditorProps) => {
   const { resolvedTheme } = useTheme();
   const { isAuthenticated, isLoading } = useConvexAuth();
+
+  const editorContext = useEditorContext();
+  useEffect(() => {
+    editorContext.setAuthenticated(isAuthenticated && !isLoading);
+    editorContext.setSavable(savable ?? false);
+  }, [isAuthenticated, isLoading, savable]);
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const handleUpload = async (file: File) => {
-    if (!isAuthenticated || isLoading) {
+    if (!useEditorContext.getState().authenticated) {
       toast.error("You must be logged in to upload files.");
       return "";
     }
@@ -40,9 +54,20 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
       return "";
     }
 
-    const url = await upload(file, getUploadUrl);
+    // Don't need to upload blob if editor is not savable in the first place
+    if (!useEditorContext.getState().savable) {
+      return URL.createObjectURL(file);
+    }
 
-    return url?.href ?? "";
+    const uploadUrl = await getUploadUrl({});
+    const url = await upload(file, uploadUrl);
+
+    if (!url) {
+      toast.error("Failed to upload media.");
+      return "";
+    }
+
+    return url.href ?? "";
   };
 
   const editor = useCreateBlockNote({
