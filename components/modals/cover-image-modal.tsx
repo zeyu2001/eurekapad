@@ -41,11 +41,17 @@ export const CoverImageModal = () => {
         return;
       }
 
-      const url = await upload(file, getUploadUrl);
+      const uploadUrl = await getUploadUrl({});
+      const url = await upload(file, uploadUrl);
+
+      if (!url) {
+        toast.error("Failed to upload media.");
+        return;
+      }
 
       await update({
         id: params.documentId as Id<"documents">,
-        coverImage: url?.href ?? undefined,
+        coverImage: url.href,
       });
 
       onClose();

@@ -3,8 +3,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { InlineContentSchema, StyleSchema } from "@blocknote/core";
 import { ReactCustomBlockRenderProps } from "@blocknote/react";
 import { langNames, langs } from "@uiw/codemirror-extensions-langs";
-import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode";
-import { vscodeLightInit } from "@uiw/codemirror-theme-vscode";
+import { vscodeDarkInit, vscodeLightInit } from "@uiw/codemirror-theme-vscode";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import clsx from "clsx";
 import { useAction } from "convex/react";
@@ -37,6 +36,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
+import { useEditorContext } from "@/hooks/use-editor-context";
 import { usePythonRunner } from "@/hooks/use-python-runner";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
@@ -119,7 +119,9 @@ export const CodeBlock: FC<
     imagesJSONSchema.parse(block.props.images)
   );
   const [isRunning, setIsRunning] = useState(false);
-  const [isProcessingMedia, setisProcessingMedia] = useState(false);
+  const [isProcessingMedia, setIsProcessingMedia] = useState(false);
+
+  const editorContext = useEditorContext();
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
@@ -135,26 +137,34 @@ export const CodeBlock: FC<
 
   const imageHandler = useCallback(
     (format: string, b64Data: string) => {
-      const toAzBlob = async (format: string, b64Data: string) => {
-        setisProcessingMedia(true);
+      const toURL = async (format: string, b64Data: string) => {
+        const dataUrl = `data:${format};base64,${b64Data}`;
 
-        const url = `data:${format};base64,${b64Data}`;
-        const response = await fetch(url);
+        if (!editorContext.authenticated || !editorContext.savable) {
+          return new URL(dataUrl);
+        }
+
+        const response = await fetch(dataUrl);
         const blob = await response.blob();
         const file = new File([blob], "image.png", { type: blob.type });
 
-        const azBlobUrl = await upload(file, getUploadUrl);
-
-        setisProcessingMedia(false);
+        const uploadUrl = await getUploadUrl({});
+        const azBlobUrl = await upload(file, uploadUrl);
 
         return azBlobUrl;
       };
 
-      toAzBlob(format, b64Data).then(
-        (azBlobUrl) => azBlobUrl && setImages((prev) => [...prev, azBlobUrl])
-      );
+      setIsProcessingMedia(true);
+      toURL(format, b64Data).then((url) => {
+        setIsProcessingMedia(false);
+        if (!url) {
+          toast.error("Failed to upload media.");
+          return;
+        }
+        setImages((prev) => [...prev, url]);
+      });
     },
-    [getUploadUrl]
+    [getUploadUrl, editorContext]
   );
 
   const { runner, loaded } = usePythonRunner();
