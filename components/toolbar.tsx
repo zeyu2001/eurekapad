@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/use-cover-image";
+import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
 
 import { IconPicker } from "./icon-picker";
 
@@ -25,7 +26,7 @@ export const Toolbar = ({
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
 
-  const update = useMutation(api.documents.update);
+  const update = useOptimisticDocumentUpdate();
   const removeIcon = useMutation(api.documents.removeIcon);
 
   const coverImage = useCoverImage();

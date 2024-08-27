@@ -1,6 +1,5 @@
 "use client";
 
-import { useMutation } from "convex/react";
 import { Check, Copy, Globe } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,8 +9,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger} from "@/components/ui/popover"
-import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
 import { useOrigin } from "@/hooks/use-origin";
 
 interface PublishProps {
@@ -22,7 +21,7 @@ export const Publish = ({
   initialData
 }: PublishProps) => {
   const origin = useOrigin();
-  const update = useMutation(api.documents.update);
+  const update = useOptimisticDocumentUpdate();
 
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAction, useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,13 +9,14 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/use-cover-image";
+import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
 import { upload } from "@/lib/client-uploads";
 
 import { SingleImageDropzone } from "../single-age-dropzone";
 
 export const CoverImageModal = () => {
   const params = useParams();
-  const update = useMutation(api.documents.update);
+  const update = useOptimisticDocumentUpdate();
   const coverImage = useCoverImage();
 
   const [file, setFile] = useState<File>();
