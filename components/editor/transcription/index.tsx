@@ -55,7 +55,7 @@ export const insertTranscriptionBlock = (editor: CustomEditor) => ({
           type: "transcription",
         },
       ],
-      currentBlock
+      currentBlock,
     );
   },
   icon: <Mic size={16} />,

@@ -36,7 +36,7 @@ export const CoverImageModal = () => {
 
       if (file.size > 10 * 1024 * 1024) {
         toast.error(
-          "File size must be less than 10MB. Support for larger files coming soon!"
+          "File size must be less than 10MB. Support for larger files coming soon!",
         );
         return;
       }

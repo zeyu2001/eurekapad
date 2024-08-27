@@ -26,12 +26,12 @@ export const getUploadUrl = action({
 
     const sharedKeyCredential = new StorageSharedKeyCredential(
       accountName,
-      accountKey
+      accountKey,
     );
 
     const blobServiceClient = new BlobServiceClient(
       `https://${accountName}.blob.core.windows.net`,
-      sharedKeyCredential
+      sharedKeyCredential,
     );
 
     const containerName = "uploads";
@@ -56,7 +56,7 @@ export const getUploadUrl = action({
 
     const sasToken = generateBlobSASQueryParameters(
       sasOptions,
-      sharedKeyCredential
+      sharedKeyCredential,
     ).toString();
 
     // Construct the full SAS URL

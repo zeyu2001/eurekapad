@@ -92,7 +92,7 @@ const LanguageDropdown = ({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === lang.value ? "opacity-100" : "opacity-0"
+                      value === lang.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {capitalizeFirstLetter(lang.value)}
@@ -116,7 +116,7 @@ export const CodeBlock: FC<
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
   const [stderr, setStderr] = useState<string>(block.props.stderr || "");
   const [images, setImages] = useState<Images>(
-    imagesJSONSchema.parse(block.props.images)
+    imagesJSONSchema.parse(block.props.images),
   );
   const [isRunning, setIsRunning] = useState(false);
   const [isProcessingMedia, setIsProcessingMedia] = useState(false);
@@ -127,12 +127,12 @@ export const CodeBlock: FC<
 
   const stdoutHandler = useCallback(
     (msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()),
-    []
+    [],
   );
 
   const stderrHandler = useCallback(
     (msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()),
-    []
+    [],
   );
 
   const imageHandler = useCallback(
@@ -164,7 +164,7 @@ export const CodeBlock: FC<
         setImages((prev) => [...prev, url]);
       });
     },
-    [getUploadUrl, editorContext]
+    [getUploadUrl, editorContext],
   );
 
   const { runner, loaded } = usePythonRunner();
@@ -285,7 +285,7 @@ export const CodeBlock: FC<
           <div
             className={clsx(
               "font-mono p-4 bg-background border-green-600 border-l-4",
-              stderr || "rounded-b-lg"
+              stderr || "rounded-b-lg",
             )}
           >
             {stdout.split("\n").map((line, index) => (
@@ -310,7 +310,7 @@ export const CodeBlock: FC<
         className={clsx(
           "w-full place-items-center grid",
           images.length >= 2 ? "grid-cols-2" : "grid-cols-1",
-          isProcessingMedia && "h-64"
+          isProcessingMedia && "h-64",
         )}
       >
         {isProcessingMedia ? (

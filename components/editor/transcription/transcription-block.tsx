@@ -82,13 +82,13 @@ const TranscriptionComponent = ({
         ],
       });
     },
-    [editor, blockId]
+    [editor, blockId],
   );
 
   const handleListen = useCallback(() => {
     const recognizer = SingletonSpeechRecognizer.getInstance(
       speechConfig,
-      audioConfig
+      audioConfig,
     );
 
     if (isListening) {
@@ -113,7 +113,7 @@ const TranscriptionComponent = ({
           console.log(`"CANCELED: ErrorCode=${e.errorCode}`);
           console.log(`"CANCELED: ErrorDetails=${e.errorDetails}`);
           console.log(
-            "CANCELED: Did you set the speech resource key and region values?"
+            "CANCELED: Did you set the speech resource key and region values?",
           );
         }
 

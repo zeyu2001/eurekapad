@@ -35,7 +35,7 @@ export function generateStaticParams() {
 
   // converting the file names to their slugs
   const postSlugs = posts.map((file) =>
-    file.split("/")[2].replace(/ /g, "-").slice(0, -4).trim()
+    file.split("/")[2].replace(/ /g, "-").slice(0, -4).trim(),
   );
 
   // creating a path for each of the `slug` parameter

@@ -61,7 +61,7 @@ export const insertGraphBlock = (editor: CustomEditor) => ({
           type: "graph",
         },
       ],
-      currentBlock
+      currentBlock,
     );
   },
   icon: <ChartLine size={16} />,

@@ -23,7 +23,7 @@ export const getToken = action({
     const tokenResponse = await axios.post(
       `https://${speechRegion}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
       null,
-      headers
+      headers,
     );
 
     return { token: tokenResponse.data, region: speechRegion };

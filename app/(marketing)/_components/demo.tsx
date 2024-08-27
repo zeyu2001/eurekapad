@@ -41,7 +41,7 @@ const features = [
 
 export function Demo() {
   let [tabOrientation, setTabOrientation] = useState<"horizontal" | "vertical">(
-    "horizontal"
+    "horizontal",
   );
 
   const [isLg, setIsLg] = useState(false);
@@ -100,7 +100,7 @@ export function Demo() {
                         "group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6",
                         selectedIndex === featureIndex
                           ? "bg-white lg:bg-white/10 lg:ring-1 lg:ring-inset lg:ring-white/10"
-                          : "hover:bg-white/10 lg:hover:bg-white/5"
+                          : "hover:bg-white/10 lg:hover:bg-white/5",
                       )}
                     >
                       <h3>
@@ -109,7 +109,7 @@ export function Demo() {
                             "font-display text-lg ui-not-focus-visible:outline-none",
                             selectedIndex === featureIndex
                               ? "text-blue-600 lg:text-white"
-                              : "text-blue-100 hover:text-white lg:text-white"
+                              : "text-blue-100 hover:text-white lg:text-white",
                           )}
                         >
                           <span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none" />
@@ -121,7 +121,7 @@ export function Demo() {
                           "mt-2 hidden text-sm lg:block",
                           selectedIndex === featureIndex
                             ? "text-white"
-                            : "text-blue-100 group-hover:text-white"
+                            : "text-blue-100 group-hover:text-white",
                         )}
                       >
                         {feature.description}
@@ -144,7 +144,7 @@ export function Demo() {
                         "mt-10 overflow-hidden rounded-xl shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0",
                         isLg
                           ? "bg-white dark:bg-[#1F1F1F] p-4"
-                          : "mt-10 w-[45rem] overflow-hidden sm:w-auto"
+                          : "mt-10 w-[45rem] overflow-hidden sm:w-auto",
                       )}
                     >
                       <div>

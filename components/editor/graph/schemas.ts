@@ -208,7 +208,7 @@ export const imageStateSchema = baseNonFolderStateSchema.extend({
       z.object({
         hoveredImage: z.string().optional(),
         depressedImage: z.string().optional(),
-      })
+      }),
     )
     .optional(),
 });
@@ -245,7 +245,7 @@ export const tickerSchema = z.object({
 });
 
 export const expressionStateSchema = expressionStateWithoutColumnSchema.and(
-  columnExpressionSharedSchema
+  columnExpressionSharedSchema,
 );
 
 export const nonFolderStateSchema = z.union([

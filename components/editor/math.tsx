@@ -92,7 +92,7 @@ export const insertMathBlock = (editor: CustomEditor) => ({
           },
         },
       ],
-      currentBlock
+      currentBlock,
     );
   },
   icon: <Radical size={16} />,
