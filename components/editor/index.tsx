@@ -8,7 +8,7 @@ import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useAction, useConvexAuth } from "convex/react";
 import { useTheme } from "next-themes";
-import { memo, useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { customSchema } from "@/components/editor/schema";
@@ -95,4 +95,4 @@ const Editor = ({
   );
 };
 
-export default memo(Editor);
+export default Editor;
