@@ -1,13 +1,12 @@
 "use client";
 
-import { useMutation } from "convex/react";
 import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
 
 interface TitleProps {
   initialData: Doc<"documents">;
@@ -15,7 +14,7 @@ interface TitleProps {
 
 export const Title = ({ initialData }: TitleProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const update = useMutation(api.documents.update);
+  const update = useOptimisticDocumentUpdate();
 
   const [title, setTitle] = useState(initialData.title || "Untitled");
   const [isEditing, setIsEditing] = useState(false);
