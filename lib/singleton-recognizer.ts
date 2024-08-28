@@ -10,17 +10,17 @@ import {
 
 type RecognizerEventHandler = (
   _s: Recognizer,
-  _e: SpeechRecognitionEventArgs
+  _e: SpeechRecognitionEventArgs,
 ) => void;
 
 type RecognizerCanceledEventHandler = (
   _s: Recognizer,
-  _e: SpeechRecognitionCanceledEventArgs
+  _e: SpeechRecognitionCanceledEventArgs,
 ) => void;
 
 type RecognizerSessionStoppedEventHandler = (
   _s: Recognizer,
-  _e: SessionEventArgs
+  _e: SessionEventArgs,
 ) => void;
 
 export class SingletonSpeechRecognizer {
@@ -33,12 +33,12 @@ export class SingletonSpeechRecognizer {
 
   public static getInstance(
     speechConfig: SpeechConfig,
-    audioConfig: AudioConfig
+    audioConfig: AudioConfig,
   ) {
     if (!SingletonSpeechRecognizer.instance) {
       SingletonSpeechRecognizer.instance = new SingletonSpeechRecognizer(
         speechConfig,
-        audioConfig
+        audioConfig,
       );
     }
     return SingletonSpeechRecognizer.instance;
@@ -57,7 +57,7 @@ export class SingletonSpeechRecognizer {
   }
 
   public setSessionStoppedHandler(
-    handler: RecognizerSessionStoppedEventHandler
+    handler: RecognizerSessionStoppedEventHandler,
   ) {
     this.recognizer.sessionStopped = handler;
   }

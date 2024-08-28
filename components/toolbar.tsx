@@ -16,12 +16,9 @@ import { IconPicker } from "./icon-picker";
 interface ToolbarProps {
   initialData: Doc<"documents">;
   preview?: boolean;
-};
+}
 
-export const Toolbar = ({
-  initialData,
-  preview
-}: ToolbarProps) => {
+export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
@@ -47,13 +44,11 @@ export const Toolbar = ({
     setValue(value);
     update({
       id: initialData._id,
-      title: value || "Untitled"
+      title: value || "Untitled",
     });
   };
 
-  const onKeyDown = (
-    event: React.KeyboardEvent<HTMLTextAreaElement>
-  ) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
       disableInput();
@@ -69,9 +64,9 @@ export const Toolbar = ({
 
   const onRemoveIcon = () => {
     removeIcon({
-      id: initialData._id
-    })
-  }
+      id: initialData._id,
+    });
+  };
 
   return (
     <div className="pl-[54px] group relative">
@@ -93,9 +88,7 @@ export const Toolbar = ({
         </div>
       )}
       {!!initialData.icon && preview && (
-        <p className="text-6xl pt-6">
-          {initialData.icon}
-        </p>
+        <p className="text-6xl pt-6">{initialData.icon}</p>
       )}
       <div className="opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4">
         {!initialData.icon && !preview && (
@@ -140,5 +133,5 @@ export const Toolbar = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

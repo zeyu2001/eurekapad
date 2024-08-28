@@ -21,7 +21,7 @@ export const GraphBlock: FC<
   const graphRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [graphState, setGraphState] = useState<GraphState | null>(
-    result.error ? null : result.data
+    result.error ? null : result.data,
   );
 
   const updateEditor = () => {

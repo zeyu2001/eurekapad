@@ -26,7 +26,7 @@ type DisplayDataContent = {
 };
 
 const handleMessage = (
-  msg: KernelMessage.IMessage<KernelMessage.MessageType>
+  msg: KernelMessage.IMessage<KernelMessage.MessageType>,
 ) => {
   SingletonPythonRunner.getInstance().sendMessage(msg);
 };
@@ -94,7 +94,7 @@ export class SingletonPythonRunner {
         case "display_data": {
           const content = msg.content as DisplayDataContent;
           const formats = Object.keys(content.data).filter((key) =>
-            key.startsWith("image/")
+            key.startsWith("image/"),
           );
           if (formats.length > 0) {
             const format = formats[0];
@@ -111,7 +111,7 @@ export class SingletonPythonRunner {
     code: string,
     stdout: (_msg: string) => void,
     stderr: (_msg: string) => void,
-    image: (_format: string, _b64Data: string) => void
+    image: (_format: string, _b64Data: string) => void,
   ) {
     this.stdout = stdout;
     this.stderr = stderr;
@@ -135,7 +135,7 @@ export class SingletonPythonRunner {
     code: string,
     stdout: (_msg: string) => void,
     stderr: (_msg: string) => void,
-    image: (_format: string, _b64Data: string) => void
+    image: (_format: string, _b64Data: string) => void,
   ) {
     if (!this.loaded) {
       throw new Error("Pyodide is not loaded yet");
@@ -143,7 +143,7 @@ export class SingletonPythonRunner {
 
     // Ensure that only one execution is running at a time
     this.idle = this.idle.then(() =>
-      this._runPython(code, stdout, stderr, image)
+      this._runPython(code, stdout, stderr, image),
     );
     return this.idle;
   }

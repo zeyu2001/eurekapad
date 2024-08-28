@@ -2,7 +2,7 @@ import { BlockBlobClient } from "@azure/storage-blob";
 
 export const upload = async (
   file: File,
-  uploadUrl: string
+  uploadUrl: string,
 ): Promise<URL | null> => {
   const blobServiceClient = new BlockBlobClient(uploadUrl);
   const response = await blobServiceClient.uploadBrowserData(file);
@@ -13,6 +13,6 @@ export const upload = async (
 
   return new URL(
     new URL(blobServiceClient.url).pathname,
-    new URL(blobServiceClient.url).origin
+    new URL(blobServiceClient.url).origin,
   );
 };

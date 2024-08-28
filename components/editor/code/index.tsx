@@ -99,7 +99,7 @@ export const insertCodeBlock = (editor: CustomEditor) => ({
           },
         },
       ],
-      currentBlock
+      currentBlock,
     );
   },
   icon: <Code size={16} />,

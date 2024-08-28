@@ -10,11 +10,9 @@ import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-upd
 
 interface TitleProps {
   initialData: Doc<"documents">;
-};
+}
 
-export const Title = ({
-  initialData
-}: TitleProps) => {
+export const Title = ({ initialData }: TitleProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const update = useOptimisticDocumentUpdate();
 
@@ -26,7 +24,7 @@ export const Title = ({
     setIsEditing(true);
     setTimeout(() => {
       inputRef.current?.focus();
-      inputRef.current?.setSelectionRange(0, inputRef.current.value.length)
+      inputRef.current?.setSelectionRange(0, inputRef.current.value.length);
     }, 0);
   };
 
@@ -34,19 +32,15 @@ export const Title = ({
     setIsEditing(false);
   };
 
-  const onChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
     update({
       id: initialData._id,
-      title: event.target.value || "Untitled"
+      title: event.target.value || "Untitled",
     });
   };
 
-  const onKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       disableInput();
     }
@@ -72,17 +66,13 @@ export const Title = ({
           size="sm"
           className="font-normal h-auto p-1"
         >
-          <span className="truncate">
-            {initialData?.title}
-          </span>
+          <span className="truncate">{initialData?.title}</span>
         </Button>
       )}
     </div>
-  )
-}
+  );
+};
 
 Title.Skeleton = function TitleSkeleton() {
-  return (
-    <Skeleton className="h-9 w-20 rounded-md" />
-  );
+  return <Skeleton className="h-9 w-20 rounded-md" />;
 };
