@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
 import { useOrigin } from "@/hooks/use-origin";

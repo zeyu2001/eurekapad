@@ -28,7 +28,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     documentId: params.documentId,
   });
 
-  const update = useOptimisticDocumentUpdate()
+  const update = useOptimisticDocumentUpdate();
 
   const onChange = (content: string) => {
     update({

@@ -7,17 +7,21 @@ export const useOptimisticDocumentUpdate = () => {
     (localStore, args) => {
       const { id, ...rest } = args;
       const currentDocument = localStore.getQuery(api.documents.getById, {
-        documentId: id
+        documentId: id,
       });
-  
+
       if (currentDocument !== undefined) {
-        localStore.setQuery(api.documents.getById, {documentId: id}, {
-          ...currentDocument,
-          ...rest,
-        })
+        localStore.setQuery(
+          api.documents.getById,
+          { documentId: id },
+          {
+            ...currentDocument,
+            ...rest,
+          },
+        );
       }
-    }
+    },
   );
 
-  return update
-}
+  return update;
+};
