@@ -14,7 +14,7 @@ interface IResult {
 }
 
 interface ICallback {
-  (_error: Error | undefined, _stdout: unknown): void;
+  (_error?: Error, _stdout?: unknown, _done?: boolean): void;
 }
 
 export const getWorkerMessenger = () => {
@@ -24,7 +24,7 @@ export const getWorkerMessenger = () => {
     callback: ICallback,
   ) => {
     const blob = new Blob(
-      [WORKER_TEMPLATE.replace("FUNCTION_BODY_PLACEHOLDER", functionBody)],
+      [WORKER_TEMPLATE.replace("FUNCTION_PLACEHOLDER", functionBody)],
       {
         type: "application/javascript",
       },
@@ -53,11 +53,11 @@ export const getWorkerMessenger = () => {
       callback(error, undefined);
     };
 
-    // Kill the worker after 60 seconds
+    // Kill the worker after 5 seconds
     setTimeout(() => {
       cleanup();
-      callback(new Error("Execution timed out"), undefined);
-    }, 60000);
+      callback(undefined, undefined, true);
+    }, 5000);
 
     worker.postMessage(args);
   };

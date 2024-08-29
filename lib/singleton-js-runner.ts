@@ -72,17 +72,23 @@ export class SingletonJSRunner {
 
       const AsyncFunction = async function () {}.constructor;
 
-      sendMessage(
-        new AsyncFunction(transpiledCode).toString(),
-        [],
-        (error, result) => {
-          if (error) {
-            stderr(error.message);
-          } else if (result) {
-            stdout(result.toString());
-          }
-        },
-      );
+      return new Promise((resolve, _reject) => {
+        sendMessage(
+          new AsyncFunction(transpiledCode).toString(),
+          [],
+          (error, result, done) => {
+            if (error) {
+              stderr(error.message);
+            }
+            if (result) {
+              stdout(result.toString());
+            }
+            if (done) {
+              resolve();
+            }
+          },
+        );
+      });
     } catch (error) {
       stderr(error.toString());
     }

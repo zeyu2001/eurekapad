@@ -36,9 +36,10 @@ self.addEventListener("unhandledrejection", function (e) {
 onmessage = function (evt) {
   let result, error;
   try {
-    result = (FUNCTION_BODY_PLACEHOLDER).apply(undefined, evt.data);
+    (FUNCTION_PLACEHOLDER).apply(undefined, evt.data);
   } catch (err) {
     error = err;
   }
+  send(error, undefined);
 };
 `;
