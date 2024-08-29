@@ -48,7 +48,7 @@ export const getWorkerMessenger = () => {
       err.stopPropagation();
       let error = err.error;
       if (!error) {
-        error = new SyntaxError(err.message, err.filename, err.lineno);
+        error = new SyntaxError(err.message);
       }
       callback(error, undefined);
     };

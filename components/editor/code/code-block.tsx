@@ -42,6 +42,23 @@ import { usePythonRunner } from "@/hooks/use-python-runner";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
 
+const LanguageCommandItem = ({
+  lang,
+  selected,
+  onSelect,
+}: {
+  lang: { key: string; value: string };
+  selected: boolean;
+  onSelect: (_selected: string) => void;
+}) => (
+  <CommandItem key={lang.key} value={lang.value} onSelect={onSelect}>
+    <Check
+      className={cn("mr-2 h-4 w-4", selected ? "opacity-100" : "opacity-0")}
+    />
+    {capitalizeFirstLetter(lang.value)}
+  </CommandItem>
+);
+
 const LanguageDropdown = ({
   language,
   onChange,
@@ -56,6 +73,13 @@ const LanguageDropdown = ({
     key: lang.toLowerCase(),
     value: lang,
   }));
+
+  const runnableLanguages = languages.filter((lang) =>
+    RUNNABLE_LANGUAGES.includes(lang.value),
+  );
+  const otherLanguages = languages.filter(
+    (lang) => !RUNNABLE_LANGUAGES.includes(lang.value),
+  );
 
   const onSelect = (selected: string) => {
     const value = languages.find((lang) => lang.key === selected)?.value;
@@ -84,20 +108,23 @@ const LanguageDropdown = ({
           <CommandEmpty>No language found.</CommandEmpty>
           <ScrollArea className="overflow-auto">
             <CommandGroup>
-              {languages.map((lang) => (
-                <CommandItem
-                  key={lang.key}
-                  value={lang.value}
+              <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
+              {runnableLanguages.map((lang) => (
+                <LanguageCommandItem
+                  lang={lang}
+                  selected={value === lang.value}
                   onSelect={onSelect}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === lang.value ? "opacity-100" : "opacity-0",
-                    )}
-                  />
-                  {capitalizeFirstLetter(lang.value)}
-                </CommandItem>
+                  key={lang.key}
+                />
+              ))}
+              <p className="text-xs text-gray-500 px-4 py-2">Other</p>
+              {otherLanguages.map((lang) => (
+                <LanguageCommandItem
+                  lang={lang}
+                  selected={value === lang.value}
+                  onSelect={onSelect}
+                  key={lang.key}
+                />
               ))}
             </CommandGroup>
           </ScrollArea>
@@ -272,7 +299,7 @@ export const CodeBlock: FC<
   const runnable = RUNNABLE_LANGUAGES.includes(language);
 
   return (
-    <div className="w-full">
+    <div className="w-full border border-gray-200 rounded-lg dark:border-none">
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
         <LanguageDropdown
           language={language}

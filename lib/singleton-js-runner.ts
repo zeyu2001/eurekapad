@@ -2,6 +2,10 @@ import * as swc from "@swc/wasm-web";
 
 import { getWorkerMessenger } from "./js-worker/get-worker-messenger";
 
+type FunctionConstructor = {
+  new (_code: string): Function;
+};
+
 export class SingletonJSRunner {
   private static instance: SingletonJSRunner;
   private loaded: boolean = false;
@@ -70,9 +74,10 @@ export class SingletonJSRunner {
       const transpiledCode = transpiledOutput.code;
       const sendMessage = getWorkerMessenger();
 
-      const AsyncFunction = async function () {}.constructor;
+      const AsyncFunction = async function () {}
+        .constructor as FunctionConstructor;
 
-      return new Promise((resolve, _reject) => {
+      return new Promise<void>((resolve, _reject) => {
         sendMessage(
           new AsyncFunction(transpiledCode).toString(),
           [],
@@ -90,7 +95,7 @@ export class SingletonJSRunner {
         );
       });
     } catch (error) {
-      stderr(error.toString());
+      stderr(error?.toString() ?? "An unknown error occurred");
     }
   }
 }
