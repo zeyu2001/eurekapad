@@ -24,6 +24,8 @@ interface EditorProps {
   savable?: boolean;
 }
 
+type CustomBlock = typeof customSchema.Block;
+
 const Editor = ({
   onChange,
   initialContent,
@@ -49,7 +51,7 @@ const Editor = ({
 
     if (file.size > 10 * 1024 * 1024) {
       toast.error(
-        "File size must be less than 10MB. Support for larger files coming soon!",
+        "File size must be less than 10MB. Support for larger files coming soon!"
       );
       return "";
     }
@@ -78,6 +80,42 @@ const Editor = ({
     uploadFile: handleUpload,
   });
 
+  const handleEditorChange = () => {
+    const blocks = editor.document;
+
+    const updatedBlocks = blocks.map((block) => {
+      const updatedBlock = applyTriggerActions(block);
+      return updatedBlock || block;
+    });
+
+    onChange(JSON.stringify(updatedBlocks, null, 2));
+  };
+
+  // Update the type of applyTriggerActions
+  const applyTriggerActions = (block: CustomBlock): CustomBlock | null => {
+    const triggerActions = [
+      {
+        condition: (b: CustomBlock) => 
+          b.type === "paragraph" && 
+          b.content?.[0]?.type === "text" && 
+          b.content[0].text.startsWith("```"),
+        action: (b: CustomBlock) => (
+          editor.updateBlock(b.id, {
+            type: "codeblock",
+          })
+        ),
+      },
+    ];
+
+    for (const { condition, action } of triggerActions) {
+      if (condition(block)) {
+        return action(block);
+      }
+    }
+
+    return null;
+  };
+
   return (
     <div>
       <BlockNoteView
@@ -85,9 +123,7 @@ const Editor = ({
         editable={editable}
         theme={resolvedTheme === "dark" ? "dark" : "light"}
         slashMenu={false}
-        onChange={() => {
-          onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
-        }}
+        onChange={handleEditorChange}
       >
         <CustomSlashMenu editor={editor} />
       </BlockNoteView>

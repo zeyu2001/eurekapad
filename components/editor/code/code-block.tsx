@@ -38,6 +38,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import { useEditorContext } from "@/hooks/use-editor-context";
 import { usePythonRunner } from "@/hooks/use-python-runner";
+import { useJSRunner } from "@/hooks/use-js-runner";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
 
@@ -110,7 +111,6 @@ export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor }) => {
   const code = block.props.code || "";
-
   const language = block.props.language || "python";
 
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
@@ -122,7 +122,6 @@ export const CodeBlock: FC<
   const [isProcessingMedia, setIsProcessingMedia] = useState(false);
 
   const editorContext = useEditorContext();
-
   const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const stdoutHandler = useCallback(
@@ -167,7 +166,8 @@ export const CodeBlock: FC<
     [getUploadUrl, editorContext],
   );
 
-  const { runner, loaded } = usePythonRunner();
+  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner();
+  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner();
 
   const handleInputChange = ({
     code,
@@ -186,21 +186,44 @@ export const CodeBlock: FC<
   };
 
   const runCode = useCallback(async () => {
-    if (!runner || !loaded) {
-      toast.error("Hang tight, Python kernel is still getting ready...");
+    const runnerConfig = {
+      python: { runner: pythonRunner, loaded: pythonLoaded },
+      javascript: { runner: jsRunner, loaded: jsLoaded },
+      typescript: { runner: jsRunner, loaded: jsLoaded },
+    };
+
+    const config = runnerConfig[language as keyof typeof runnerConfig];
+
+    if (!config) {
+      toast.error("Unsupported language");
+      return;
+    }
+
+    if (!config.runner || !config.loaded) {
+      toast.error(`Hang tight, ${language} runner is still getting ready...`);
       return;
     }
 
     setStdout("");
     setStderr("");
     setImages([]);
-
     setIsRunning(true);
 
-    await runner.runPython(code, stdoutHandler, stderrHandler, imageHandler);
-
-    setIsRunning(false);
-  }, [runner, loaded, code, stdoutHandler, stderrHandler, imageHandler]);
+    try {
+      if (language === 'python' && 'runPython' in config.runner) {
+        await config.runner.runPython(code, stdoutHandler, stderrHandler, imageHandler);
+      } else if ((language === 'javascript' || language === 'typescript') && 'runJS' in config.runner) {
+        const mediaTargetRef = { current: null };
+        await config.runner.runJS(code, language, mediaTargetRef, stdoutHandler, stderrHandler);
+      } else {
+        throw new Error("Unexpected runner configuration");
+      }
+    } catch (error) {
+      toast.error("An error occurred while running the code.");
+    } finally {
+      setIsRunning(false);
+    }
+  }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler]);
 
   useEffect(() => {
     editor.updateBlock(block.id, {
