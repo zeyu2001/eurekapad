@@ -210,11 +210,18 @@ export const CodeBlock: FC<
     setIsRunning(true);
 
     try {
-      if (language === 'python' && 'runPython' in config.runner) {
-        await config.runner.runPython(code, stdoutHandler, stderrHandler, imageHandler);
-      } else if ((language === 'javascript' || language === 'typescript') && 'runJS' in config.runner) {
-        const mediaTargetRef = { current: null };
-        await config.runner.runJS(code, language, mediaTargetRef, stdoutHandler, stderrHandler);
+      if (language === "python" && "runPython" in config.runner) {
+        await config.runner.runPython(
+          code,
+          stdoutHandler,
+          stderrHandler,
+          imageHandler,
+        );
+      } else if (
+        (language === "javascript" || language === "typescript") &&
+        "runJS" in config.runner
+      ) {
+        await config.runner.runJS(code, language, stdoutHandler, stderrHandler);
       } else {
         throw new Error("Unexpected runner configuration");
       }
@@ -223,7 +230,17 @@ export const CodeBlock: FC<
     } finally {
       setIsRunning(false);
     }
-  }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler]);
+  }, [
+    pythonRunner,
+    jsRunner,
+    pythonLoaded,
+    jsLoaded,
+    language,
+    code,
+    stdoutHandler,
+    stderrHandler,
+    imageHandler,
+  ]);
 
   useEffect(() => {
     editor.updateBlock(block.id, {
