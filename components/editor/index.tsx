@@ -51,7 +51,7 @@ const Editor = ({
 
     if (file.size > 10 * 1024 * 1024) {
       toast.error(
-        "File size must be less than 10MB. Support for larger files coming soon!"
+        "File size must be less than 10MB. Support for larger files coming soon!",
       );
       return "";
     }
@@ -95,15 +95,14 @@ const Editor = ({
   const applyTriggerActions = (block: CustomBlock): CustomBlock | null => {
     const triggerActions = [
       {
-        condition: (b: CustomBlock) => 
-          b.type === "paragraph" && 
-          b.content?.[0]?.type === "text" && 
+        condition: (b: CustomBlock) =>
+          b.type === "paragraph" &&
+          b.content?.[0]?.type === "text" &&
           b.content[0].text.startsWith("```"),
-        action: (b: CustomBlock) => (
+        action: (b: CustomBlock) =>
           editor.updateBlock(b.id, {
             type: "codeblock",
-          })
-        ),
+          }),
       },
     ];
 
