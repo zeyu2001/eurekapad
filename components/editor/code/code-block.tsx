@@ -37,8 +37,8 @@ import {
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useEditorContext } from "@/hooks/use-editor-context";
-import { usePythonRunner } from "@/hooks/use-python-runner";
 import { useJSRunner } from "@/hooks/use-js-runner";
+import { usePythonRunner } from "@/hooks/use-python-runner";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
 
