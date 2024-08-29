@@ -19,6 +19,23 @@ export const useOptimisticDocumentUpdate = () => {
             ...rest,
           },
         );
+
+        const currentSidebarDocuments = localStore.getQuery(
+          api.documents.getSidebar,
+          {
+            parentDocument: currentDocument.parentDocument,
+          },
+        );
+
+        if (currentSidebarDocuments !== undefined) {
+          localStore.setQuery(
+            api.documents.getSidebar,
+            { parentDocument: currentDocument.parentDocument },
+            currentSidebarDocuments.map((document) =>
+              document._id === id ? { ...document, ...rest } : document,
+            ),
+          );
+        }
       }
     },
   );
