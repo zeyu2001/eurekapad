@@ -35,7 +35,7 @@ export const GraphBlock: FC<
 
   // can only initialize GraphingCalculator after graphRef is mounted
   useEffect(() => {
-    if (!loaded || !graphRef.current) return;
+    if (!graphRef.current) return;
 
     const calculator = Desmos.GraphingCalculator(graphRef.current);
 
