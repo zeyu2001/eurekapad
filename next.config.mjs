@@ -11,7 +11,7 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, options) => {
+  webpack: (config, _options) => {
     config.module.rules.push({
       test: /(all.json|\.whl)$/,
       type: "asset/resource",

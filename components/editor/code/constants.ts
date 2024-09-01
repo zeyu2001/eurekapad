@@ -1,1 +1,1 @@
-export const RUNNABLE_LANGUAGES = ["python"];
+export const RUNNABLE_LANGUAGES = ["python", "javascript", "typescript"];
