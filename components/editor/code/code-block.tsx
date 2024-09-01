@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { useAction } from "convex/react";
 import { Check, ChevronsDown, CircleAlert, Delete, Play } from "lucide-react";
 import { useTheme } from "next-themes";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { CodeBlockConfig } from "@/components/editor/code";
@@ -36,6 +36,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
+import { useBlockFocus } from "@/hooks/use-block-focus";
 import { useEditorContext } from "@/hooks/use-editor-context";
 import { useJSRunner } from "@/hooks/use-js-runner";
 import { usePythonRunner } from "@/hooks/use-python-runner";
@@ -137,6 +138,13 @@ const LanguageDropdown = ({
 export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor }) => {
+  const codeMirrorRef = useRef<HTMLDivElement>(null);
+  useBlockFocus<CodeBlockConfig, InlineContentSchema, StyleSchema>(
+    codeMirrorRef,
+    editor,
+    block.id,
+  );
+
   const code = block.props.code || "";
   const language = block.props.language || "python";
 
@@ -334,19 +342,22 @@ export const CodeBlock: FC<
           </div>
         )}
       </div>
-      <ReactCodeMirror
-        id={block?.id}
-        placeholder={"Write your code here..."}
-        style={{ width: "100%", resize: "vertical" }}
-        //@ts-ignore
-        extensions={[langs[language]()]}
-        value={code}
-        theme={editorTheme}
-        editable={editor.isEditable}
-        width="100%"
-        height="200px"
-        onChange={(value) => handleInputChange({ code: value })}
-      />
+      <div ref={codeMirrorRef}>
+        <ReactCodeMirror
+          id={block?.id}
+          placeholder={"Write your code here..."}
+          style={{ width: "100%", resize: "vertical" }}
+          //@ts-ignore
+          extensions={[langs[language]()]}
+          value={code}
+          theme={editorTheme}
+          editable={editor.isEditable}
+          width="100%"
+          height="200px"
+          onChange={(value) => handleInputChange({ code: value })}
+        />
+      </div>
+
       <div>
         {stdout && (
           <div
