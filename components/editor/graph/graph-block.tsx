@@ -55,6 +55,7 @@ export const GraphBlock: FC<
     <>
       <Script
         src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
+        onLoad={() => setReady(true)}
         onReady={() => setReady(true)}
       />
       <div
