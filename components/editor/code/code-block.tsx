@@ -110,7 +110,7 @@ const LanguageDropdown = ({
 export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor }) => {
-  const codeMirrorRef = useRef<ReactCodeMirror>(null);
+  const codeMirrorRef = useRef<HTMLDivElement>(null);
   useBlockFocus<CodeBlockConfig, InlineContentSchema, StyleSchema>(
     codeMirrorRef,
     editor,

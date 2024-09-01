@@ -13,20 +13,25 @@ const isFocusable = (item: HTMLElement) => {
   }
   switch (item.tagName) {
     case "A":
-      return !!item.href;
+      return !!(item as HTMLAnchorElement).href;
     case "INPUT":
-      return item.type !== "hidden" && !item.disabled;
+      return (
+        (item as HTMLInputElement).type !== "hidden" &&
+        !(item as HTMLInputElement).disabled
+      );
     case "SELECT":
     case "TEXTAREA":
     case "BUTTON":
-      return !item.disabled;
+      return !(item as HTMLButtonElement).disabled;
     default:
       return false;
   }
 };
 
 const findFirstFocusableElement = (container: HTMLElement) => {
-  return Array.from(container.getElementsByTagName("*")).find(isFocusable);
+  return (
+    Array.from(container.getElementsByTagName("*")) as HTMLElement[]
+  ).find(isFocusable);
 };
 
 // Focuses the block when the text cursor is placed on it
