@@ -5,6 +5,8 @@ import { ReactCustomBlockRenderProps } from "@blocknote/react";
 import Script from "next/script";
 import { FC, useEffect, useRef, useState } from "react";
 
+import { Spinner } from "@/components/spinner";
+
 import { GraphBlockConfig } from ".";
 import { graphStateJSONSchema } from "./schemas";
 import { GraphState } from "./types";
@@ -63,8 +65,10 @@ export const GraphBlock: FC<
         // update when Desmos input loses focus,
         // otherwise interactive element will lose focus while user is still typing
         onBlur={updateEditor}
-        className="w-full h-96"
-      ></div>
+        className="w-full h-96 flex items-center justify-center"
+      >
+        {!ready && <Spinner />}
+      </div>
     </>
   );
 };
