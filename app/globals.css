@@ -7,7 +7,6 @@ body,
 :root {
   height: 100%;
 }
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -78,9 +77,6 @@ body,
   }
   body {
     @apply bg-background text-foreground;
-  }
-  a {
-    @apply text-blue-500 underline hover:text-blue-700;
   }
 }
 
