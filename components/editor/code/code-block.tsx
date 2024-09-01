@@ -37,9 +37,27 @@ import {
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useEditorContext } from "@/hooks/use-editor-context";
+import { useJSRunner } from "@/hooks/use-js-runner";
 import { usePythonRunner } from "@/hooks/use-python-runner";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
+
+const LanguageCommandItem = ({
+  lang,
+  selected,
+  onSelect,
+}: {
+  lang: { key: string; value: string };
+  selected: boolean;
+  onSelect: (_selected: string) => void;
+}) => (
+  <CommandItem key={lang.key} value={lang.value} onSelect={onSelect}>
+    <Check
+      className={cn("mr-2 h-4 w-4", selected ? "opacity-100" : "opacity-0")}
+    />
+    {capitalizeFirstLetter(lang.value)}
+  </CommandItem>
+);
 
 const LanguageDropdown = ({
   language,
@@ -55,6 +73,13 @@ const LanguageDropdown = ({
     key: lang.toLowerCase(),
     value: lang,
   }));
+
+  const runnableLanguages = languages.filter((lang) =>
+    RUNNABLE_LANGUAGES.includes(lang.value),
+  );
+  const otherLanguages = languages.filter(
+    (lang) => !RUNNABLE_LANGUAGES.includes(lang.value),
+  );
 
   const onSelect = (selected: string) => {
     const value = languages.find((lang) => lang.key === selected)?.value;
@@ -83,20 +108,23 @@ const LanguageDropdown = ({
           <CommandEmpty>No language found.</CommandEmpty>
           <ScrollArea className="overflow-auto">
             <CommandGroup>
-              {languages.map((lang) => (
-                <CommandItem
-                  key={lang.key}
-                  value={lang.value}
+              <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
+              {runnableLanguages.map((lang) => (
+                <LanguageCommandItem
+                  lang={lang}
+                  selected={value === lang.value}
                   onSelect={onSelect}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === lang.value ? "opacity-100" : "opacity-0",
-                    )}
-                  />
-                  {capitalizeFirstLetter(lang.value)}
-                </CommandItem>
+                  key={lang.key}
+                />
+              ))}
+              <p className="text-xs text-gray-500 px-4 py-2">Other</p>
+              {otherLanguages.map((lang) => (
+                <LanguageCommandItem
+                  lang={lang}
+                  selected={value === lang.value}
+                  onSelect={onSelect}
+                  key={lang.key}
+                />
               ))}
             </CommandGroup>
           </ScrollArea>
@@ -110,7 +138,6 @@ export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor }) => {
   const code = block.props.code || "";
-
   const language = block.props.language || "python";
 
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
@@ -122,7 +149,6 @@ export const CodeBlock: FC<
   const [isProcessingMedia, setIsProcessingMedia] = useState(false);
 
   const editorContext = useEditorContext();
-
   const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const stdoutHandler = useCallback(
@@ -167,7 +193,8 @@ export const CodeBlock: FC<
     [getUploadUrl, editorContext],
   );
 
-  const { runner, loaded } = usePythonRunner();
+  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner();
+  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner();
 
   const handleInputChange = ({
     code,
@@ -186,21 +213,61 @@ export const CodeBlock: FC<
   };
 
   const runCode = useCallback(async () => {
-    if (!runner || !loaded) {
-      toast.error("Hang tight, Python kernel is still getting ready...");
+    const runnerConfig = {
+      python: { runner: pythonRunner, loaded: pythonLoaded },
+      javascript: { runner: jsRunner, loaded: jsLoaded },
+      typescript: { runner: jsRunner, loaded: jsLoaded },
+    };
+
+    const config = runnerConfig[language as keyof typeof runnerConfig];
+
+    if (!config) {
+      toast.error("Unsupported language");
+      return;
+    }
+
+    if (!config.runner || !config.loaded) {
+      toast.error(`Hang tight, ${language} runner is still getting ready...`);
       return;
     }
 
     setStdout("");
     setStderr("");
     setImages([]);
-
     setIsRunning(true);
 
-    await runner.runPython(code, stdoutHandler, stderrHandler, imageHandler);
-
-    setIsRunning(false);
-  }, [runner, loaded, code, stdoutHandler, stderrHandler, imageHandler]);
+    try {
+      if (language === "python" && "runPython" in config.runner) {
+        await config.runner.runPython(
+          code,
+          stdoutHandler,
+          stderrHandler,
+          imageHandler,
+        );
+      } else if (
+        (language === "javascript" || language === "typescript") &&
+        "runJS" in config.runner
+      ) {
+        await config.runner.runJS(code, language, stdoutHandler, stderrHandler);
+      } else {
+        throw new Error("Unexpected runner configuration");
+      }
+    } catch (error) {
+      toast.error("An error occurred while running the code.");
+    } finally {
+      setIsRunning(false);
+    }
+  }, [
+    pythonRunner,
+    jsRunner,
+    pythonLoaded,
+    jsLoaded,
+    language,
+    code,
+    stdoutHandler,
+    stderrHandler,
+    imageHandler,
+  ]);
 
   useEffect(() => {
     editor.updateBlock(block.id, {
@@ -232,7 +299,7 @@ export const CodeBlock: FC<
   const runnable = RUNNABLE_LANGUAGES.includes(language);
 
   return (
-    <div className="w-full">
+    <div className="w-full border border-gray-200 rounded-lg dark:border-none">
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
         <LanguageDropdown
           language={language}

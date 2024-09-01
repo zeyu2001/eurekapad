@@ -1,10 +1,3 @@
-declare global {
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  interface Document {
-    pyodideMplTarget: HTMLDivElement;
-  }
-}
-
 import { type IMimeBundle } from "@jupyterlab/nbformat";
 import { ContentsManager, type KernelMessage } from "@jupyterlab/services";
 import { PyodideKernel } from "@jupyterlite/pyodide-kernel";
