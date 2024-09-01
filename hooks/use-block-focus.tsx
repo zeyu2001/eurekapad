@@ -65,7 +65,6 @@ export function useBlockFocus<
 
   useEffect(() => {
     if (firstFocusable && editor.getTextCursorPosition().block.id === blockId) {
-      console.log(firstFocusable, firstFocusable.isContentEditable);
       firstFocusable.focus();
     }
   }, [firstFocusable, editor, blockId]);
