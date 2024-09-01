@@ -19,7 +19,7 @@ export const GraphBlock: FC<
   const result = graphStateJSONSchema.safeParse(block.props.state);
 
   const graphRef = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const [ready, setReady] = useState<boolean>(false);
   const [graphState, setGraphState] = useState<GraphState | null>(
     result.error ? null : result.data,
   );
@@ -35,7 +35,7 @@ export const GraphBlock: FC<
 
   // can only initialize GraphingCalculator after graphRef is mounted
   useEffect(() => {
-    if (!graphRef.current) return;
+    if (!ready || !graphRef.current) return;
 
     const calculator = Desmos.GraphingCalculator(graphRef.current);
 
@@ -49,13 +49,13 @@ export const GraphBlock: FC<
     // this is a workaround to remove the duplicate graphs
     while (graphRef.current.children.length > 1)
       graphRef.current.removeChild(graphRef.current.lastChild as ChildNode);
-  }, [loaded, graphRef, graphState]);
+  }, [ready, graphRef, graphState]);
 
   return (
     <>
       <Script
         src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
-        onLoad={() => setLoaded(true)}
+        onReady={() => setReady(true)}
       />
       <div
         ref={graphRef}

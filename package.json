@@ -64,7 +64,6 @@
     "styled-components": "^6.1.12",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "update": "^0.7.4",
     "usehooks-ts": "^2.9.1",
     "zod": "^3.22.4",
     "zustand": "^4.4.5"
