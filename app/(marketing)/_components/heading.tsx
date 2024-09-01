@@ -2,9 +2,10 @@
 
 import { SignInButton } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,16 @@ import imperialImage from "@/images/imperial.png";
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  });
 
   return (
     <div className="text-center">
@@ -62,34 +73,33 @@ export const Heading = () => {
           </div>
         </div>
       </div>
+      <div className="absolute bottom-4 flex justify-center w-full">
+        {!scrolled && (
+          <ChevronDown className="h-8 w-8 transform animate-bounce" />
+        )}
+      </div>
       <div className="pb-16 container">
         <p className="font-display text-base text-slate-900 dark:text-slate-100">
           Built by students from Cambridge, and trusted by students from
         </p>
         <ul
           role="list"
-          className="mt-8 flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0"
+          className="mt-8 flex items-center justify-center gap-x-8 flex-col gap-x-0 gap-y-10 md:flex-row md:gap-x-12 md:gap-y-0"
         >
           {[
-            [{ name: "University of Cambridge", logo: cambridgeImage }],
-            [{ name: "Imperial College London", logo: imperialImage }],
-          ].map((group, groupIndex) => (
-            <li key={groupIndex}>
-              <ul
-                role="list"
-                className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0 dark:bg-white p-4 rounded-lg shadow-lg dark:shadow-blue-500/50"
-              >
-                {group.map((company) => (
-                  <li key={company.name} className="flex">
-                    <Image
-                      src={company.logo}
-                      alt={company.name}
-                      width={200}
-                      height={200}
-                    />
-                  </li>
-                ))}
-              </ul>
+            { name: "University of Cambridge", logo: cambridgeImage },
+            { name: "Imperial College London", logo: imperialImage },
+          ].map((company) => (
+            <li
+              key={company.name}
+              className="dark:bg-white p-4 rounded-lg shadow-lg dark:shadow-blue-500/50"
+            >
+              <Image
+                src={company.logo}
+                alt={company.name}
+                width={200}
+                height={200}
+              />
             </li>
           ))}
         </ul>
