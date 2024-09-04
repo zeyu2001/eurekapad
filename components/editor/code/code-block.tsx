@@ -205,24 +205,27 @@ export const CodeBlock: FC<
   const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner();
   const { runner: jsRunner, loaded: jsLoaded } = useJSRunner();
 
-  const handleInputChange = ({
-    code,
-    language,
-    height,
-  }: {
-    code?: string;
-    language?: string;
-    height?: number;
-  }) => {
-    editor.updateBlock(block.id, {
-      props: {
-        ...block.props,
-        language: language ?? block.props.language,
-        code: code ?? block.props.code,
-        height: height ?? block.props.height,
-      },
-    });
-  };
+  const handleInputChange = useCallback(
+    ({
+      code,
+      language,
+      height,
+    }: {
+      code?: string;
+      language?: string;
+      height?: number;
+    }) => {
+      editor.updateBlock(block.id, {
+        props: {
+          ...block.props,
+          language: language ?? block.props.language,
+          code: code ?? block.props.code,
+          height: height ?? block.props.height,
+        },
+      });
+    },
+    [block.id, block.props, editor],
+  );
 
   const runCode = useCallback(async () => {
     const runnerConfig = {
