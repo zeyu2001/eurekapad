@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
+
 interface DocumentIdPageProps {
   params: {
     documentId: Id<"documents">;
@@ -16,8 +18,6 @@ interface DocumentIdPageProps {
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
-
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
   });

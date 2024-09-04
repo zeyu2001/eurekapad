@@ -10,6 +10,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { getTitle } from "@/lib/utils";
 
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
+
 interface DocumentIdPageProps {
   params: {
     documentId: Id<"documents">;
@@ -17,8 +19,6 @@ interface DocumentIdPageProps {
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
-
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
   });
