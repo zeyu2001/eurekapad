@@ -1,13 +1,9 @@
 "use client";
 
-import EmojiPicker, { Theme } from "emoji-picker-react";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import type { Emoji as EmojiMart } from "emoji-mart";
 import { useTheme } from "next-themes";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 interface IconPickerProps {
   onChange: (_icon: string) => void;
@@ -15,29 +11,63 @@ interface IconPickerProps {
   asChild?: boolean;
 }
 
+/**
+ * Currently, type definitions in `@emoji-mart/react` isn't perfect, so we implement our own.
+ * ref. https://github.com/missive/emoji-mart/issues/576
+ */
+
+type Emoji = typeof EmojiMart.Props;
+
+interface Category {
+  id: string;
+  name: string;
+  emojis: string[];
+}
+
+interface Data {
+  compressed: boolean;
+  categories: Category[];
+  emojis: Record<string, Emoji>;
+  aliases: Record<string, string>;
+}
+
+interface PickerProps {
+  data: Data;
+  theme: "auto" | "light" | "dark";
+  onEmojiSelect: (_emoji: Emoji) => void;
+}
+
+const EmojiPicker = (props: PickerProps) => {
+  return <Picker {...props} />;
+};
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 export const IconPicker = ({
   onChange,
   children,
   asChild,
 }: IconPickerProps) => {
   const { resolvedTheme } = useTheme();
-  const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
-
-  const themeMap = {
-    dark: Theme.DARK,
-    light: Theme.LIGHT,
-  };
-
-  const theme = themeMap[currentTheme];
+  const currentTheme =
+    resolvedTheme === "dark"
+      ? "dark"
+      : resolvedTheme === "light"
+        ? "light"
+        : "auto";
 
   return (
     <Popover>
       <PopoverTrigger asChild={asChild}>{children}</PopoverTrigger>
       <PopoverContent className="p-0 w-full border-none shadow-none">
         <EmojiPicker
-          height={350}
-          theme={theme}
-          onEmojiClick={(data) => onChange(data.emoji)}
+          data={data as Data}
+          theme={currentTheme}
+          onEmojiSelect={(data) => onChange(data.native)}
         />
       </PopoverContent>
     </Popover>
