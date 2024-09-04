@@ -26,7 +26,10 @@ import {
   ReactCustomBlockRenderProps,
 } from "@blocknote/react";
 import { Radical } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
+
+import { useBlockFocus } from "@/hooks/use-block-focus";
+import { insertBlockAndFocus } from "@/lib/insert-block";
 
 import { CustomEditor } from "./schema";
 
@@ -49,9 +52,17 @@ const MathBlock: FC<
 > = ({ block, editor }) => {
   const content = block.content[0] as StyledText<StyleSchema>;
   const [latex, setLatex] = useState(content?.text || "");
+  const mathFieldRef = useRef<HTMLElement>(null);
+
+  useBlockFocus<MathBlockConfig, InlineContentSchema, StyleSchema>(
+    mathFieldRef,
+    editor,
+    block.id,
+  );
 
   return (
     <math-field
+      ref={mathFieldRef}
       onInput={(evt) => {
         setLatex((evt.target as HTMLInputElement).value);
         editor.updateBlock(block, {
@@ -82,18 +93,12 @@ export const mathBlockSpec = createReactBlockSpec<
 export const insertMathBlock = (editor: CustomEditor) => ({
   title: "Block Equation",
   onItemClick: () => {
-    const currentBlock = editor.getTextCursorPosition().block;
-    editor.insertBlocks(
-      [
-        {
-          type: "math",
-          props: {
-            textAlignment: "center",
-          },
-        },
-      ],
-      currentBlock
-    );
+    insertBlockAndFocus(editor, {
+      type: "math",
+      props: {
+        textAlignment: "center",
+      },
+    });
   },
   icon: <Radical size={16} />,
   aliases: ["math", "equation", "latex"],

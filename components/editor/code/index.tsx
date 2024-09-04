@@ -14,6 +14,7 @@ import { Code } from "lucide-react";
 
 import { CodeBlock } from "@/components/editor/code/code-block";
 import { CustomEditor } from "@/components/editor/schema";
+import { insertBlockAndFocus } from "@/lib/insert-block";
 
 export interface CodeBlockConfig {
   type: "codeblock";
@@ -89,18 +90,12 @@ export const codeBlockSpec = createReactBlockSpec<
 export const insertCodeBlock = (editor: CustomEditor) => ({
   title: "Code Block",
   onItemClick: () => {
-    const currentBlock = editor.getTextCursorPosition().block;
-    editor.insertBlocks(
-      [
-        {
-          type: "codeblock",
-          props: {
-            language: "python",
-          },
-        },
-      ],
-      currentBlock
-    );
+    insertBlockAndFocus(editor, {
+      type: "codeblock",
+      props: {
+        language: "python",
+      },
+    });
   },
   icon: <Code size={16} />,
   aliases: ["code", "programming"],

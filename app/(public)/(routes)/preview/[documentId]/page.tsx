@@ -1,14 +1,16 @@
 "use client";
 
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
 
 import { Cover } from "@/components/cover";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
+
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 interface DocumentIdPageProps {
   params: {
@@ -17,16 +19,11 @@ interface DocumentIdPageProps {
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
-    []
-  );
-
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
   });
 
-  const update = useMutation(api.documents.update);
+  const update = useOptimisticDocumentUpdate();
 
   const onChange = (content: string) => {
     update({

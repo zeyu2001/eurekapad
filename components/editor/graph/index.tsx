@@ -13,6 +13,7 @@ import { ChartLine } from "lucide-react";
 
 import { GraphBlock } from "@/components/editor/graph/graph-block";
 import { CustomEditor } from "@/components/editor/schema";
+import { insertBlockAndFocus } from "@/lib/insert-block";
 
 export interface GraphBlockConfig {
   type: "graph";
@@ -54,15 +55,9 @@ export const graphBlockSpec = createReactBlockSpec<
 export const insertGraphBlock = (editor: CustomEditor) => ({
   title: "Graph",
   onItemClick: () => {
-    const currentBlock = editor.getTextCursorPosition().block;
-    editor.insertBlocks(
-      [
-        {
-          type: "graph",
-        },
-      ],
-      currentBlock
-    );
+    insertBlockAndFocus(editor, {
+      type: "graph",
+    });
   },
   icon: <ChartLine size={16} />,
   aliases: ["graph", "desmos"],

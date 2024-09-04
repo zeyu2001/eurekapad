@@ -6,7 +6,7 @@ const imagesSchema = z.array(
     .url()
     .transform((val) => {
       return new URL(val);
-    })
+    }),
 );
 
 export const imagesJSONSchema = z

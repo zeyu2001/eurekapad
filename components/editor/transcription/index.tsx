@@ -12,6 +12,7 @@ import {
 import { Mic } from "lucide-react";
 
 import { CustomEditor } from "@/components/editor/schema";
+import { insertBlockAndFocus } from "@/lib/insert-block";
 
 import { TranscriptionBlock } from "./transcription-block";
 
@@ -48,15 +49,9 @@ export const transcriptionBlockSpec = createReactBlockSpec<
 export const insertTranscriptionBlock = (editor: CustomEditor) => ({
   title: "Transcribe",
   onItemClick: () => {
-    const currentBlock = editor.getTextCursorPosition().block;
-    editor.insertBlocks(
-      [
-        {
-          type: "transcription",
-        },
-      ],
-      currentBlock
-    );
+    insertBlockAndFocus(editor, {
+      type: "transcription",
+    });
   },
   icon: <Mic size={16} />,
   aliases: ["transcribe", "microphone", "audio", "voice"],

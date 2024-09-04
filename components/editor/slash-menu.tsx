@@ -40,7 +40,7 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
               a.title.localeCompare(b.title)
             );
           }),
-          query
+          query,
         )
       }
     />

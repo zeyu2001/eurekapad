@@ -4,7 +4,8 @@
 import * as pypiUrls from "@jupyterlite/pyodide-kernel/lib/_pypi";
 
 // This forces webpack to bundle all the whl files
-for (const [_key, _value] of Object.entries(pypiUrls)) {}
+for (const [_key, _value] of Object.entries(pypiUrls)) {
+}
 
 const PYODIDE_CDN_BASE = "https://cdn.jsdelivr.net/pyodide/v0.26.2/full";
 

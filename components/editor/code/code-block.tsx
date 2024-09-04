@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { useAction } from "convex/react";
 import { Check, ChevronsDown, CircleAlert, Delete, Play } from "lucide-react";
 import { useTheme } from "next-themes";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { CodeBlockConfig } from "@/components/editor/code";
@@ -36,10 +36,29 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
+import { useBlockFocus } from "@/hooks/use-block-focus";
 import { useEditorContext } from "@/hooks/use-editor-context";
+import { useJSRunner } from "@/hooks/use-js-runner";
 import { usePythonRunner } from "@/hooks/use-python-runner";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
+
+const LanguageCommandItem = ({
+  lang,
+  selected,
+  onSelect,
+}: {
+  lang: { key: string; value: string };
+  selected: boolean;
+  onSelect: (_selected: string) => void;
+}) => (
+  <CommandItem key={lang.key} value={lang.value} onSelect={onSelect}>
+    <Check
+      className={cn("mr-2 h-4 w-4", selected ? "opacity-100" : "opacity-0")}
+    />
+    {capitalizeFirstLetter(lang.value)}
+  </CommandItem>
+);
 
 const LanguageDropdown = ({
   language,
@@ -55,6 +74,13 @@ const LanguageDropdown = ({
     key: lang.toLowerCase(),
     value: lang,
   }));
+
+  const runnableLanguages = languages.filter((lang) =>
+    RUNNABLE_LANGUAGES.includes(lang.value),
+  );
+  const otherLanguages = languages.filter(
+    (lang) => !RUNNABLE_LANGUAGES.includes(lang.value),
+  );
 
   const onSelect = (selected: string) => {
     const value = languages.find((lang) => lang.key === selected)?.value;
@@ -83,20 +109,23 @@ const LanguageDropdown = ({
           <CommandEmpty>No language found.</CommandEmpty>
           <ScrollArea className="overflow-auto">
             <CommandGroup>
-              {languages.map((lang) => (
-                <CommandItem
-                  key={lang.key}
-                  value={lang.value}
+              <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
+              {runnableLanguages.map((lang) => (
+                <LanguageCommandItem
+                  lang={lang}
+                  selected={value === lang.value}
                   onSelect={onSelect}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === lang.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {capitalizeFirstLetter(lang.value)}
-                </CommandItem>
+                  key={lang.key}
+                />
+              ))}
+              <p className="text-xs text-gray-500 px-4 py-2">Other</p>
+              {otherLanguages.map((lang) => (
+                <LanguageCommandItem
+                  lang={lang}
+                  selected={value === lang.value}
+                  onSelect={onSelect}
+                  key={lang.key}
+                />
               ))}
             </CommandGroup>
           </ScrollArea>
@@ -109,30 +138,35 @@ const LanguageDropdown = ({
 export const CodeBlock: FC<
   ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
 > = ({ block, editor }) => {
-  const code = block.props.code || "";
+  const codeMirrorRef = useRef<HTMLDivElement>(null);
+  useBlockFocus<CodeBlockConfig, InlineContentSchema, StyleSchema>(
+    codeMirrorRef,
+    editor,
+    block.id,
+  );
 
+  const code = block.props.code || "";
   const language = block.props.language || "python";
 
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
   const [stderr, setStderr] = useState<string>(block.props.stderr || "");
   const [images, setImages] = useState<Images>(
-    imagesJSONSchema.parse(block.props.images)
+    imagesJSONSchema.parse(block.props.images),
   );
   const [isRunning, setIsRunning] = useState(false);
   const [isProcessingMedia, setIsProcessingMedia] = useState(false);
 
   const editorContext = useEditorContext();
-
   const getUploadUrl = useAction(api.uploads.getUploadUrl);
 
   const stdoutHandler = useCallback(
     (msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()),
-    []
+    [],
   );
 
   const stderrHandler = useCallback(
     (msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()),
-    []
+    [],
   );
 
   const imageHandler = useCallback(
@@ -164,10 +198,11 @@ export const CodeBlock: FC<
         setImages((prev) => [...prev, url]);
       });
     },
-    [getUploadUrl, editorContext]
+    [getUploadUrl, editorContext],
   );
 
-  const { runner, loaded } = usePythonRunner();
+  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner();
+  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner();
 
   const handleInputChange = ({
     code,
@@ -186,21 +221,61 @@ export const CodeBlock: FC<
   };
 
   const runCode = useCallback(async () => {
-    if (!runner || !loaded) {
-      toast.error("Hang tight, Python kernel is still getting ready...");
+    const runnerConfig = {
+      python: { runner: pythonRunner, loaded: pythonLoaded },
+      javascript: { runner: jsRunner, loaded: jsLoaded },
+      typescript: { runner: jsRunner, loaded: jsLoaded },
+    };
+
+    const config = runnerConfig[language as keyof typeof runnerConfig];
+
+    if (!config) {
+      toast.error("Unsupported language");
+      return;
+    }
+
+    if (!config.runner || !config.loaded) {
+      toast.error(`Hang tight, ${language} runner is still getting ready...`);
       return;
     }
 
     setStdout("");
     setStderr("");
     setImages([]);
-
     setIsRunning(true);
 
-    await runner.runPython(code, stdoutHandler, stderrHandler, imageHandler);
-
-    setIsRunning(false);
-  }, [runner, loaded, code, stdoutHandler, stderrHandler, imageHandler]);
+    try {
+      if (language === "python" && "runPython" in config.runner) {
+        await config.runner.runPython(
+          code,
+          stdoutHandler,
+          stderrHandler,
+          imageHandler,
+        );
+      } else if (
+        (language === "javascript" || language === "typescript") &&
+        "runJS" in config.runner
+      ) {
+        await config.runner.runJS(code, language, stdoutHandler, stderrHandler);
+      } else {
+        throw new Error("Unexpected runner configuration");
+      }
+    } catch (error) {
+      toast.error("An error occurred while running the code.");
+    } finally {
+      setIsRunning(false);
+    }
+  }, [
+    pythonRunner,
+    jsRunner,
+    pythonLoaded,
+    jsLoaded,
+    language,
+    code,
+    stdoutHandler,
+    stderrHandler,
+    imageHandler,
+  ]);
 
   useEffect(() => {
     editor.updateBlock(block.id, {
@@ -232,7 +307,7 @@ export const CodeBlock: FC<
   const runnable = RUNNABLE_LANGUAGES.includes(language);
 
   return (
-    <div className="w-full">
+    <div className="w-full border border-gray-200 rounded-lg dark:border-none">
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
         <LanguageDropdown
           language={language}
@@ -267,25 +342,28 @@ export const CodeBlock: FC<
           </div>
         )}
       </div>
-      <ReactCodeMirror
-        id={block?.id}
-        placeholder={"Write your code here..."}
-        style={{ width: "100%", resize: "vertical" }}
-        //@ts-ignore
-        extensions={[langs[language]()]}
-        value={code}
-        theme={editorTheme}
-        editable={editor.isEditable}
-        width="100%"
-        height="200px"
-        onChange={(value) => handleInputChange({ code: value })}
-      />
+      <div ref={codeMirrorRef}>
+        <ReactCodeMirror
+          id={block?.id}
+          placeholder={"Write your code here..."}
+          style={{ width: "100%", resize: "vertical" }}
+          //@ts-ignore
+          extensions={[langs[language]()]}
+          value={code}
+          theme={editorTheme}
+          editable={editor.isEditable}
+          width="100%"
+          height="200px"
+          onChange={(value) => handleInputChange({ code: value })}
+        />
+      </div>
+
       <div>
         {stdout && (
           <div
             className={clsx(
               "font-mono p-4 bg-background border-green-600 border-l-4",
-              stderr || "rounded-b-lg"
+              stderr || "rounded-b-lg",
             )}
           >
             {stdout.split("\n").map((line, index) => (
@@ -310,7 +388,7 @@ export const CodeBlock: FC<
         className={clsx(
           "w-full place-items-center grid",
           images.length >= 2 ? "grid-cols-2" : "grid-cols-1",
-          isProcessingMedia && "h-64"
+          isProcessingMedia && "h-64",
         )}
       >
         {isProcessingMedia ? (
