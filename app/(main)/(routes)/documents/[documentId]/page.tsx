@@ -2,7 +2,6 @@
 
 import { useQuery } from "convex/react";
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
 
 import { Cover } from "@/components/cover";
 import { Toolbar } from "@/components/toolbar";
@@ -12,6 +11,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
 import { getTitle } from "@/lib/utils";
 
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
+
 interface DocumentIdPageProps {
   params: {
     documentId: Id<"documents">;
@@ -19,11 +20,6 @@ interface DocumentIdPageProps {
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
-    [],
-  );
-
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
   });
