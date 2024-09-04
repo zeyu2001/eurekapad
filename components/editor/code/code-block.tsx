@@ -148,6 +148,7 @@ export const CodeBlock: FC<
   const code = block.props.code || "";
   const language = block.props.language || "python";
 
+  const [height, setHeight] = useState<number>(block.props.height || 300);
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
   const [stderr, setStderr] = useState<string>(block.props.stderr || "");
   const [images, setImages] = useState<Images>(
@@ -207,15 +208,18 @@ export const CodeBlock: FC<
   const handleInputChange = ({
     code,
     language,
+    height,
   }: {
     code?: string;
     language?: string;
+    height?: number;
   }) => {
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
         language: language ?? block.props.language,
         code: code ?? block.props.code,
+        height: height ?? block.props.height,
       },
     });
   };
@@ -288,6 +292,10 @@ export const CodeBlock: FC<
     });
   }, [stdout, stderr, images, editor, block.id, block.props]);
 
+  useEffect(() => {
+    handleInputChange({ height });
+  }, [height, handleInputChange]);
+
   const { theme } = useTheme();
   const editorTheme =
     theme === "light"
@@ -346,16 +354,42 @@ export const CodeBlock: FC<
         <ReactCodeMirror
           id={block?.id}
           placeholder={"Write your code here..."}
-          style={{ width: "100%", resize: "vertical" }}
           //@ts-ignore
           extensions={[langs[language]()]}
           value={code}
           theme={editorTheme}
           editable={editor.isEditable}
           width="100%"
-          height="200px"
+          height={`${height}px`}
           onChange={(value) => handleInputChange({ code: value })}
         />
+        <div
+          className="flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize"
+          onMouseDown={(e) => {
+            // Starting position of drag
+            localStorage.setItem("code-start-y", e.pageY.toString());
+
+            const handleResize = (e: MouseEvent) => {
+              // Add the amount dragged to the height
+              const startY = Number(localStorage.getItem("code-start-y"));
+              setHeight((prev) => Math.max(prev + (e.pageY - startY), 300));
+
+              // Update the starting position
+              localStorage.setItem("code-start-y", e.pageY.toString());
+            };
+
+            const handleMouseUp = () => {
+              // Done dragging
+              window.removeEventListener("mousemove", handleResize);
+              window.removeEventListener("mouseup", handleMouseUp);
+            };
+
+            window.addEventListener("mousemove", handleResize);
+            window.addEventListener("mouseup", handleMouseUp);
+          }}
+        >
+          <ChevronsDown className="mr-2 h-4 w-4" />
+        </div>
       </div>
 
       <div>
