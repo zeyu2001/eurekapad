@@ -1,31 +1,31 @@
-import axios from "axios";
+import axios from 'axios'
 
-import { action } from "./_generated/server";
+import { action } from './_generated/server'
 
 export const getToken = action({
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
+  handler: async ctx => {
+    const identity = await ctx.auth.getUserIdentity()
 
     if (!identity) {
-      throw new Error("Not authenticated");
+      throw new Error('Not authenticated')
     }
 
-    const speechKey = process.env.AZURE_SPEECH_KEY;
-    const speechRegion = process.env.AZURE_SPEECH_REGION;
+    const speechKey = process.env.AZURE_SPEECH_KEY
+    const speechRegion = process.env.AZURE_SPEECH_REGION
 
     const headers = {
       headers: {
-        "Ocp-Apim-Subscription-Key": speechKey,
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Ocp-Apim-Subscription-Key': speechKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-    };
+    }
 
     const tokenResponse = await axios.post(
       `https://${speechRegion}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
       null,
       headers,
-    );
+    )
 
-    return { token: tokenResponse.data, region: speechRegion };
+    return { token: tokenResponse.data, region: speechRegion }
   },
-});
+})

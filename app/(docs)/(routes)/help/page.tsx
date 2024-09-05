@@ -1,6 +1,6 @@
-import dayjs from "dayjs";
-import { glob } from "glob";
-import Link from "next/link";
+import dayjs from 'dayjs'
+import { glob } from 'glob'
+import Link from 'next/link'
 
 import {
   Breadcrumb,
@@ -9,24 +9,24 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb'
 
-import { Time } from "./time";
+import { Time } from './time'
 
 export default function Help() {
   const posts = glob
     .sync(`content/**/*.mdx`)
-    .map((file) => file.split("/")[2].replace(/ /g, "-").slice(0, -4).trim())
-    .map((slug) => {
-      const data = require(`@/content/help/${slug}.mdx`);
+    .map(file => file.split('/')[2].replace(/ /g, '-').slice(0, -4).trim())
+    .map(slug => {
+      const data = require(`@/content/help/${slug}.mdx`)
       return {
         id: slug,
         title: data.meta.title,
         href: `/help/${slug}`,
         dateTime: data.meta.lastUpdated,
-      };
+      }
     })
-    .sort((a, b) => dayjs(b.dateTime).unix() - dayjs(a.dateTime).unix());
+    .sort((a, b) => dayjs(b.dateTime).unix() - dayjs(a.dateTime).unix())
 
   return (
     <div className="px-6 py-32 lg:px-8 mx-auto max-w-3xl text-base leading-7 text-gray-700 dark:text-gray-300">
@@ -42,7 +42,7 @@ export default function Help() {
         </Breadcrumb>
       </div>
       <ul role="list" className="divide-y divide-gray-100 dark:divide-gray-800">
-        {posts.map((posts) => (
+        {posts.map(posts => (
           <li
             key={posts.id}
             className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap"
@@ -55,7 +55,7 @@ export default function Help() {
               </p>
               <div className="mt-1 flex items-center gap-x-2 text-sm leading-5 text-gray-500 dark:text-gray-400">
                 <p>
-                  Updated{" "}
+                  Updated{' '}
                   <span>
                     <Time dateTime={posts.dateTime} />
                   </span>
@@ -66,5 +66,5 @@ export default function Help() {
         ))}
       </ul>
     </div>
-  );
+  )
 }

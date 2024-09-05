@@ -1,41 +1,37 @@
-import "./globals.css";
+import './globals.css'
 
-import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import clsx from "clsx";
-import type { Metadata } from "next";
-import { Inter, Lexend } from "next/font/google";
-import Script from "next/script";
-import { Toaster } from "sonner";
+import { TooltipProvider } from '@radix-ui/react-tooltip'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import clsx from 'clsx'
+import type { Metadata } from 'next'
+import { Inter, Lexend } from 'next/font/google'
+import Script from 'next/script'
+import { Toaster } from 'sonner'
 
-import { ConvexClientProvider } from "@/components/providers/convex-provider";
-import { ModalProvider } from "@/components/providers/modal-provider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import Scroll from "@/components/scroll";
+import { ConvexClientProvider } from '@/components/providers/convex-provider'
+import { ModalProvider } from '@/components/providers/modal-provider'
+import { ThemeProvider } from '@/components/providers/theme-provider'
+import Scroll from '@/components/scroll'
 
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 const lexend = Lexend({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-lexend",
-});
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-lexend',
+})
 
 export const metadata: Metadata = {
-  title: "EurekaPad",
-  description: "Where better, faster work happens.",
-};
+  title: 'EurekaPad',
+  description: 'Where better, faster work happens.',
+}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <Scroll />
@@ -63,5 +59,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-import type { Emoji as EmojiMart } from "emoji-mart";
-import { useTheme } from "next-themes";
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
+import type { Emoji as EmojiMart } from 'emoji-mart'
+import { useTheme } from 'next-themes'
 
 interface IconPickerProps {
-  onChange: (_icon: string) => void;
-  children: React.ReactNode;
-  asChild?: boolean;
+  onChange: (_icon: string) => void
+  children: React.ReactNode
+  asChild?: boolean
 }
 
 /**
@@ -16,60 +16,43 @@ interface IconPickerProps {
  * ref. https://github.com/missive/emoji-mart/issues/576
  */
 
-type Emoji = typeof EmojiMart.Props;
+type Emoji = typeof EmojiMart.Props
 
 interface Category {
-  id: string;
-  name: string;
-  emojis: string[];
+  id: string
+  name: string
+  emojis: string[]
 }
 
 interface Data {
-  compressed: boolean;
-  categories: Category[];
-  emojis: Record<string, Emoji>;
-  aliases: Record<string, string>;
+  compressed: boolean
+  categories: Category[]
+  emojis: Record<string, Emoji>
+  aliases: Record<string, string>
 }
 
 interface PickerProps {
-  data: Data;
-  theme: "auto" | "light" | "dark";
-  onEmojiSelect: (_emoji: Emoji) => void;
+  data: Data
+  theme: 'auto' | 'light' | 'dark'
+  onEmojiSelect: (_emoji: Emoji) => void
 }
 
 const EmojiPicker = (props: PickerProps) => {
-  return <Picker {...props} />;
-};
+  return <Picker {...props} />
+}
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export const IconPicker = ({
-  onChange,
-  children,
-  asChild,
-}: IconPickerProps) => {
-  const { resolvedTheme } = useTheme();
-  const currentTheme =
-    resolvedTheme === "dark"
-      ? "dark"
-      : resolvedTheme === "light"
-        ? "light"
-        : "auto";
+export const IconPicker = ({ onChange, children, asChild }: IconPickerProps) => {
+  const { resolvedTheme } = useTheme()
+  const currentTheme = resolvedTheme === 'dark' ? 'dark' : resolvedTheme === 'light' ? 'light' : 'auto'
 
   return (
     <Popover>
       <PopoverTrigger asChild={asChild}>{children}</PopoverTrigger>
       <PopoverContent className="p-0 w-full border-none shadow-none">
-        <EmojiPicker
-          data={data as Data}
-          theme={currentTheme}
-          onEmojiSelect={(data) => onChange(data.native)}
-        />
+        <EmojiPicker data={data as Data} theme={currentTheme} onEmojiSelect={data => onChange(data.native)} />
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}
