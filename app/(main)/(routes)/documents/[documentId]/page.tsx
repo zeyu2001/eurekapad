@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
 
 import { Cover } from '@/components/cover'
@@ -8,6 +8,7 @@ import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { useContent } from '@/hooks/use-content'
 import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
 import { getTitle } from '@/lib/utils'
 
@@ -24,12 +25,27 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     documentId: params.documentId,
   })
 
+  const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
+  const content = useContent(document?.contentId)
+
   const update = useOptimisticDocumentUpdate()
 
-  const onChange = (content: string) => {
+  const onChange = async (content: string) => {
+    const uploadUrl = await generateUploadUrl()
+
+    const result = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: content,
+    })
+
+    const { storageId } = await result.json()
+
     update({
       id: params.documentId,
-      content,
+      contentId: storageId,
     })
   }
 
@@ -60,7 +76,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
         <Cover url={document.coverImage} />
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
-          <Editor onChange={onChange} savable initialContent={document.content} />
+          <Editor onChange={onChange} savable initialContent={content} />
         </div>
       </div>
     </>

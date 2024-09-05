@@ -86,6 +86,25 @@ EurekaPad is a specialized note-taking application designed to provide a superio
 5. Keep the `convex/schema.ts` file updated when modifying the database structure.
 6. Use the `useOptimisticDocumentUpdate` hook for a better user experience when updating documents.
 
+## Running Migrations
+
+Migrations are implemented in `convex/migrations.ts`. See the [Convex documentation](https://stack.convex.dev/migrating-data-with-mutations)
+for more information on migrations.
+
+To test a migration before running it:
+
+```
+npx convex run migrations:deprecateContent '{"dryRun": true, "fn": "migrations:deprecateContent"}'
+```
+
+To run a migration:
+
+```
+npx convex run migrations:deprecateContent '{"fn": "migrations:deprecateContent"}'
+```
+
+These can be run in production with the `--prod` flag, but only *after* deploying with `npx convex deploy`.
+
 ## Available Scripts
 
 - `npm run dev`: Start the development server

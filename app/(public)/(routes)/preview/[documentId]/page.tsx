@@ -8,7 +8,7 @@ import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
+import { useContent } from '@/hooks/use-content'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -22,15 +22,9 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
   })
+  const content = useContent(document?.contentId)
 
-  const update = useOptimisticDocumentUpdate()
-
-  const onChange = (content: string) => {
-    update({
-      id: params.documentId,
-      content,
-    })
-  }
+  const onChange = (_content: string) => {}
 
   if (document === undefined) {
     return (
@@ -57,7 +51,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
       <Cover preview url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar preview initialData={document} />
-        <Editor editable={false} onChange={onChange} initialContent={document.content} />
+        <Editor editable={false} onChange={onChange} initialContent={content} />
       </div>
     </div>
   )

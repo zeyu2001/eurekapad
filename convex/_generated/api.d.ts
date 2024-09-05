@@ -11,6 +11,7 @@
 
 import type { ApiFromModules, FilterApi, FunctionReference } from 'convex/server'
 import type * as documents from '../documents.js'
+import type * as migrations from '../migrations.js'
 import type * as speech from '../speech.js'
 import type * as uploads from '../uploads.js'
 
@@ -24,6 +25,7 @@ import type * as uploads from '../uploads.js'
  */
 declare const fullApi: ApiFromModules<{
   documents: typeof documents
+  migrations: typeof migrations
   speech: typeof speech
   uploads: typeof uploads
 }>
