@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 
+/**
+ * Fetches the content of a document from the storage service.
+ * Returns the content, or undefined if the content is not yet fetched.
+ */
 export const useContent = (contentId: Id<'_storage'> | undefined) => {
-  const [content, setContent] = useState<string>('')
+  const [content, setContent] = useState<string | undefined>(undefined)
   const getContentUrl = useQuery(api.documents.getContentUrl, {
-    contentId: contentId ?? ('' as Id<'_storage'>),
+    contentId,
   })
 
   useEffect(() => {
@@ -15,6 +19,8 @@ export const useContent = (contentId: Id<'_storage'> | undefined) => {
       fetch(getContentUrl)
         .then(response => response.text())
         .then(setContent)
+    } else if (getContentUrl !== undefined) {
+      setContent('')
     }
   }, [getContentUrl])
 

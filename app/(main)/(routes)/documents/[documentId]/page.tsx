@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
+import { useCallback, useEffect, useState } from 'react'
+import { useDebounce } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
@@ -26,30 +28,47 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   })
 
   const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
-  const content = useContent(document?.contentId)
+  const initialContent = useContent(document?.contentId)
+
+  const [content, setContent] = useState<string | undefined>(initialContent)
+  const debouncedContent = useDebounce<string | undefined>(content, 1000)
 
   const update = useOptimisticDocumentUpdate()
 
   const onChange = async (content: string) => {
-    const uploadUrl = await generateUploadUrl({})
-
-    const result = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: content,
-    })
-
-    const { storageId } = await result.json()
-
-    update({
-      id: params.documentId,
-      contentId: storageId,
-    })
+    setContent(content)
   }
 
-  if (document === undefined) {
+  const saveContent = useCallback(
+    async (content: string) => {
+      const uploadUrl = await generateUploadUrl({})
+
+      const result = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: content,
+      })
+
+      const { storageId } = await result.json()
+
+      update({
+        id: params.documentId,
+        contentId: storageId,
+      })
+    },
+    [generateUploadUrl, params.documentId, update],
+  )
+
+  useEffect(() => {
+    if (debouncedContent === undefined) {
+      return
+    }
+    saveContent(debouncedContent)
+  }, [debouncedContent, initialContent])
+
+  if (document === undefined || initialContent === undefined) {
     return (
       <div>
         <Cover.Skeleton />
@@ -76,7 +95,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
         <Cover url={document.coverImage} />
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
-          <Editor onChange={onChange} savable initialContent={content} />
+          <Editor onChange={onChange} savable initialContent={initialContent} />
         </div>
       </div>
     </>

@@ -284,7 +284,11 @@ export const update = mutation({
 
     // replace old content and delete it
     if (args.contentId && existingDocument.contentId) {
-      await ctx.storage.delete(existingDocument.contentId)
+      try {
+        await ctx.storage.delete(existingDocument.contentId)
+      } catch (error) {
+        console.error('Failed to delete old content', error)
+      }
     }
     const document = await ctx.db.patch(args.id, {
       ...rest,
@@ -309,8 +313,11 @@ export const generateContentUploadUrl = mutation({
 })
 
 export const getContentUrl = query({
-  args: { contentId: v.id('_storage') },
+  args: { contentId: v.optional(v.id('_storage')) },
   handler: async (ctx, args) => {
+    if (!args.contentId) {
+      return null
+    }
     return await ctx.storage.getUrl(args.contentId)
   },
 })
