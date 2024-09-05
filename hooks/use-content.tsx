@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 
-export const useContent = (contentId: Id<'_storage'>) => {
+export const useContent = (contentId: Id<'_storage'> | undefined) => {
   const [content, setContent] = useState<string>('')
   const getContentUrl = useQuery(api.documents.getContentUrl, {
-    contentId,
+    contentId: contentId ?? ('' as Id<'_storage'>),
   })
 
   useEffect(() => {

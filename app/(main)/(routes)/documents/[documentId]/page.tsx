@@ -31,7 +31,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   const update = useOptimisticDocumentUpdate()
 
   const onChange = async (content: string) => {
-    const uploadUrl = await generateUploadUrl()
+    const uploadUrl = await generateUploadUrl({})
 
     const result = await fetch(uploadUrl, {
       method: 'POST',
