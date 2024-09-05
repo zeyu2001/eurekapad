@@ -20,12 +20,14 @@ import { useSearch } from '@/hooks/use-search'
 export const SearchCommand = () => {
   const { user } = useUser()
   const router = useRouter()
-  const documents = useQuery(api.documents.getSearch)
   const [isMounted, setIsMounted] = useState(false)
 
   const toggle = useSearch(store => store.toggle)
   const isOpen = useSearch(store => store.isOpen)
   const onClose = useSearch(store => store.onClose)
+
+  // only fetch documents when the search command is open
+  const documents = useQuery(api.documents.getSearch, isOpen ? {} : 'skip')
 
   useEffect(() => {
     setIsMounted(true)
