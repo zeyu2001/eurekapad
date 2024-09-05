@@ -196,6 +196,14 @@ export const remove = mutation({
       throw new Error('Unauthorized')
     }
 
+    // delete the stored content
+    if (existingDocument.contentId) {
+      try {
+        await ctx.storage.delete(existingDocument.contentId)
+      } catch (error) {
+        console.error('Failed to delete content', error)
+      }
+    }
     const document = await ctx.db.delete(args.id)
 
     return document
