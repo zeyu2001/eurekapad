@@ -1,31 +1,28 @@
-"use client";
+'use client'
 
-import "@blocknote/core/fonts/inter.css";
+import '@blocknote/core/fonts/inter.css'
 
-import { filterSuggestionItems } from "@blocknote/core";
-import {
-  getDefaultReactSlashMenuItems,
-  SuggestionMenuController,
-} from "@blocknote/react";
+import { filterSuggestionItems } from '@blocknote/core'
+import { getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react'
 
-import { insertCodeBlock } from "@/components/editor/code";
-import { insertMathBlock } from "@/components/editor/math";
-import { CustomEditor } from "@/components/editor/schema";
-import { insertTranscriptionBlock } from "@/components/editor/transcription";
+import { insertCodeBlock } from '@/components/editor/code'
+import { insertMathBlock } from '@/components/editor/math'
+import { CustomEditor } from '@/components/editor/schema'
+import { insertTranscriptionBlock } from '@/components/editor/transcription'
 
-import { insertGraphBlock } from "./graph";
+import { insertGraphBlock } from './graph'
 
 interface CustomSlashMenuProps {
-  editor: CustomEditor;
+  editor: CustomEditor
 }
 
-const groupOrder = ["Headings", "Basic blocks", "Advanced", "Media", "Others"];
+const groupOrder = ['Headings', 'Basic blocks', 'Advanced', 'Media', 'Others']
 
 export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
   return (
     <SuggestionMenuController
-      triggerCharacter={"/"}
-      getItems={async (query) =>
+      triggerCharacter={'/'}
+      getItems={async query =>
         filterSuggestionItems(
           [
             ...getDefaultReactSlashMenuItems(editor),
@@ -35,14 +32,12 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
             insertGraphBlock(editor),
           ].sort((a, b) => {
             return (
-              groupOrder.indexOf(a.group || "") -
-                groupOrder.indexOf(b.group || "") ||
-              a.title.localeCompare(b.title)
-            );
+              groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title)
+            )
           }),
           query,
         )
       }
     />
-  );
-};
+  )
+}

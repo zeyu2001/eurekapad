@@ -42,4 +42,4 @@ onmessage = function (evt) {
   }
   send(error, undefined);
 };
-`;
+`

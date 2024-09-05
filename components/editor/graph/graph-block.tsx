@@ -1,26 +1,21 @@
-import "desmos";
+import 'desmos'
 
-import { InlineContentSchema, StyleSchema } from "@blocknote/core";
-import { ReactCustomBlockRenderProps } from "@blocknote/react";
-import { FC, useEffect, useRef, useState } from "react";
+import { InlineContentSchema, StyleSchema } from '@blocknote/core'
+import { ReactCustomBlockRenderProps } from '@blocknote/react'
+import { FC, useEffect, useRef, useState } from 'react'
 
-import { GraphBlockConfig } from ".";
-import { graphStateJSONSchema } from "./schemas";
-import { GraphState } from "./types";
+import { GraphBlockConfig } from '.'
+import { graphStateJSONSchema } from './schemas'
+import { GraphState } from './types'
 
-export const GraphBlock: FC<
-  ReactCustomBlockRenderProps<
-    GraphBlockConfig,
-    InlineContentSchema,
-    StyleSchema
-  >
-> = ({ block, editor }) => {
-  const result = graphStateJSONSchema.safeParse(block.props.state);
+export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, InlineContentSchema, StyleSchema>> = ({
+  block,
+  editor,
+}) => {
+  const result = graphStateJSONSchema.safeParse(block.props.state)
 
-  const graphRef = useRef<HTMLDivElement>(null);
-  const [graphState, setGraphState] = useState<GraphState | null>(
-    result.error ? null : result.data,
-  );
+  const graphRef = useRef<HTMLDivElement>(null)
+  const [graphState, setGraphState] = useState<GraphState | null>(result.error ? null : result.data)
 
   const updateEditor = () => {
     editor.updateBlock(block.id, {
@@ -28,26 +23,25 @@ export const GraphBlock: FC<
         ...block.props,
         state: JSON.stringify(graphState),
       },
-    });
-  };
+    })
+  }
 
   // can only initialize GraphingCalculator after graphRef is mounted
   useEffect(() => {
-    if (!graphRef.current) return;
+    if (!graphRef.current) return
 
-    const calculator = Desmos.GraphingCalculator(graphRef.current);
+    const calculator = Desmos.GraphingCalculator(graphRef.current)
 
-    if (graphState) calculator.setState(graphState);
+    if (graphState) calculator.setState(graphState)
 
-    calculator.observeEvent("change", () => {
-      setGraphState(calculator.getState() as GraphState);
-    });
+    calculator.observeEvent('change', () => {
+      setGraphState(calculator.getState() as GraphState)
+    })
 
     // on subsequent callbacks, a duplicate graph is appended to the graphRef
     // this is a workaround to remove the duplicate graphs
-    while (graphRef.current.children.length > 1)
-      graphRef.current.removeChild(graphRef.current.lastChild as ChildNode);
-  }, [graphRef, graphState]);
+    while (graphRef.current.children.length > 1) graphRef.current.removeChild(graphRef.current.lastChild as ChildNode)
+  }, [graphRef, graphState])
 
   return (
     <div
@@ -57,5 +51,5 @@ export const GraphBlock: FC<
       onBlur={updateEditor}
       className="w-full h-96 flex items-center justify-center"
     ></div>
-  );
-};
+  )
+}
