@@ -487,7 +487,7 @@ const signupEmailTemplateHTML = `
 														<tr>
 															<td class="pad" style="padding-left:10px;padding-right:10px;padding-top:10px;width:100%;">
 																<div class="alignment" align="center" style="line-height:10px">
-																	<div style="max-width: 210px;"><img src="https://4138cc9244.imgdist.com/pub/bfra/jki2uk8x/7o3/zm4/z0c/two-humans.297ffe0f.svg" style="display: block; height: auto; border: 0; width: 100%;" width="210" alt="Alternate text" title="Alternate text" height="auto"></div>
+																	<div style="max-width: 210px;"><img src="https://4138cc9244.imgdist.com/pub/bfra/jki2uk8x/q7o/4lq/g2e/two-humans.297ffe0f.png" style="display: block; height: auto; border: 0; width: 100%;" width="210" alt="Alternate text" title="Alternate text" height="auto"></div>
 																</div>
 															</td>
 														</tr>
