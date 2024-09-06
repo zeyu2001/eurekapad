@@ -103,7 +103,7 @@ To run a migration:
 npx convex run migrations:deprecateContent '{"fn": "migrations:deprecateContent"}'
 ```
 
-These can be run in production with the `--prod` flag, but only *after* deploying with `npx convex deploy`.
+These can be run in production with the `--prod` flag, but only _after_ deploying with `npx convex deploy`.
 
 ## Available Scripts
 
