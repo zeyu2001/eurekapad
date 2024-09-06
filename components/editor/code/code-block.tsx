@@ -37,9 +37,11 @@ import {
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useBlockFocus } from "@/hooks/use-block-focus";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useEditorContext } from "@/hooks/use-editor-context";
 import { useJSRunner } from "@/hooks/use-js-runner";
 import { usePythonRunner } from "@/hooks/use-python-runner";
+import { useResizable } from "@/hooks/use-resizable";
 import { upload } from "@/lib/client-uploads";
 import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
 
@@ -148,7 +150,6 @@ export const CodeBlock: FC<
   const code = block.props.code || "";
   const language = block.props.language || "python";
 
-  const [height, setHeight] = useState<number>(block.props.height || 300);
   const [stdout, setStdout] = useState<string>(block.props.stdout || "");
   const [stderr, setStderr] = useState<string>(block.props.stderr || "");
   const [images, setImages] = useState<Images>(
@@ -295,10 +296,6 @@ export const CodeBlock: FC<
     });
   }, [stdout, stderr, images, editor, block.id, block.props]);
 
-  useEffect(() => {
-    handleInputChange({ height });
-  }, [height, handleInputChange]);
-
   const { theme } = useTheme();
   const editorTheme =
     theme === "light"
@@ -316,6 +313,17 @@ export const CodeBlock: FC<
         });
 
   const runnable = RUNNABLE_LANGUAGES.includes(language);
+
+  const { height, handleMouseDown, isResizing } = useResizable(
+    block.props.height || 300,
+    100,
+    1000,
+  );
+  const debouncedHeight = useDebounce(height, 1000);
+
+  useEffect(() => {
+    handleInputChange({ height: debouncedHeight });
+  }, [debouncedHeight, handleInputChange]);
 
   return (
     <div className="w-full border border-gray-200 rounded-lg dark:border-none">
@@ -357,39 +365,20 @@ export const CodeBlock: FC<
         <ReactCodeMirror
           id={block?.id}
           placeholder={"Write your code here..."}
-          //@ts-ignore
-          extensions={[langs[language]()]}
+          extensions={[langs[language as keyof typeof langs]()]}
           value={code}
           theme={editorTheme}
           editable={editor.isEditable}
           width="100%"
-          height={`${height}px`}
           onChange={(value) => handleInputChange({ code: value })}
+          height={`${height}px`}
         />
         <div
-          className="flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize"
-          onMouseDown={(e) => {
-            // Starting position of drag
-            localStorage.setItem("code-start-y", e.pageY.toString());
-
-            const handleResize = (e: MouseEvent) => {
-              // Add the amount dragged to the height
-              const startY = Number(localStorage.getItem("code-start-y"));
-              setHeight((prev) => Math.max(prev + (e.pageY - startY), 300));
-
-              // Update the starting position
-              localStorage.setItem("code-start-y", e.pageY.toString());
-            };
-
-            const handleMouseUp = () => {
-              // Done dragging
-              window.removeEventListener("mousemove", handleResize);
-              window.removeEventListener("mouseup", handleMouseUp);
-            };
-
-            window.addEventListener("mousemove", handleResize);
-            window.addEventListener("mouseup", handleMouseUp);
-          }}
+          className={clsx(
+            "flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize",
+            isResizing && "bg-blue-200 dark:bg-blue-800",
+          )}
+          onMouseDown={handleMouseDown}
         >
           <ChevronsDown className="mr-2 h-4 w-4" />
         </div>
