@@ -4,7 +4,7 @@ import { useUser } from '@clerk/nextjs'
 import { useQuery } from 'convex/react'
 import { File } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import {
   CommandDialog,
@@ -20,7 +20,6 @@ import { useSearch } from '@/hooks/use-search'
 export const SearchCommand = () => {
   const { user } = useUser()
   const router = useRouter()
-  const [isMounted, setIsMounted] = useState(false)
 
   const toggle = useSearch(store => store.toggle)
   const isOpen = useSearch(store => store.isOpen)
@@ -28,10 +27,6 @@ export const SearchCommand = () => {
 
   // only fetch documents when the search command is open
   const documents = useQuery(api.documents.getSearch, isOpen ? {} : 'skip')
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -48,10 +43,6 @@ export const SearchCommand = () => {
   const onSelect = (id: string) => {
     router.push(`/documents/${id}`)
     onClose()
-  }
-
-  if (!isMounted) {
-    return null
   }
 
   return (
