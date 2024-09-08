@@ -14,7 +14,7 @@ import 'mathlive'
 import { defaultProps, InlineContentSchema, StyledText, StyleSchema } from '@blocknote/core'
 import { createReactBlockSpec, ReactCustomBlockImplementation, ReactCustomBlockRenderProps } from '@blocknote/react'
 import { Radical } from 'lucide-react'
-import type { MathfieldElement } from 'mathlive'
+import { MathfieldElement } from 'mathlive'
 import { usePathname } from 'next/navigation'
 import { FC, useRef, useState } from 'react'
 
