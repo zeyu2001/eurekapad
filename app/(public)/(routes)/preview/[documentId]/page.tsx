@@ -22,11 +22,11 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
   })
-  const content = useContent(document?.contentId)
+  const [isLoaded, content] = useContent(document?.contentId)
 
   const onChange = (_content: string) => {}
 
-  if (document === undefined) {
+  if (document === undefined || !isLoaded) {
     return (
       <div>
         <Cover.Skeleton />

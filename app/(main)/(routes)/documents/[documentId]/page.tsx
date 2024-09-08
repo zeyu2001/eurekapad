@@ -28,7 +28,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   })
 
   const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
-  const initialContent = useContent(document?.contentId)
+  const [isLoaded, initialContent] = useContent(document?.contentId)
 
   const [content, setContent] = useState<string | undefined>(initialContent)
   const debouncedContent = useDebounce<string | undefined>(content, 1000)
@@ -62,13 +62,13 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   )
 
   useEffect(() => {
-    if (debouncedContent === undefined) {
+    if (!isLoaded || debouncedContent === undefined) {
       return
     }
     saveContent(debouncedContent)
-  }, [debouncedContent, initialContent])
+  }, [debouncedContent, isLoaded])
 
-  if (document === undefined || initialContent === undefined) {
+  if (document === undefined || !isLoaded) {
     return (
       <div>
         <Cover.Skeleton />

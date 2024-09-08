@@ -10,6 +10,7 @@ import { Id } from '@/convex/_generated/dataModel'
  */
 export const useContent = (contentId: Id<'_storage'> | undefined) => {
   const [content, setContent] = useState<string | undefined>(undefined)
+  const [isLoaded, setIsLoaded] = useState(false)
   const getContentUrl = useQuery(api.documents.getContentUrl, {
     contentId,
   })
@@ -24,5 +25,11 @@ export const useContent = (contentId: Id<'_storage'> | undefined) => {
     }
   }, [getContentUrl])
 
-  return content
+  useEffect(() => {
+    if (content !== undefined) {
+      setIsLoaded(true)
+    }
+  }, [content])
+
+  return [isLoaded, content]
 }
