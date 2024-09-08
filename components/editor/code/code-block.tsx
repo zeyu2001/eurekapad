@@ -23,9 +23,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/convex/_generated/api'
 import { useBlockFocus } from '@/hooks/use-block-focus'
+import { useDebounce } from '@/hooks/use-debounce'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { useJSRunner } from '@/hooks/use-js-runner'
 import { usePythonRunner } from '@/hooks/use-python-runner'
+import { useResizable } from '@/hooks/use-resizable'
 import { upload } from '@/lib/client-uploads'
 import { ansiToSpans, capitalizeFirstLetter, cn } from '@/lib/utils'
 
@@ -158,15 +160,19 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner()
   const { runner: jsRunner, loaded: jsLoaded } = useJSRunner()
 
-  const handleInputChange = ({ code, language }: { code?: string; language?: string }) => {
-    editor.updateBlock(block.id, {
-      props: {
-        ...block.props,
-        language: language ?? block.props.language,
-        code: code ?? block.props.code,
-      },
-    })
-  }
+  const handleInputChange = useCallback(
+    ({ code, language, height }: { code?: string; language?: string; height?: number }) => {
+      editor.updateBlock(block.id, {
+        props: {
+          ...block.props,
+          language: language ?? block.props.language,
+          code: code ?? block.props.code,
+          height: height ?? block.props.height,
+        },
+      })
+    },
+    [block.id, block.props, editor],
+  )
 
   const runCode = useCallback(async () => {
     const runnerConfig = {
@@ -236,6 +242,13 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
 
   const runnable = RUNNABLE_LANGUAGES.includes(language)
 
+  const { height, handleMouseDown, isResizing } = useResizable(block.props.height || 300, 100, 1000)
+  const debouncedHeight = useDebounce(height, 1000)
+
+  useEffect(() => {
+    handleInputChange({ height: debouncedHeight })
+  }, [debouncedHeight, handleInputChange])
+
   return (
     <div className="w-full border border-gray-200 rounded-lg dark:border-none">
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
@@ -273,16 +286,23 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
         <ReactCodeMirror
           id={block?.id}
           placeholder={'Write your code here...'}
-          style={{ width: '100%', resize: 'vertical' }}
-          //@ts-ignore
-          extensions={[langs[language]()]}
+          extensions={[langs[language as keyof typeof langs]()]}
           value={code}
           theme={editorTheme}
           editable={editor.isEditable}
           width="100%"
-          height="200px"
           onChange={value => handleInputChange({ code: value })}
+          height={`${height}px`}
         />
+        <div
+          className={clsx(
+            'flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize',
+            isResizing && 'bg-blue-200 dark:bg-blue-800',
+          )}
+          onMouseDown={handleMouseDown}
+        >
+          <ChevronsDown className="mr-2 h-4 w-4" />
+        </div>
       </div>
 
       <div>

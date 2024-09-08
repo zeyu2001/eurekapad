@@ -29,6 +29,9 @@ export interface CodeBlockConfig {
     images: {
       default: string
     }
+    height: {
+      default: number
+    }
   }
   content: 'none'
 }
@@ -53,6 +56,9 @@ const codeBlockConfig: CodeBlockConfig = {
     },
     images: {
       default: JSON.stringify([]),
+    },
+    height: {
+      default: 300,
     },
   },
   content: 'none',
