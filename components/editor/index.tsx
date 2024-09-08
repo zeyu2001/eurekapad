@@ -2,6 +2,7 @@
 
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
+import './styles.css'
 
 import { PartialBlock } from '@blocknote/core'
 import { BlockNoteView } from '@blocknote/mantine'
