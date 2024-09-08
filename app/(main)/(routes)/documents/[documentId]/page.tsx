@@ -1,13 +1,16 @@
 'use client'
 
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
+import { useCallback, useEffect, useState } from 'react'
+import { useDebounce } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { useContent } from '@/hooks/use-content'
 import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
 import { getTitle } from '@/lib/utils'
 
@@ -24,16 +27,48 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     documentId: params.documentId,
   })
 
+  const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
+  const [isLoaded, initialContent] = useContent(document?.contentId)
+
+  const [content, setContent] = useState<string | undefined>(initialContent)
+  const debouncedContent = useDebounce<string | undefined>(content, 1000)
+
   const update = useOptimisticDocumentUpdate()
 
-  const onChange = (content: string) => {
-    update({
-      id: params.documentId,
-      content,
-    })
+  const onChange = async (content: string) => {
+    setContent(content)
   }
 
-  if (document === undefined) {
+  const saveContent = useCallback(
+    async (content: string) => {
+      const uploadUrl = await generateUploadUrl({})
+
+      const result = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: content,
+      })
+
+      const { storageId } = await result.json()
+
+      update({
+        id: params.documentId,
+        contentId: storageId,
+      })
+    },
+    [generateUploadUrl, params.documentId, update],
+  )
+
+  useEffect(() => {
+    if (!isLoaded || debouncedContent === undefined) {
+      return
+    }
+    saveContent(debouncedContent)
+  }, [debouncedContent, isLoaded])
+
+  if (document === undefined || !isLoaded) {
     return (
       <div>
         <Cover.Skeleton />
@@ -60,7 +95,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
         <Cover url={document.coverImage} />
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
-          <Editor onChange={onChange} savable initialContent={document.content} />
+          <Editor onChange={onChange} savable initialContent={initialContent} />
         </div>
       </div>
     </>
