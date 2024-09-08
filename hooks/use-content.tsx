@@ -8,7 +8,7 @@ import { Id } from '@/convex/_generated/dataModel'
  * Fetches the content of a document from the storage service.
  * Returns the content, or undefined if the content is not yet fetched.
  */
-export const useContent = (contentId: Id<'_storage'> | undefined) => {
+export const useContent = (contentId: Id<'_storage'> | undefined): [boolean, string | undefined] => {
   const [content, setContent] = useState<string | undefined>(undefined)
   const [isLoaded, setIsLoaded] = useState(false)
   const getContentUrl = useQuery(api.documents.getContentUrl, {
