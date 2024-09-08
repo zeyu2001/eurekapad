@@ -28,7 +28,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
   })
 
   const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
-  const [isLoaded, initialContent] = useContent(document?.contentId)
+  const [isLoaded, initialContent] = useContent(document)
 
   const [content, setContent] = useState<string | undefined>(initialContent)
   const debouncedContent = useDebounce<string | undefined>(content, 1000)
