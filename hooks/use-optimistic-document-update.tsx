@@ -1,44 +1,37 @@
-import { useMutation } from "convex/react";
+import { useMutation } from 'convex/react'
 
-import { api } from "@/convex/_generated/api";
+import { api } from '@/convex/_generated/api'
 
 export const useOptimisticDocumentUpdate = () => {
-  const update = useMutation(api.documents.update).withOptimisticUpdate(
-    (localStore, args) => {
-      const { id, ...rest } = args;
-      const currentDocument = localStore.getQuery(api.documents.getById, {
-        documentId: id,
-      });
+  const update = useMutation(api.documents.update).withOptimisticUpdate((localStore, args) => {
+    const { id, ...rest } = args
+    const currentDocument = localStore.getQuery(api.documents.getById, {
+      documentId: id,
+    })
 
-      if (currentDocument !== undefined) {
+    if (currentDocument !== undefined) {
+      localStore.setQuery(
+        api.documents.getById,
+        { documentId: id },
+        {
+          ...currentDocument,
+          ...rest,
+        },
+      )
+
+      const currentSidebarDocuments = localStore.getQuery(api.documents.getSidebar, {
+        parentDocument: currentDocument.parentDocument,
+      })
+
+      if (currentSidebarDocuments !== undefined) {
         localStore.setQuery(
-          api.documents.getById,
-          { documentId: id },
-          {
-            ...currentDocument,
-            ...rest,
-          },
-        );
-
-        const currentSidebarDocuments = localStore.getQuery(
           api.documents.getSidebar,
-          {
-            parentDocument: currentDocument.parentDocument,
-          },
-        );
-
-        if (currentSidebarDocuments !== undefined) {
-          localStore.setQuery(
-            api.documents.getSidebar,
-            { parentDocument: currentDocument.parentDocument },
-            currentSidebarDocuments.map((document) =>
-              document._id === id ? { ...document, ...rest } : document,
-            ),
-          );
-        }
+          { parentDocument: currentDocument.parentDocument },
+          currentSidebarDocuments.map(document => (document._id === id ? { ...document, ...rest } : document)),
+        )
       }
-    },
-  );
+    }
+  })
 
-  return update;
-};
+  return update
+}

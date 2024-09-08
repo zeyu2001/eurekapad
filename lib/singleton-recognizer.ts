@@ -6,67 +6,50 @@ import {
   SpeechRecognitionCanceledEventArgs,
   SpeechRecognitionEventArgs,
   SpeechRecognizer,
-} from "microsoft-cognitiveservices-speech-sdk";
+} from 'microsoft-cognitiveservices-speech-sdk'
 
-type RecognizerEventHandler = (
-  _s: Recognizer,
-  _e: SpeechRecognitionEventArgs,
-) => void;
+type RecognizerEventHandler = (_s: Recognizer, _e: SpeechRecognitionEventArgs) => void
 
-type RecognizerCanceledEventHandler = (
-  _s: Recognizer,
-  _e: SpeechRecognitionCanceledEventArgs,
-) => void;
+type RecognizerCanceledEventHandler = (_s: Recognizer, _e: SpeechRecognitionCanceledEventArgs) => void
 
-type RecognizerSessionStoppedEventHandler = (
-  _s: Recognizer,
-  _e: SessionEventArgs,
-) => void;
+type RecognizerSessionStoppedEventHandler = (_s: Recognizer, _e: SessionEventArgs) => void
 
 export class SingletonSpeechRecognizer {
-  private static instance: SingletonSpeechRecognizer;
-  private recognizer: SpeechRecognizer;
+  private static instance: SingletonSpeechRecognizer
+  private recognizer: SpeechRecognizer
 
   private constructor(speechConfig: SpeechConfig, audioConfig: AudioConfig) {
-    this.recognizer = new SpeechRecognizer(speechConfig, audioConfig);
+    this.recognizer = new SpeechRecognizer(speechConfig, audioConfig)
   }
 
-  public static getInstance(
-    speechConfig: SpeechConfig,
-    audioConfig: AudioConfig,
-  ) {
+  public static getInstance(speechConfig: SpeechConfig, audioConfig: AudioConfig) {
     if (!SingletonSpeechRecognizer.instance) {
-      SingletonSpeechRecognizer.instance = new SingletonSpeechRecognizer(
-        speechConfig,
-        audioConfig,
-      );
+      SingletonSpeechRecognizer.instance = new SingletonSpeechRecognizer(speechConfig, audioConfig)
     }
-    return SingletonSpeechRecognizer.instance;
+    return SingletonSpeechRecognizer.instance
   }
 
   public setRecognizingHandler(handler: RecognizerEventHandler) {
-    this.recognizer.recognizing = handler;
+    this.recognizer.recognizing = handler
   }
 
   public setRecognizedHandler(handler: RecognizerEventHandler) {
-    this.recognizer.recognized = handler;
+    this.recognizer.recognized = handler
   }
 
   public setCanceledHandler(handler: RecognizerCanceledEventHandler) {
-    this.recognizer.canceled = handler;
+    this.recognizer.canceled = handler
   }
 
-  public setSessionStoppedHandler(
-    handler: RecognizerSessionStoppedEventHandler,
-  ) {
-    this.recognizer.sessionStopped = handler;
+  public setSessionStoppedHandler(handler: RecognizerSessionStoppedEventHandler) {
+    this.recognizer.sessionStopped = handler
   }
 
   public startListening() {
-    this.recognizer.startContinuousRecognitionAsync();
+    this.recognizer.startContinuousRecognitionAsync()
   }
 
   public stopListening() {
-    this.recognizer.stopContinuousRecognitionAsync();
+    this.recognizer.stopContinuousRecognitionAsync()
   }
 }

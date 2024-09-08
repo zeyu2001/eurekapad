@@ -50,58 +50,47 @@ const LanguageCommandItem = ({
   selected,
   onSelect,
 }: {
-  lang: { key: string; value: string };
-  selected: boolean;
-  onSelect: (_selected: string) => void;
+  lang: { key: string; value: string }
+  selected: boolean
+  onSelect: (_selected: string) => void
 }) => (
   <CommandItem key={lang.key} value={lang.value} onSelect={onSelect}>
-    <Check
-      className={cn("mr-2 h-4 w-4", selected ? "opacity-100" : "opacity-0")}
-    />
+    <Check className={cn('mr-2 h-4 w-4', selected ? 'opacity-100' : 'opacity-0')} />
     {capitalizeFirstLetter(lang.value)}
   </CommandItem>
-);
+)
 
 const LanguageDropdown = ({
   language,
   onChange,
 }: Readonly<{
-  language: string;
-  onChange: (_lang: string) => void;
+  language: string
+  onChange: (_lang: string) => void
 }>) => {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(language);
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState(language)
 
-  const languages = langNames.map((lang) => ({
+  const languages = langNames.map(lang => ({
     key: lang.toLowerCase(),
     value: lang,
-  }));
+  }))
 
-  const runnableLanguages = languages.filter((lang) =>
-    RUNNABLE_LANGUAGES.includes(lang.value),
-  );
-  const otherLanguages = languages.filter(
-    (lang) => !RUNNABLE_LANGUAGES.includes(lang.value),
-  );
+  const runnableLanguages = languages.filter(lang => RUNNABLE_LANGUAGES.includes(lang.value))
+  const otherLanguages = languages.filter(lang => !RUNNABLE_LANGUAGES.includes(lang.value))
 
   const onSelect = (selected: string) => {
-    const value = languages.find((lang) => lang.key === selected)?.value;
-    if (!value) return;
-    setValue(value);
-    onChange(value);
-    setOpen(false);
-  };
+    const value = languages.find(lang => lang.key === selected)?.value
+    if (!value) return
+    setValue(value)
+    onChange(value)
+    setOpen(false)
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {capitalizeFirstLetter(value) || "Select language..."}
+        <Button variant="ghost" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
+          {capitalizeFirstLetter(value) || 'Select language...'}
           <ChevronsDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -112,93 +101,72 @@ const LanguageDropdown = ({
           <ScrollArea className="overflow-auto">
             <CommandGroup>
               <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
-              {runnableLanguages.map((lang) => (
-                <LanguageCommandItem
-                  lang={lang}
-                  selected={value === lang.value}
-                  onSelect={onSelect}
-                  key={lang.key}
-                />
+              {runnableLanguages.map(lang => (
+                <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
               ))}
               <p className="text-xs text-gray-500 px-4 py-2">Other</p>
-              {otherLanguages.map((lang) => (
-                <LanguageCommandItem
-                  lang={lang}
-                  selected={value === lang.value}
-                  onSelect={onSelect}
-                  key={lang.key}
-                />
+              {otherLanguages.map(lang => (
+                <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
               ))}
             </CommandGroup>
           </ScrollArea>
         </Command>
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}
 
-export const CodeBlock: FC<
-  ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>
-> = ({ block, editor }) => {
-  const codeMirrorRef = useRef<HTMLDivElement>(null);
-  useBlockFocus<CodeBlockConfig, InlineContentSchema, StyleSchema>(
-    codeMirrorRef,
-    editor,
-    block.id,
-  );
+export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineContentSchema, StyleSchema>> = ({
+  block,
+  editor,
+}) => {
+  const codeMirrorRef = useRef<HTMLDivElement>(null)
+  useBlockFocus<CodeBlockConfig, InlineContentSchema, StyleSchema>(codeMirrorRef, editor, block.id)
 
-  const code = block.props.code || "";
-  const language = block.props.language || "python";
+  const code = block.props.code || ''
+  const language = block.props.language || 'python'
 
-  const [stdout, setStdout] = useState<string>(block.props.stdout || "");
-  const [stderr, setStderr] = useState<string>(block.props.stderr || "");
-  const [images, setImages] = useState<Images>(
-    imagesJSONSchema.parse(block.props.images),
-  );
-  const [isRunning, setIsRunning] = useState(false);
-  const [isProcessingMedia, setIsProcessingMedia] = useState(false);
+  const [stdout, setStdout] = useState<string>(block.props.stdout || '')
+  const [stderr, setStderr] = useState<string>(block.props.stderr || '')
+  const [images, setImages] = useState<Images>(imagesJSONSchema.parse(block.props.images))
+  const [isRunning, setIsRunning] = useState(false)
+  const [isProcessingMedia, setIsProcessingMedia] = useState(false)
 
-  const editorContext = useEditorContext();
-  const getUploadUrl = useAction(api.uploads.getUploadUrl);
+  const editorContext = useEditorContext()
+  const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
-  const stdoutHandler = useCallback(
-    (msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()),
-    [],
-  );
+  const stdoutHandler = useCallback((msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()), [])
 
-  const stderrHandler = useCallback(
-    (msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()),
-    [],
-  );
+  const stderrHandler = useCallback((msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()), [])
 
   const imageHandler = useCallback(
     (format: string, b64Data: string) => {
       const toURL = async (format: string, b64Data: string) => {
-        const dataUrl = `data:${format};base64,${b64Data}`;
+        const dataUrl = `data:${format};base64,${b64Data}`
 
         if (!editorContext.authenticated || !editorContext.savable) {
-          return new URL(dataUrl);
+          return new URL(dataUrl)
         }
 
-        const response = await fetch(dataUrl);
-        const blob = await response.blob();
-        const file = new File([blob], "image.png", { type: blob.type });
+        const response = await fetch(dataUrl)
+        const blob = await response.blob()
+        const file = new File([blob], 'image.png', { type: blob.type })
 
-        const uploadUrl = await getUploadUrl({});
-        const azBlobUrl = await upload(file, uploadUrl);
+        const uploadUrl = await getUploadUrl({})
+        const azBlobUrl = await upload(file, uploadUrl)
 
-        return azBlobUrl;
-      };
+        return azBlobUrl
+      }
 
-      setIsProcessingMedia(true);
-      toURL(format, b64Data).then((url) => {
-        setIsProcessingMedia(false);
+      setIsProcessingMedia(true)
+      toURL(format, b64Data).then(url => {
+        setIsProcessingMedia(false)
         if (!url) {
-          toast.error("Failed to upload media.");
-          return;
+          toast.error('Failed to upload media.')
+          return
         }
-        setImages((prev) => [...prev, url]);
-      });
+        setImages(prev => [...prev, url])
+      })
     },
     [getUploadUrl, editorContext],
   );
@@ -233,57 +201,39 @@ export const CodeBlock: FC<
       python: { runner: pythonRunner, loaded: pythonLoaded },
       javascript: { runner: jsRunner, loaded: jsLoaded },
       typescript: { runner: jsRunner, loaded: jsLoaded },
-    };
+    }
 
-    const config = runnerConfig[language as keyof typeof runnerConfig];
+    const config = runnerConfig[language as keyof typeof runnerConfig]
 
     if (!config) {
-      toast.error("Unsupported language");
-      return;
+      toast.error('Unsupported language')
+      return
     }
 
     if (!config.runner || !config.loaded) {
-      toast.error(`Hang tight, ${language} runner is still getting ready...`);
-      return;
+      toast.error(`Hang tight, ${language} runner is still getting ready...`)
+      return
     }
 
-    setStdout("");
-    setStderr("");
-    setImages([]);
-    setIsRunning(true);
+    setStdout('')
+    setStderr('')
+    setImages([])
+    setIsRunning(true)
 
     try {
-      if (language === "python" && "runPython" in config.runner) {
-        await config.runner.runPython(
-          code,
-          stdoutHandler,
-          stderrHandler,
-          imageHandler,
-        );
-      } else if (
-        (language === "javascript" || language === "typescript") &&
-        "runJS" in config.runner
-      ) {
-        await config.runner.runJS(code, language, stdoutHandler, stderrHandler);
+      if (language === 'python' && 'runPython' in config.runner) {
+        await config.runner.runPython(code, stdoutHandler, stderrHandler, imageHandler)
+      } else if ((language === 'javascript' || language === 'typescript') && 'runJS' in config.runner) {
+        await config.runner.runJS(code, language, stdoutHandler, stderrHandler)
       } else {
-        throw new Error("Unexpected runner configuration");
+        throw new Error('Unexpected runner configuration')
       }
     } catch (error) {
-      toast.error("An error occurred while running the code.");
+      toast.error('An error occurred while running the code.')
     } finally {
-      setIsRunning(false);
+      setIsRunning(false)
     }
-  }, [
-    pythonRunner,
-    jsRunner,
-    pythonLoaded,
-    jsLoaded,
-    language,
-    code,
-    stdoutHandler,
-    stderrHandler,
-    imageHandler,
-  ]);
+  }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler])
 
   useEffect(() => {
     editor.updateBlock(block.id, {
@@ -293,26 +243,26 @@ export const CodeBlock: FC<
         stderr: stderr,
         images: JSON.stringify(images),
       },
-    });
-  }, [stdout, stderr, images, editor, block.id, block.props]);
+    })
+  }, [stdout, stderr, images, editor, block.id, block.props])
 
-  const { theme } = useTheme();
+  const { theme } = useTheme()
   const editorTheme =
-    theme === "light"
+    theme === 'light'
       ? vscodeLightInit({
           settings: {
-            caret: "#000000",
-            fontFamily: "monospace",
+            caret: '#000000',
+            fontFamily: 'monospace',
           },
         })
       : vscodeDarkInit({
           settings: {
-            caret: "#c6c6c6",
-            fontFamily: "monospace",
+            caret: '#c6c6c6',
+            fontFamily: 'monospace',
           },
-        });
+        })
 
-  const runnable = RUNNABLE_LANGUAGES.includes(language);
+  const runnable = RUNNABLE_LANGUAGES.includes(language)
 
   const { height, handleMouseDown, isResizing } = useResizable(
     block.props.height || 300,
@@ -328,10 +278,7 @@ export const CodeBlock: FC<
   return (
     <div className="w-full border border-gray-200 rounded-lg dark:border-none">
       <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
-        <LanguageDropdown
-          language={language}
-          onChange={(lang) => handleInputChange({ language: lang })}
-        />
+        <LanguageDropdown language={language} onChange={lang => handleInputChange({ language: lang })} />
         {runnable && (
           <div>
             <Tooltip>
@@ -348,9 +295,9 @@ export const CodeBlock: FC<
                   size="icon"
                   variant="ghost"
                   onClick={() => {
-                    setStdout("");
-                    setStderr("");
-                    setImages([]);
+                    setStdout('')
+                    setStderr('')
+                    setImages([])
                   }}
                 >
                   <Delete size={16} />
@@ -386,24 +333,17 @@ export const CodeBlock: FC<
 
       <div>
         {stdout && (
-          <div
-            className={clsx(
-              "font-mono p-4 bg-background border-green-600 border-l-4",
-              stderr || "rounded-b-lg",
-            )}
-          >
-            {stdout.split("\n").map((line, index) => (
+          <div className={clsx('font-mono p-4 bg-background border-green-600 border-l-4', stderr || 'rounded-b-lg')}>
+            {stdout.split('\n').map((line, index) => (
               <div key={index}>{ansiToSpans(line)}</div>
             ))}
           </div>
         )}
         {stderr && (
           <div className="font-mono p-4 bg-background rounded-b-lg border-red-600 border-l-4">
-            {stderr.split("\n").map((line, index) => (
+            {stderr.split('\n').map((line, index) => (
               <div key={index}>
-                {index === 0 && (
-                  <CircleAlert className="mr-4 my-2 inline-block text-red-600" />
-                )}
+                {index === 0 && <CircleAlert className="mr-4 my-2 inline-block text-red-600" />}
                 {ansiToSpans(line)}
               </div>
             ))}
@@ -412,19 +352,17 @@ export const CodeBlock: FC<
       </div>
       <div
         className={clsx(
-          "w-full place-items-center grid",
-          images.length >= 2 ? "grid-cols-2" : "grid-cols-1",
-          isProcessingMedia && "h-64",
+          'w-full place-items-center grid',
+          images.length >= 2 ? 'grid-cols-2' : 'grid-cols-1',
+          isProcessingMedia && 'h-64',
         )}
       >
         {isProcessingMedia ? (
           <Spinner />
         ) : (
-          images.map((url, index) => (
-            <img key={index} src={url.href} alt="Image output" />
-          ))
+          images.map((url, index) => <img key={index} src={url.href} alt="Image output" />)
         )}
       </div>
     </div>
-  );
-};
+  )
+}

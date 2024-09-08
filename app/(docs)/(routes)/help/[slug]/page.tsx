@@ -1,5 +1,5 @@
-import { glob } from "glob";
-import { notFound } from "next/navigation";
+import { glob } from 'glob'
+import { notFound } from 'next/navigation'
 
 import {
   Breadcrumb,
@@ -8,8 +8,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { getTitle } from "@/lib/utils";
+} from '@/components/ui/breadcrumb'
+import { getTitle } from '@/lib/utils'
 
 /**
  * Content of help pages is stored in the `/content/help` directory.
@@ -18,34 +18,32 @@ import { getTitle } from "@/lib/utils";
 
 function getContent(params: { slug: string }) {
   try {
-    const data = require(`@/content/help/${params.slug}.mdx`);
+    const data = require(`@/content/help/${params.slug}.mdx`)
 
     return {
       mdx: data.default,
       meta: data.meta,
-    };
+    }
   } catch (error) {
-    notFound();
+    notFound()
   }
 }
 
 export function generateStaticParams() {
   // getting all .mdx files from the posts directory
-  const posts = glob.sync(`content/help/*.mdx`);
+  const posts = glob.sync(`content/help/*.mdx`)
 
   // converting the file names to their slugs
-  const postSlugs = posts.map((file) =>
-    file.split("/")[2].replace(/ /g, "-").slice(0, -4).trim(),
-  );
+  const postSlugs = posts.map(file => file.split('/')[2].replace(/ /g, '-').slice(0, -4).trim())
 
   // creating a path for each of the `slug` parameter
-  return postSlugs.map((slug) => {
-    return { slug: slug };
-  });
+  return postSlugs.map(slug => {
+    return { slug: slug }
+  })
 }
 
 export default function Content({ params }: { params: { slug: string } }) {
-  const content = getContent(params);
+  const content = getContent(params)
 
   return (
     <>
@@ -86,5 +84,5 @@ export default function Content({ params }: { params: { slug: string } }) {
         </div>
       </div>
     </>
-  );
+  )
 }

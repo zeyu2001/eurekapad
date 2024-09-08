@@ -1,18 +1,18 @@
-import { PartialBlock } from "@blocknote/core";
-import { v4 as uuidv4 } from "uuid";
+import { PartialBlock } from '@blocknote/core'
+import { v4 as uuidv4 } from 'uuid'
 
-import { CustomEditor } from "@/components/editor/schema";
+import { CustomEditor } from '@/components/editor/schema'
 
 export function insertBlockAndFocus(
   editor: CustomEditor,
   block: PartialBlock<
-    CustomEditor["schema"]["blockSchema"],
-    CustomEditor["schema"]["inlineContentSchema"],
-    CustomEditor["schema"]["styleSchema"]
+    CustomEditor['schema']['blockSchema'],
+    CustomEditor['schema']['inlineContentSchema'],
+    CustomEditor['schema']['styleSchema']
   >,
 ) {
-  const currentBlock = editor.getTextCursorPosition().block;
-  const id = uuidv4();
+  const currentBlock = editor.getTextCursorPosition().block
+  const id = uuidv4()
   editor.insertBlocks(
     [
       {
@@ -21,6 +21,6 @@ export function insertBlockAndFocus(
       },
     ],
     currentBlock,
-  );
-  editor.setTextCursorPosition({ id: id });
+  )
+  editor.setTextCursorPosition({ id: id })
 }
