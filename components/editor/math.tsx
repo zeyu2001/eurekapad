@@ -14,6 +14,7 @@ import 'mathlive'
 import { defaultProps, InlineContentSchema, StyledText, StyleSchema } from '@blocknote/core'
 import { createReactBlockSpec, ReactCustomBlockImplementation, ReactCustomBlockRenderProps } from '@blocknote/react'
 import { Radical } from 'lucide-react'
+import { MathfieldElement } from 'mathlive'
 import { FC, useRef, useState } from 'react'
 
 import { useBlockFocus } from '@/hooks/use-block-focus'
@@ -34,6 +35,10 @@ const mathBlockConfig: MathBlockConfig = {
   },
   content: 'inline',
 }
+
+// Setting these to null prevents any custom fonts/sounds from loading
+MathfieldElement.fontsDirectory = null
+MathfieldElement.soundsDirectory = null
 
 const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSchema, StyleSchema>> = ({
   block,
