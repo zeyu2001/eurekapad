@@ -11,6 +11,7 @@ import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import cambridgeImage from '@/images/cambridge.png'
 import imperialImage from '@/images/imperial.png'
+import nusImage from '@/images/nus.png'
 import heroImage from '@/images/two-humans.svg'
 import heroImageDark from '@/images/two-humans-dark.svg'
 
@@ -86,7 +87,7 @@ export const Heading = () => {
       </div>
       <div className="pb-16 container text-center">
         <p className="font-display text-base text-slate-900 dark:text-slate-100">
-          Built by students from Cambridge, and trusted by students from
+          Built by students from Cambridge and NUS. Trusted by students from
         </p>
         <ul
           role="list"
@@ -95,6 +96,7 @@ export const Heading = () => {
           {[
             { name: 'University of Cambridge', logo: cambridgeImage },
             { name: 'Imperial College London', logo: imperialImage },
+            { name: 'National University of Singapore', logo: nusImage },
           ].map(school => (
             <li key={school.name} className="dark:bg-white p-4 rounded-lg shadow-lg dark:shadow-blue-500/50">
               <Image src={school.logo} alt={school.name} width={200} height={200} />
