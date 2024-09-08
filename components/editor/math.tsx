@@ -37,6 +37,10 @@ const mathBlockConfig: MathBlockConfig = {
   content: 'inline',
 }
 
+// Setting these to null prevents any custom fonts/sounds from loading
+MathfieldElement.fontsDirectory = null
+MathfieldElement.soundsDirectory = null
+
 const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSchema, StyleSchema>> = ({
   block,
   editor,

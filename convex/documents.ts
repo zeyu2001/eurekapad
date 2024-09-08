@@ -196,6 +196,14 @@ export const remove = mutation({
       throw new Error('Unauthorized')
     }
 
+    // delete the stored content
+    if (existingDocument.contentId) {
+      try {
+        await ctx.storage.delete(existingDocument.contentId)
+      } catch (error) {
+        console.error('Failed to delete content', error)
+      }
+    }
     const document = await ctx.db.delete(args.id)
 
     return document
@@ -256,7 +264,7 @@ export const update = mutation({
   args: {
     id: v.id('documents'),
     title: v.optional(v.string()),
-    content: v.optional(v.string()),
+    contentId: v.optional(v.id('_storage')),
     coverImage: v.optional(v.string()),
     icon: v.optional(v.string()),
     isPublished: v.optional(v.boolean()),
@@ -282,11 +290,43 @@ export const update = mutation({
       throw new Error('Unauthorized')
     }
 
+    // replace old content and delete it
+    if (args.contentId && existingDocument.contentId) {
+      try {
+        await ctx.storage.delete(existingDocument.contentId)
+      } catch (error) {
+        console.error('Failed to delete old content', error)
+      }
+    }
     const document = await ctx.db.patch(args.id, {
       ...rest,
     })
 
     return document
+  },
+})
+
+export const generateContentUploadUrl = mutation({
+  handler: async (ctx, _args) => {
+    const identity = await ctx.auth.getUserIdentity()
+
+    if (!identity) {
+      throw new Error('Unauthenticated')
+    }
+
+    const uploadUrl = await ctx.storage.generateUploadUrl()
+
+    return uploadUrl
+  },
+})
+
+export const getContentUrl = query({
+  args: { contentId: v.optional(v.id('_storage')) },
+  handler: async (ctx, args) => {
+    if (!args.contentId) {
+      return null
+    }
+    return await ctx.storage.getUrl(args.contentId)
   },
 })
 
