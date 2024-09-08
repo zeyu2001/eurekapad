@@ -85,6 +85,7 @@ EurekaPad is a specialized note-taking application designed to provide a superio
 4. When adding new environment variables, update both `.env.example` and the setup instructions in this README.
 5. Keep the `convex/schema.ts` file updated when modifying the database structure.
 6. Use the `useOptimisticDocumentUpdate` hook for a better user experience when updating documents.
+7. Use `contex/http.ts` for webhook callbacks.
 
 ## Running Migrations
 

@@ -10,8 +10,11 @@
  */
 
 import type { ApiFromModules, FilterApi, FunctionReference } from 'convex/server'
+import type * as clerk from '../clerk.js'
 import type * as documents from '../documents.js'
 import type * as migrations from '../migrations.js'
+import type * as emails_signup from '../emails/signup.js'
+import type * as http from '../http.js'
 import type * as speech from '../speech.js'
 import type * as uploads from '../uploads.js'
 
@@ -24,8 +27,11 @@ import type * as uploads from '../uploads.js'
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  clerk: typeof clerk
   documents: typeof documents
   migrations: typeof migrations
+  'emails/signup': typeof emails_signup
+  http: typeof http
   speech: typeof speech
   uploads: typeof uploads
 }>

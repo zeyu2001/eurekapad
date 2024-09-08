@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FaInstagram, FaLinkedin } from 'react-icons/fa'
+import { FaDiscord, FaInstagram, FaLinkedin } from 'react-icons/fa'
 
 import { Logo } from './logo'
 import { NavLink } from './navlink'
@@ -38,6 +38,9 @@ export function Footer() {
               aria-label="EurekaPad on LinkedIn"
             >
               <FaLinkedin className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
+            </Link>
+            <Link href="https://discord.gg/CM6zFT6MRr" className="group" aria-label="EurekaPad on Discord">
+              <FaDiscord className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
             </Link>
           </div>
           <p className="mt-6 text-sm text-slate-500 sm:mt-0 darK:text-slate-300">
