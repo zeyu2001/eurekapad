@@ -14,6 +14,7 @@ import 'mathlive'
 import { defaultProps, InlineContentSchema, StyledText, StyleSchema } from '@blocknote/core'
 import { createReactBlockSpec, ReactCustomBlockImplementation, ReactCustomBlockRenderProps } from '@blocknote/react'
 import { Radical } from 'lucide-react'
+import type { MathfieldElement } from 'mathlive'
 import { FC, useRef, useState } from 'react'
 
 import { useBlockFocus } from '@/hooks/use-block-focus'
@@ -41,7 +42,7 @@ const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSc
 }) => {
   const content = block.content[0] as StyledText<StyleSchema>
   const [latex, setLatex] = useState(content?.text || '')
-  const mathFieldRef = useRef<HTMLElement>(null)
+  const mathFieldRef = useRef<MathfieldElement>(null)
 
   useBlockFocus<MathBlockConfig, InlineContentSchema, StyleSchema>(mathFieldRef, editor, block.id)
 
