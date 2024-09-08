@@ -1,49 +1,35 @@
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
-import { InlineContentSchema, StyleSchema } from "@blocknote/core";
-import { ReactCustomBlockRenderProps } from "@blocknote/react";
-import { langNames, langs } from "@uiw/codemirror-extensions-langs";
-import { vscodeDarkInit, vscodeLightInit } from "@uiw/codemirror-theme-vscode";
-import ReactCodeMirror from "@uiw/react-codemirror";
-import clsx from "clsx";
-import { useAction } from "convex/react";
-import { Check, ChevronsDown, CircleAlert, Delete, Play } from "lucide-react";
-import { useTheme } from "next-themes";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { InlineContentSchema, StyleSchema } from '@blocknote/core'
+import { ReactCustomBlockRenderProps } from '@blocknote/react'
+import { langNames, langs } from '@uiw/codemirror-extensions-langs'
+import { vscodeDarkInit, vscodeLightInit } from '@uiw/codemirror-theme-vscode'
+import ReactCodeMirror from '@uiw/react-codemirror'
+import clsx from 'clsx'
+import { useAction } from 'convex/react'
+import { Check, ChevronsDown, CircleAlert, Delete, Play } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
-import { CodeBlockConfig } from "@/components/editor/code";
-import { RUNNABLE_LANGUAGES } from "@/components/editor/code/constants";
-import { Images, imagesJSONSchema } from "@/components/editor/code/schemas";
-import { Spinner } from "@/components/spinner";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { api } from "@/convex/_generated/api";
-import { useBlockFocus } from "@/hooks/use-block-focus";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useEditorContext } from "@/hooks/use-editor-context";
-import { useJSRunner } from "@/hooks/use-js-runner";
-import { usePythonRunner } from "@/hooks/use-python-runner";
-import { useResizable } from "@/hooks/use-resizable";
-import { upload } from "@/lib/client-uploads";
-import { ansiToSpans, capitalizeFirstLetter, cn } from "@/lib/utils";
+import { CodeBlockConfig } from '@/components/editor/code'
+import { RUNNABLE_LANGUAGES } from '@/components/editor/code/constants'
+import { Images, imagesJSONSchema } from '@/components/editor/code/schemas'
+import { Spinner } from '@/components/spinner'
+import { Button } from '@/components/ui/button'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { api } from '@/convex/_generated/api'
+import { useBlockFocus } from '@/hooks/use-block-focus'
+import { useDebounce } from '@/hooks/use-debounce'
+import { useEditorContext } from '@/hooks/use-editor-context'
+import { useJSRunner } from '@/hooks/use-js-runner'
+import { usePythonRunner } from '@/hooks/use-python-runner'
+import { useResizable } from '@/hooks/use-resizable'
+import { upload } from '@/lib/client-uploads'
+import { ansiToSpans, capitalizeFirstLetter, cn } from '@/lib/utils'
 
 const LanguageCommandItem = ({
   lang,
@@ -169,21 +155,13 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
       })
     },
     [getUploadUrl, editorContext],
-  );
+  )
 
-  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner();
-  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner();
+  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner()
+  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner()
 
   const handleInputChange = useCallback(
-    ({
-      code,
-      language,
-      height,
-    }: {
-      code?: string;
-      language?: string;
-      height?: number;
-    }) => {
+    ({ code, language, height }: { code?: string; language?: string; height?: number }) => {
       editor.updateBlock(block.id, {
         props: {
           ...block.props,
@@ -191,10 +169,10 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
           code: code ?? block.props.code,
           height: height ?? block.props.height,
         },
-      });
+      })
     },
     [block.id, block.props, editor],
-  );
+  )
 
   const runCode = useCallback(async () => {
     const runnerConfig = {
@@ -264,16 +242,12 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
 
   const runnable = RUNNABLE_LANGUAGES.includes(language)
 
-  const { height, handleMouseDown, isResizing } = useResizable(
-    block.props.height || 300,
-    100,
-    1000,
-  );
-  const debouncedHeight = useDebounce(height, 1000);
+  const { height, handleMouseDown, isResizing } = useResizable(block.props.height || 300, 100, 1000)
+  const debouncedHeight = useDebounce(height, 1000)
 
   useEffect(() => {
-    handleInputChange({ height: debouncedHeight });
-  }, [debouncedHeight, handleInputChange]);
+    handleInputChange({ height: debouncedHeight })
+  }, [debouncedHeight, handleInputChange])
 
   return (
     <div className="w-full border border-gray-200 rounded-lg dark:border-none">
@@ -311,19 +285,19 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
       <div ref={codeMirrorRef}>
         <ReactCodeMirror
           id={block?.id}
-          placeholder={"Write your code here..."}
+          placeholder={'Write your code here...'}
           extensions={[langs[language as keyof typeof langs]()]}
           value={code}
           theme={editorTheme}
           editable={editor.isEditable}
           width="100%"
-          onChange={(value) => handleInputChange({ code: value })}
+          onChange={value => handleInputChange({ code: value })}
           height={`${height}px`}
         />
         <div
           className={clsx(
-            "flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize",
-            isResizing && "bg-blue-200 dark:bg-blue-800",
+            'flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize',
+            isResizing && 'bg-blue-200 dark:bg-blue-800',
           )}
           onMouseDown={handleMouseDown}
         >

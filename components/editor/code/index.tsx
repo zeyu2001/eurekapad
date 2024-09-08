@@ -27,13 +27,13 @@ export interface CodeBlockConfig {
       default: string
     }
     images: {
-      default: string;
-    };
+      default: string
+    }
     height: {
-      default: number;
-    };
-  };
-  content: "none";
+      default: number
+    }
+  }
+  content: 'none'
 }
 
 const codeBlockConfig: CodeBlockConfig = {
