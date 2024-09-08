@@ -88,3 +88,7 @@ math-field::part(content) {
   text-align: center;
   display: block;
 }
+
+math-field::part(virtual-keyboard-toggle) {
+  display: var(--virtual-keyboard-toggle-display);
+}

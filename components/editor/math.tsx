@@ -15,6 +15,7 @@ import { defaultProps, InlineContentSchema, StyledText, StyleSchema } from '@blo
 import { createReactBlockSpec, ReactCustomBlockImplementation, ReactCustomBlockRenderProps } from '@blocknote/react'
 import { Radical } from 'lucide-react'
 import type { MathfieldElement } from 'mathlive'
+import { usePathname } from 'next/navigation'
 import { FC, useRef, useState } from 'react'
 
 import { useBlockFocus } from '@/hooks/use-block-focus'
@@ -40,9 +41,15 @@ const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSc
   block,
   editor,
 }) => {
+  const pathname = usePathname()
   const content = block.content[0] as StyledText<StyleSchema>
   const [latex, setLatex] = useState(content?.text || '')
   const mathFieldRef = useRef<MathfieldElement>(null)
+
+  document.body.style.setProperty(
+    '--virtual-keyboard-toggle-display',
+    pathname.startsWith('/preview') ? 'none' : 'flex',
+  )
 
   useBlockFocus<MathBlockConfig, InlineContentSchema, StyleSchema>(mathFieldRef, editor, block.id)
 
