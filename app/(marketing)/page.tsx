@@ -1,7 +1,7 @@
-import { Demo } from "./_components/demo";
-import { Footer } from "./_components/footer";
-import { Heading } from "./_components/heading";
-import { Testimonials } from "./_components/testimonials";
+import { Demo } from './_components/demo'
+import { Footer } from './_components/footer'
+import { Heading } from './_components/heading'
+import { Testimonials } from './_components/testimonials'
 
 const MarketingPage = () => {
   return (
@@ -11,7 +11,7 @@ const MarketingPage = () => {
       <Testimonials />
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default MarketingPage;
+export default MarketingPage

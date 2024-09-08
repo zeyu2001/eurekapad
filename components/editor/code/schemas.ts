@@ -1,28 +1,28 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const imagesSchema = z.array(
   z
     .string()
     .url()
-    .transform((val) => {
-      return new URL(val);
+    .transform(val => {
+      return new URL(val)
     }),
-);
+)
 
 export const imagesJSONSchema = z
   .string()
   .transform((val, ctx) => {
     try {
-      return JSON.parse(val);
+      return JSON.parse(val)
     } catch (error) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "invalid json",
-      });
-      return z.never;
+        message: 'invalid json',
+      })
+      return z.never
     }
   })
   .pipe(imagesSchema)
-  .catch([]);
+  .catch([])
 
-export type Images = z.infer<typeof imagesSchema>;
+export type Images = z.infer<typeof imagesSchema>

@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-import { SingletonJSRunner } from "@/lib/singleton-js-runner";
+import { SingletonJSRunner } from '@/lib/singleton-js-runner'
 
 export const useJSRunner = () => {
-  const [runner, setRunner] = useState<SingletonJSRunner | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [runner, setRunner] = useState<SingletonJSRunner | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const runner = SingletonJSRunner.getInstance();
+    const runner = SingletonJSRunner.getInstance()
 
-    setRunner(runner);
+    setRunner(runner)
 
     if (runner.isLoaded()) {
-      setLoaded(true);
-      return;
+      setLoaded(true)
+      return
     }
 
     runner.initJS().then(() => {
-      setLoaded(true);
-    });
-  }, []);
+      setLoaded(true)
+    })
+  }, [])
 
-  return { runner, loaded };
-};
+  return { runner, loaded }
+}

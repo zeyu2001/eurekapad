@@ -1,43 +1,74 @@
-"use client";
+'use client'
 
-import { useQuery } from "convex/react";
-import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMutation, useQuery } from 'convex/react'
+import dynamic from 'next/dynamic'
+import { useCallback, useEffect, useState } from 'react'
+import { useDebounce } from 'usehooks-ts'
 
-import { Cover } from "@/components/cover";
-import { Toolbar } from "@/components/toolbar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useOptimisticDocumentUpdate } from "@/hooks/use-optimistic-document-update";
-import { getTitle } from "@/lib/utils";
+import { Cover } from '@/components/cover'
+import { Toolbar } from '@/components/toolbar'
+import { Skeleton } from '@/components/ui/skeleton'
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
+import { useContent } from '@/hooks/use-content'
+import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
+import { getTitle } from '@/lib/utils'
+
+const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
 interface DocumentIdPageProps {
   params: {
-    documentId: Id<"documents">;
-  };
+    documentId: Id<'documents'>
+  }
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
-    [],
-  );
-
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
-  });
+  })
 
-  const update = useOptimisticDocumentUpdate();
+  const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
+  const [isLoaded, initialContent] = useContent(document)
 
-  const onChange = (content: string) => {
-    update({
-      id: params.documentId,
-      content,
-    });
-  };
+  const [content, setContent] = useState<string | undefined>(initialContent)
+  const debouncedContent = useDebounce<string | undefined>(content, 1000)
 
-  if (document === undefined) {
+  const update = useOptimisticDocumentUpdate()
+
+  const onChange = async (content: string) => {
+    setContent(content)
+  }
+
+  const saveContent = useCallback(
+    async (content: string) => {
+      const uploadUrl = await generateUploadUrl({})
+
+      const result = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: content,
+      })
+
+      const { storageId } = await result.json()
+
+      update({
+        id: params.documentId,
+        contentId: storageId,
+      })
+    },
+    [generateUploadUrl, params.documentId, update],
+  )
+
+  useEffect(() => {
+    if (!isLoaded || debouncedContent === undefined) {
+      return
+    }
+    saveContent(debouncedContent)
+  }, [debouncedContent, isLoaded])
+
+  if (document === undefined || !isLoaded) {
     return (
       <div>
         <Cover.Skeleton />
@@ -50,11 +81,11 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   if (document === null) {
-    return <div>Not found</div>;
+    return <div>Not found</div>
   }
 
   return (
@@ -64,15 +95,11 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
         <Cover url={document.coverImage} />
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
-          <Editor
-            onChange={onChange}
-            savable
-            initialContent={document.content}
-          />
+          <Editor onChange={onChange} savable initialContent={initialContent} />
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default DocumentIdPage;
+export default DocumentIdPage

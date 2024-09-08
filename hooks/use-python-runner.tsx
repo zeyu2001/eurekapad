@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-import { SingletonPythonRunner } from "@/lib/singleton-python-runner";
+import { SingletonPythonRunner } from '@/lib/singleton-python-runner'
 
 export const usePythonRunner = () => {
-  const [runner, setRunner] = useState<SingletonPythonRunner | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [runner, setRunner] = useState<SingletonPythonRunner | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const runner = SingletonPythonRunner.getInstance();
+    const runner = SingletonPythonRunner.getInstance()
 
-    setRunner(runner);
+    setRunner(runner)
 
     if (runner.isLoaded()) {
-      setLoaded(true);
-      return;
+      setLoaded(true)
+      return
     }
 
     runner.initPyodide().then(() => {
-      setLoaded(true);
-    });
-  }, []);
+      setLoaded(true)
+    })
+  }, [])
 
-  return { runner, loaded };
-};
+  return { runner, loaded }
+}

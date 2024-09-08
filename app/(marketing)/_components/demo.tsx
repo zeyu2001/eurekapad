@@ -1,66 +1,62 @@
-"use client";
+'use client'
 
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import clsx from "clsx";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import clsx from 'clsx'
+import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
-import backgroundImage from "@/images/background-features.jpg";
-import codeBlockImage from "@/images/code-block.png";
-import mathBlockImage from "@/images/math-block.png";
+import backgroundImage from '@/images/background-features.jpg'
+import codeBlockImage from '@/images/code-block.png'
+import mathBlockImage from '@/images/math-block.png'
 
-import codeBlockDemo from "./codeBlockDemo.json";
-import graphBlockDemo from "./graphBlockDemo.json";
-import mathBlockDemo from "./mathBlockDemo.json";
+import codeBlockDemo from './codeBlockDemo.json'
+import graphBlockDemo from './graphBlockDemo.json'
+import mathBlockDemo from './mathBlockDemo.json'
 
-const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
+const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
 const features = [
   {
-    title: "/code",
-    description:
-      "Lightning fast, runnable code blocks. Support for matplotlib, numpy, pandas, and more.",
+    title: '/code',
+    description: 'Lightning fast, runnable code blocks. Support for matplotlib, numpy, pandas, and more.',
     initialContent: JSON.stringify(codeBlockDemo),
     image: codeBlockImage,
   },
   {
-    title: "/math",
-    description:
-      "Interactive math blocks. Write LaTeX or use the built-in math keyboard.",
+    title: '/math',
+    description: 'Interactive math blocks. Write LaTeX or use the built-in math keyboard.',
     initialContent: JSON.stringify(mathBlockDemo),
     image: mathBlockImage,
   },
   {
-    title: "/graph",
-    description: "Interactive graphs within your notes, powered by Desmos.",
+    title: '/graph',
+    description: 'Interactive graphs within your notes, powered by Desmos.',
     initialContent: JSON.stringify(graphBlockDemo),
-    video: "/graph-block.webm",
+    video: '/graph-block.webm',
   },
-];
+]
 
 export function Demo() {
-  let [tabOrientation, setTabOrientation] = useState<"horizontal" | "vertical">(
-    "horizontal",
-  );
+  let [tabOrientation, setTabOrientation] = useState<'horizontal' | 'vertical'>('horizontal')
 
-  const [isLg, setIsLg] = useState(false);
+  const [isLg, setIsLg] = useState(false)
 
   useEffect(() => {
-    let lgMediaQuery = window.matchMedia("(min-width: 1024px)");
+    let lgMediaQuery = window.matchMedia('(min-width: 1024px)')
 
     function onMediaQueryChange({ matches }: { matches: boolean }) {
-      setTabOrientation(matches ? "vertical" : "horizontal");
-      setIsLg(matches);
+      setTabOrientation(matches ? 'vertical' : 'horizontal')
+      setIsLg(matches)
     }
 
-    onMediaQueryChange(lgMediaQuery);
-    lgMediaQuery.addEventListener("change", onMediaQueryChange);
+    onMediaQueryChange(lgMediaQuery)
+    lgMediaQuery.addEventListener('change', onMediaQueryChange)
 
     return () => {
-      lgMediaQuery.removeEventListener("change", onMediaQueryChange);
-    };
-  }, []);
+      lgMediaQuery.removeEventListener('change', onMediaQueryChange)
+    }
+  }, [])
 
   return (
     <section
@@ -87,7 +83,7 @@ export function Demo() {
         </div>
         <TabGroup
           className="mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0"
-          vertical={tabOrientation === "vertical"}
+          vertical={tabOrientation === 'vertical'}
         >
           {({ selectedIndex }) => (
             <>
@@ -97,19 +93,19 @@ export function Demo() {
                     <div
                       key={feature.title}
                       className={clsx(
-                        "group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6",
+                        'group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6',
                         selectedIndex === featureIndex
-                          ? "bg-white lg:bg-white/10 lg:ring-1 lg:ring-inset lg:ring-white/10"
-                          : "hover:bg-white/10 lg:hover:bg-white/5",
+                          ? 'bg-white lg:bg-white/10 lg:ring-1 lg:ring-inset lg:ring-white/10'
+                          : 'hover:bg-white/10 lg:hover:bg-white/5',
                       )}
                     >
                       <h3>
                         <Tab
                           className={clsx(
-                            "font-display text-lg ui-not-focus-visible:outline-none",
+                            'font-display text-lg ui-not-focus-visible:outline-none',
                             selectedIndex === featureIndex
-                              ? "text-blue-600 lg:text-white"
-                              : "text-blue-100 hover:text-white lg:text-white",
+                              ? 'text-blue-600 lg:text-white'
+                              : 'text-blue-100 hover:text-white lg:text-white',
                           )}
                         >
                           <span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none" />
@@ -118,10 +114,8 @@ export function Demo() {
                       </h3>
                       <p
                         className={clsx(
-                          "mt-2 hidden text-sm lg:block",
-                          selectedIndex === featureIndex
-                            ? "text-white"
-                            : "text-blue-100 group-hover:text-white",
+                          'mt-2 hidden text-sm lg:block',
+                          selectedIndex === featureIndex ? 'text-white' : 'text-blue-100 group-hover:text-white',
                         )}
                       >
                         {feature.description}
@@ -131,7 +125,7 @@ export function Demo() {
                 </TabList>
               </div>
               <TabPanels className="lg:col-span-7">
-                {features.map((feature) => (
+                {features.map(feature => (
                   <TabPanel key={feature.title} unmount={false}>
                     <div className="relative sm:px-6 lg:hidden">
                       <div className="absolute -inset-x-4 bottom-[-4.25rem] top-[-6.5rem] bg-white/10 ring-1 ring-inset ring-white/10 sm:inset-x-0 sm:rounded-t-xl" />
@@ -141,20 +135,12 @@ export function Demo() {
                     </div>
                     <div
                       className={clsx(
-                        "mt-10 overflow-hidden rounded-xl shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0",
-                        isLg
-                          ? "bg-white dark:bg-[#1F1F1F] p-4"
-                          : "mt-10 w-[45rem] overflow-hidden sm:w-auto",
+                        'mt-10 overflow-hidden rounded-xl shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0',
+                        isLg ? 'bg-white dark:bg-[#1F1F1F] p-4' : 'mt-10 w-[45rem] overflow-hidden sm:w-auto',
                       )}
                     >
                       <div>
-                        {isLg && (
-                          <Editor
-                            initialContent={feature.initialContent}
-                            onChange={() => {}}
-                            editable={true}
-                          />
-                        )}
+                        {isLg && <Editor initialContent={feature.initialContent} onChange={() => {}} editable={true} />}
                         {!isLg && feature.image && (
                           <Image
                             className="w-full relative z-10"
@@ -165,14 +151,7 @@ export function Demo() {
                           />
                         )}
                         {!isLg && feature.video && (
-                          <video
-                            className="w-full relative z-10"
-                            src={feature.video}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          />
+                          <video className="w-full relative z-10" src={feature.video} autoPlay loop muted playsInline />
                         )}
                       </div>
                     </div>
@@ -184,5 +163,5 @@ export function Demo() {
         </TabGroup>
       </div>
     </section>
-  );
+  )
 }
