@@ -37,8 +37,8 @@ const mathBlockConfig: MathBlockConfig = {
   content: 'inline',
 }
 
-// Setting these to null prevents any custom fonts/sounds from loading
-MathfieldElement.fontsDirectory = null
+MathfieldElement.fontsDirectory = `${window.location.origin}/_next/static/fonts`
+// Setting `soundsDirectory` to null to prevent loading of custom sounds
 MathfieldElement.soundsDirectory = null
 
 const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSchema, StyleSchema>> = ({

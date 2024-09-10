@@ -1,4 +1,5 @@
 import createMDX from '@next/mdx'
+import CopyPlugin from 'copy-webpack-plugin'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -19,6 +20,17 @@ const nextConfig = {
         filename: 'static/pypi/[name][ext]',
       },
     })
+
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: [
+          {
+            from: './node_modules/mathlive/dist/fonts',
+            to: 'static/fonts/',
+          },
+        ],
+      }),
+    )
     return config
   },
   compiler: {
