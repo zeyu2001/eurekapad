@@ -19,9 +19,10 @@ import { usePathname } from 'next/navigation'
 import { FC, useRef, useState } from 'react'
 
 import { useBlockFocus } from '@/hooks/use-block-focus'
+import { useCustomizeMathlive } from '@/hooks/use-customize-mathlive'
 import { insertBlockAndFocus } from '@/lib/insert-block'
 
-import { CustomEditor } from './schema'
+import { CustomEditor } from '../schema'
 
 interface MathBlockConfig {
   type: 'math'
@@ -50,11 +51,7 @@ const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSc
   const [latex, setLatex] = useState(content?.text || '')
   const mathFieldRef = useRef<MathfieldElement>(null)
 
-  document.body.style.setProperty(
-    '--virtual-keyboard-toggle-display',
-    pathname.startsWith('/preview') ? 'none' : 'flex',
-  )
-
+  useCustomizeMathlive(mathFieldRef, !pathname.startsWith('/preview'), !pathname.startsWith('/preview'))
   useBlockFocus<MathBlockConfig, InlineContentSchema, StyleSchema>(mathFieldRef, editor, block.id)
 
   return (

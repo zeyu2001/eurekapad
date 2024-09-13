@@ -4,7 +4,7 @@ import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import './styles.css'
 
-import { PartialBlock } from '@blocknote/core'
+import { PartialBlock, StyledText, StyleSchema } from '@blocknote/core'
 import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { useAction, useConvexAuth } from 'convex/react'
@@ -12,11 +12,15 @@ import { useTheme } from 'next-themes'
 import { memo, useEffect } from 'react'
 import { toast } from 'sonner'
 
-import { customSchema } from '@/components/editor/schema'
+import { CustomBlock, customSchema } from '@/components/editor/schema'
 import { CustomSlashMenu } from '@/components/editor/slash-menu'
 import { api } from '@/convex/_generated/api'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
+
+import { mathShortcutAction } from './math/shortcutAction'
+
+const INLINE_MATH_REGEX = /\$\$(.*)\$\$/
 
 interface EditorProps {
   onChange: (_value: string) => void
@@ -24,8 +28,6 @@ interface EditorProps {
   editable?: boolean
   savable?: boolean
 }
-
-type CustomBlock = typeof customSchema.Block
 
 const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
   const { resolvedTheme } = useTheme()
@@ -73,26 +75,33 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
   })
 
   const handleEditorChange = () => {
-    const blocks = editor.document
+    for (const block of editor.document) {
+      applyTriggerActions(block)
+    }
 
-    const updatedBlocks = blocks.map(block => {
-      const updatedBlock = applyTriggerActions(block)
-      return updatedBlock || block
-    })
-
-    onChange(JSON.stringify(updatedBlocks, null, 2))
+    onChange(JSON.stringify(editor.document, null, 2))
   }
 
   // Update the type of applyTriggerActions
-  const applyTriggerActions = (block: CustomBlock): CustomBlock | null => {
+  const applyTriggerActions = (block: CustomBlock) => {
     const triggerActions = [
       {
         condition: (b: CustomBlock) =>
-          b.type === 'paragraph' && b.content?.[0]?.type === 'text' && b.content[0].text.startsWith('```'),
+          b.type === 'paragraph' &&
+          b.content?.[0]?.type === 'text' &&
+          (b.content[0] as StyledText<StyleSchema>).text.startsWith('```'),
         action: (b: CustomBlock) =>
           editor.updateBlock(b.id, {
             type: 'codeblock',
           }),
+      },
+      {
+        condition: (b: CustomBlock) =>
+          b.type === 'paragraph' &&
+          b.content.some(
+            content => content.type === 'text' && INLINE_MATH_REGEX.test((content as StyledText<StyleSchema>).text),
+          ),
+        action: mathShortcutAction(editor),
       },
     ]
 
@@ -101,8 +110,6 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
         return action(block)
       }
     }
-
-    return null
   }
 
   return (
