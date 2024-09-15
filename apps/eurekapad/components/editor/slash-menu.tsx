@@ -6,7 +6,7 @@ import { filterSuggestionItems } from '@blocknote/core'
 import { getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react'
 
 import { insertCodeBlock } from '@/components/editor/code'
-import { insertMathBlock } from '@/components/editor/math'
+import { insertMathBlock } from '@/components/editor/math/block'
 import { CustomEditor } from '@/components/editor/schema'
 import { insertTranscriptionBlock } from '@/components/editor/transcription'
 

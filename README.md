@@ -22,7 +22,7 @@ EurekaPad is a specialized note-taking application designed to provide a superio
 2. Install dependencies:
 
    ```
-   npm install
+   pnpm install
    ```
 
 3. Set up environment variables:
@@ -37,7 +37,7 @@ EurekaPad is a specialized note-taking application designed to provide a superio
 4. Start the development server:
 
    ```
-   npm run dev
+   pnpm dev
    ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -54,6 +54,17 @@ EurekaPad is a specialized note-taking application designed to provide a superio
 - Speech-to-text transcription
 
 ## Project Structure
+
+This project is a [turborepo](https://turborepo.org/) containing the following packages:
+
+- `apps/eurekapad`: Next.js application and Convex backend
+- `packages/eslint-config`: Shared ESLint configuration
+- `packages/tiptap-extensions`: TipTap extensions used in the editor
+
+This monorepo structure allows for shared code between packages and easy cross-package imports, while keeping the codebase organized.
+Turborepo solves many problems associated with monorepos, with e.g. incremental builds, caching, task orchestration, etc.
+
+### Next.js App
 
 - `app/`: Next.js app router and page components
 - `components/`: Reusable React components
@@ -108,9 +119,8 @@ These can be run in production with the `--prod` flag, but only _after_ deployin
 
 ## Available Scripts
 
-- `npm run dev`: Start the development server
-- `npm run build`: Build the production application
-- `npm run start`: Start the production server
-- `npm run lint`: Run ESLint
-- `npm run format`: Run Prettier to format code
-- `npm run prepare`: Install Husky for pre-commit hooks
+- `pnpm run dev`: Start the development server
+- `pnpm run build`: Build the production application
+- `pnpm run start`: Start the production server
+- `pnpm run lint`: Run ESLint
+- `pnpm run format`: Run Prettier to format code
