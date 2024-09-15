@@ -18,14 +18,14 @@ jobs:
       - name: Setup Node LTS ✨
         uses: actions/setup-node@v3
         with:
-          cache: npm
+          cache: pnpm
           node-version: lts/*
 
       - name: Installing dependencies 📦️
-        run: npm install
+        run: pnpm install
 
       - name: Lint 🛀
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Check for formatting 🧹
-        run: npm run format:check
+        run: pnpm run format:check
