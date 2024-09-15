@@ -9,7 +9,7 @@
     },
     "build:deploy": {
       "dependsOn": ["^build:deploy"],
-      "env": ["NEXT_PUBLIC_*"],
+      "env": ["NEXT_PUBLIC_*", "CONVEX_DEPLOY_KEY"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
