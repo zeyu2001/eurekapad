@@ -210,6 +210,9 @@ importers:
       '@eurekapad/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@eurekapad/prettier-config':
+        specifier: workspace:*
+        version: link:../../packages/prettier-config
       '@eurekapad/tiptap-extensions':
         specifier: workspace:*
         version: link:../../packages/tiptap-extensions
@@ -295,11 +298,26 @@ importers:
         specifier: ^5.3.3
         version: 5.6.2
 
+  packages/prettier-config:
+    devDependencies:
+      eslint:
+        specifier: ^8
+        version: 8.57.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.6.2
+
   packages/tiptap-extensions:
     devDependencies:
       '@eurekapad/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@eurekapad/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier-config
       '@rollup/plugin-babel':
         specifier: ^6.0.3
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@3.29.4)

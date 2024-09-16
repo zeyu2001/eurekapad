@@ -1,0 +1,14 @@
+{
+  "name": "@eurekapad/prettier-config",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "index.js",
+    ".prettierignore"
+  ],
+  "devDependencies": {
+    "eslint": "^8",
+    "prettier": "^3.3.3",
+    "typescript": "^5.3.3"
+  }
+}

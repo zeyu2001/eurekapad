@@ -11,10 +11,12 @@
     "dev": "npm run clean && rollup -c -w",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "test": "jest"
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@eurekapad/eslint-config": "workspace:*",
+    "@eurekapad/prettier-config": "workspace:*",
     "eslint": "^8",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.1",
@@ -29,5 +31,6 @@
   "peerDependencies": {
     "@tiptap/core": "^2.4.0",
     "@tiptap/pm": "^2.4.0"
-  }
+  },
+  "prettier": "@eurekapad/prettier-config"
 }
