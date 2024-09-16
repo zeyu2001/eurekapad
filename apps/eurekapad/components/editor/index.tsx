@@ -79,9 +79,7 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
   const handleEditorChange = () => {
     const blocks = editor.document
 
-    for (const block of blocks) {
-      applyTriggerActions(block)
-    }
+    blocks.forEach(applyTriggerActions)
 
     onChange(JSON.stringify(editor.document, null, 2))
   }
