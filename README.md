@@ -59,6 +59,7 @@ This project is a [turborepo](https://turborepo.org/) containing the following p
 
 - `apps/eurekapad`: Next.js application and Convex backend
 - `packages/eslint-config`: Shared ESLint configuration
+- `packages/prettier-config`: Shared Prettier configuration
 - `packages/tiptap-extensions`: TipTap extensions used in the editor
 
 This monorepo structure allows for shared code between packages and easy cross-package imports, while keeping the codebase organized.
