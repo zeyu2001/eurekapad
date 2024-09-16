@@ -10,14 +10,18 @@
  * @module
  */
 
-import type { ApiFromModules, FilterApi, FunctionReference } from 'convex/server'
-import type * as clerk from '../clerk.js'
-import type * as documents from '../documents.js'
-import type * as emails_signup from '../emails/signup.js'
-import type * as http from '../http.js'
-import type * as migrations from '../migrations.js'
-import type * as speech from '../speech.js'
-import type * as uploads from '../uploads.js'
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
+import type * as clerk from "../clerk.js";
+import type * as documents from "../documents.js";
+import type * as emails_signup from "../emails/signup.js";
+import type * as http from "../http.js";
+import type * as migrations from "../migrations.js";
+import type * as speech from "../speech.js";
+import type * as uploads from "../uploads.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,15 +32,21 @@ import type * as uploads from '../uploads.js'
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  clerk: typeof clerk
-  documents: typeof documents
-  'emails/signup': typeof emails_signup
-  http: typeof http
-  migrations: typeof migrations
-  speech: typeof speech
-  uploads: typeof uploads
-}>
-export declare const api: FilterApi<typeof fullApi, FunctionReference<any, 'public'>>
-export declare const internal: FilterApi<typeof fullApi, FunctionReference<any, 'internal'>>
+  clerk: typeof clerk;
+  documents: typeof documents;
+  "emails/signup": typeof emails_signup;
+  http: typeof http;
+  migrations: typeof migrations;
+  speech: typeof speech;
+  uploads: typeof uploads;
+}>;
+export declare const api: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "public">
+>;
+export declare const internal: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "internal">
+>;
 
 /* prettier-ignore-end */
