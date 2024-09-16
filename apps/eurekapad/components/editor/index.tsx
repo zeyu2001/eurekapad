@@ -4,9 +4,10 @@ import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import './styles.css'
 
-import { PartialBlock } from '@blocknote/core'
+import { PartialBlock, StyledText, StyleSchema } from '@blocknote/core'
 import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
+import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
 import { memo, useEffect } from 'react'
@@ -70,25 +71,27 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     schema: customSchema,
     initialContent: initialContent ? (JSON.parse(initialContent) as PartialBlock[]) : undefined,
     uploadFile: handleUpload,
+    _tiptapOptions: {
+      extensions: [InlineMathExtension, ArrowConversionExtension],
+    },
   })
 
   const handleEditorChange = () => {
     const blocks = editor.document
 
-    const updatedBlocks = blocks.map(block => {
-      const updatedBlock = applyTriggerActions(block)
-      return updatedBlock || block
-    })
+    blocks.forEach(applyTriggerActions)
 
-    onChange(JSON.stringify(updatedBlocks, null, 2))
+    onChange(JSON.stringify(editor.document, null, 2))
   }
 
   // Update the type of applyTriggerActions
-  const applyTriggerActions = (block: CustomBlock): CustomBlock | null => {
+  const applyTriggerActions = (block: CustomBlock) => {
     const triggerActions = [
       {
         condition: (b: CustomBlock) =>
-          b.type === 'paragraph' && b.content?.[0]?.type === 'text' && b.content[0].text.startsWith('```'),
+          b.type === 'paragraph' &&
+          b.content?.[0]?.type === 'text' &&
+          (b.content[0] as StyledText<StyleSchema>).text.startsWith('```'),
         action: (b: CustomBlock) =>
           editor.updateBlock(b.id, {
             type: 'codeblock',
@@ -98,11 +101,9 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
 
     for (const { condition, action } of triggerActions) {
       if (condition(block)) {
-        return action(block)
+        action(block)
       }
     }
-
-    return null
   }
 
   return (

@@ -93,3 +93,7 @@ math-field::part(content) {
 math-field::part(virtual-keyboard-toggle) {
   display: var(--virtual-keyboard-toggle-display);
 }
+
+math-field::part(menu-toggle) {
+  display: var(--menu-toggle-display);
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "build:deploy": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*", "CONVEX_DEPLOY_KEY"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "start": {
+      "dependsOn": ["^start"],
+      "env": ["NEXT_PUBLIC_*"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^build", "^lint"]
+    },
+    "lint:fix": {
+      "dependsOn": ["^build", "^lint:fix"]
+    },
+    "format": {
+      "dependsOn": ["lint:fix"]
+    },
+    "format:check": {
+      "dependsOn": ["lint"]
+    }
+  }
+}
