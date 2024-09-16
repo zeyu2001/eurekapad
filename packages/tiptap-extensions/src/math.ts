@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core'
 
-const INPUT_REGEX = /\$\$([^\$]*)\$\$/gi // matches for text inside $$
+const INPUT_REGEX = /\$\$(.+?)\$\$/gi // matches for text inside $$
 
 export const InlineMathExtension = Node.create({
   name: 'mathInline', // this must match the name of the inlineContentSpec
