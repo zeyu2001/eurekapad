@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation } from 'convex/react'
-import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from 'lucide-react'
+import { ChevronsLeft, MenuIcon, Plus, Search, Settings, Trash } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -135,11 +135,10 @@ export const Navigation = () => {
           <UserItem />
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
-          <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>
         <div className="mt-4">
-          <DocumentList />
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
+          <DocumentList />
           <Popover>
             <PopoverTrigger className="w-full mt-4">
               <Item label="Trash" icon={Trash} />
