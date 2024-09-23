@@ -3,13 +3,12 @@
 import { useMutation } from 'convex/react'
 import { ImageIcon, X } from 'lucide-react'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { useCoverImage } from '@/hooks/use-cover-image'
+import { useDocumentId } from '@/hooks/use-documentId'
 import { cn } from '@/lib/utils'
 
 interface CoverImageProps {
@@ -18,14 +17,13 @@ interface CoverImageProps {
 }
 
 export const Cover = ({ url, preview }: CoverImageProps) => {
-  const params = useParams()
+  const documentId = useDocumentId()
+
   const coverImage = useCoverImage()
   const removeCoverImage = useMutation(api.documents.removeCoverImage)
 
   const onRemove = async () => {
-    removeCoverImage({
-      id: params.documentId as Id<'documents'>,
-    })
+    removeCoverImage({ id: documentId })
   }
 
   return (

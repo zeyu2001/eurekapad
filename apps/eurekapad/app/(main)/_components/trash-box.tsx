@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from 'convex/react'
 import { Search, Trash, Undo } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -11,13 +11,15 @@ import { Spinner } from '@/components/spinner'
 import { Input } from '@/components/ui/input'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { useDocumentId } from '@/hooks/use-documentId'
 
 export const TrashBox = () => {
   const router = useRouter()
-  const params = useParams()
   const documents = useQuery(api.documents.getTrash)
   const restore = useMutation(api.documents.restore)
   const remove = useMutation(api.documents.remove)
+
+  const documentId = useDocumentId()
 
   const [search, setSearch] = useState('')
 
@@ -40,8 +42,8 @@ export const TrashBox = () => {
     })
   }
 
-  const onRemove = (documentId: Id<'documents'>) => {
-    const promise = remove({ id: documentId })
+  const onRemove = (toRemoveDocumentId: Id<'documents'>) => {
+    const promise = remove({ id: toRemoveDocumentId })
 
     toast.promise(promise, {
       loading: 'Deleting note...',
@@ -49,7 +51,7 @@ export const TrashBox = () => {
       error: ' Failed to delete note.',
     })
 
-    if (params.documentId === documentId) {
+    if (documentId === toRemoveDocumentId) {
       router.push('/documents')
     }
   }
