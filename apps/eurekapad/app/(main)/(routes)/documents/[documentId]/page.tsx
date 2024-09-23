@@ -2,8 +2,8 @@
 
 import { useMutation, useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useState } from 'react'
-import { useDebounce } from 'usehooks-ts'
+import { useCallback, useEffect } from 'react'
+import { useDebounceValue } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
@@ -23,8 +23,7 @@ export default function DocumentIdPage() {
   const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
   const [isLoaded, initialContent] = useContent(document)
 
-  const [content, setContent] = useState<string | undefined>(initialContent)
-  const debouncedContent = useDebounce<string | undefined>(content, 1000)
+  const [debouncedContent, setContent] = useDebounceValue(initialContent, 1000)
 
   const update = useOptimisticDocumentUpdate()
 
