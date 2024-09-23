@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
+import { getUrlFriendlyTitle } from '@/lib/utils'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -39,6 +40,10 @@ export default function DocumentIdPage() {
   if (document === null) {
     return <div>Not found</div>
   }
+
+  // Update url without reloading
+  const url = getUrlFriendlyTitle(document.title, document._id)
+  window.history.replaceState({ ...window.history.state, as: url, url }, '', url)
 
   return (
     <div className="pb-40">

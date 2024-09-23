@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Doc } from '@/convex/_generated/dataModel'
 import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
 import { useOrigin } from '@/hooks/use-origin'
+import { getUrlFriendlyTitle } from '@/lib/utils'
 
 interface PublishProps {
   initialData: Doc<'documents'>
@@ -21,7 +22,7 @@ export const Publish = ({ initialData }: PublishProps) => {
   const [copied, setCopied] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const url = `${origin}/preview/${initialData._id}`
+  const url = `${origin}/preview/${getUrlFriendlyTitle(initialData.title, initialData._id)}`
 
   const onPublish = () => {
     setIsSubmitting(true)
