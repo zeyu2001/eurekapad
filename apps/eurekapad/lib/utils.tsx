@@ -34,5 +34,4 @@ export const getUrlFriendlyTitle = (title: string, id: string) =>
     .replace(/\-+/g, '-')
     .replace(/-$/, '')
     .split(/-/)
-    .reduce((acc, curr) => `${acc}-${curr}`.length <= 100 ? `${acc}-${curr}` : acc)
-    }-${id}`
+    .reduce((acc, curr) => (`${acc}-${curr}`.length <= 100 ? `${acc}-${curr}` : acc))}-${id}`
