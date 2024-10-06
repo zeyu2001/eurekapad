@@ -2,13 +2,14 @@
 
 import { useMutation } from 'convex/react'
 import { ChevronsLeft, MenuIcon, Plus, Search, Settings, Trash } from 'lucide-react'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useMediaQuery } from 'usehooks-ts'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { api } from '@/convex/_generated/api'
+import { useDocumentId } from '@/hooks/use-documentId'
 import { useSearch } from '@/hooks/use-search'
 import { useSettings } from '@/hooks/use-settings'
 import { cn } from '@/lib/utils'
@@ -23,10 +24,11 @@ export const Navigation = () => {
   const router = useRouter()
   const settings = useSettings()
   const search = useSearch()
-  const params = useParams()
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const create = useMutation(api.documents.create)
+
+  const documentId = useDocumentId()
 
   const isResizingRef = useRef(false)
   const sidebarRef = useRef<ElementRef<'aside'>>(null)
@@ -162,7 +164,7 @@ export const Navigation = () => {
           isMobile && 'left-0 w-full',
         )}
       >
-        {!!params.documentId ? (
+        {documentId ? (
           <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
         ) : (
           <nav className="bg-transparent px-3 py-2 w-full">

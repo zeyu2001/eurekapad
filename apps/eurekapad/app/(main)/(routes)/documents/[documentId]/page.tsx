@@ -2,36 +2,28 @@
 
 import { useMutation, useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { useContent } from '@/hooks/use-content'
+import { useDocumentId } from '@/hooks/use-documentId'
 import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
-import { getTitle } from '@/lib/utils'
+import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
-interface DocumentIdPageProps {
-  params: {
-    documentId: Id<'documents'>
-  }
-}
-
-const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const document = useQuery(api.documents.getById, {
-    documentId: params.documentId,
-  })
+export default function DocumentIdPage() {
+  const documentId = useDocumentId()
+  const document = useQuery(api.documents.getById, { documentId })
 
   const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
   const [isLoaded, initialContent] = useContent(document)
 
-  const [content, setContent] = useState<string | undefined>(initialContent)
-  const [debouncedContent] = useDebounceValue<string | undefined>(content, 1000)
+  const [debouncedContent, setContent] = useDebounceValue(initialContent, 1000)
 
   const update = useOptimisticDocumentUpdate()
 
@@ -54,11 +46,11 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
       const { storageId } = await result.json()
 
       update({
-        id: params.documentId,
+        id: documentId,
         contentId: storageId,
       })
     },
-    [generateUploadUrl, params.documentId, update],
+    [generateUploadUrl, documentId, update],
   )
 
   useEffect(() => {
@@ -88,6 +80,10 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     return <div>Not found</div>
   }
 
+  // Update url without reloading
+  const url = getUrlFriendlyTitle(document.title, document._id)
+  window.history.replaceState({ ...window.history.state, as: url, url }, '', url)
+
   return (
     <>
       <title>{getTitle(document.title)}</title>
@@ -101,5 +97,3 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     </>
   )
 }
-
-export default DocumentIdPage
