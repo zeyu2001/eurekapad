@@ -2,11 +2,12 @@
 
 import { useQuery } from 'convex/react'
 import { FileIcon } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
+import { useDocumentId } from '@/hooks/use-documentId'
 import { cn } from '@/lib/utils'
 
 import { Item } from './item'
@@ -18,7 +19,7 @@ interface DocumentListProps {
 }
 
 export const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
-  const params = useParams()
+  const documentId = useDocumentId()
   const router = useRouter()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
@@ -73,7 +74,7 @@ export const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps)
             label={document.title}
             icon={FileIcon}
             documentIcon={document.icon}
-            active={params.documentId === document._id}
+            active={documentId === document._id}
             level={level}
             onExpand={() => onExpand(document._id)}
             expanded={expanded[document._id]}

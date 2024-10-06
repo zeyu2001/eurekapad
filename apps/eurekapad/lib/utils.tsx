@@ -11,9 +11,7 @@ import { parse } from 'ansicolor'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-export const cn = (...inputs: ClassValue[]) => {
-  return twMerge(clsx(inputs))
-}
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
@@ -27,6 +25,13 @@ export const ansiToSpans = (text: string) => {
   ))
 }
 
-export const getTitle = (subtitle: string) => {
-  return `${subtitle} | EurekaPad`
-}
+export const getTitle = (subtitle: string) => `${subtitle} | EurekaPad`
+
+export const getUrlFriendlyTitle = (title: string, id: string) =>
+  `${title
+    .trim()
+    .replace(/[^0-9a-z_]/gi, '-')
+    .replace(/\-+/g, '-')
+    .replace(/-$/, '')
+    .split(/-/)
+    .reduce((acc, curr) => (`${acc}-${curr}`.length <= 100 ? `${acc}-${curr}` : acc))}-${id}`

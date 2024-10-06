@@ -2,10 +2,9 @@
 
 import { useQuery } from 'convex/react'
 import { MenuIcon } from 'lucide-react'
-import { useParams } from 'next/navigation'
 
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
+import { useDocumentId } from '@/hooks/use-documentId'
 
 import { Banner } from './banner'
 import { Menu } from './menu'
@@ -18,11 +17,9 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
-  const params = useParams()
+  const documentId = useDocumentId()
 
-  const document = useQuery(api.documents.getById, {
-    documentId: params.documentId as Id<'documents'>,
-  })
+  const document = useQuery(api.documents.getById, { documentId })
 
   if (document === undefined) {
     return (

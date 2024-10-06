@@ -7,21 +7,16 @@ import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { useContent } from '@/hooks/use-content'
+import { useDocumentId } from '@/hooks/use-documentId'
+import { getUrlFriendlyTitle } from '@/lib/utils'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
-interface DocumentIdPageProps {
-  params: {
-    documentId: Id<'documents'>
-  }
-}
+export default function DocumentIdPage() {
+  const documentId = useDocumentId()
 
-const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
-  const document = useQuery(api.documents.getById, {
-    documentId: params.documentId,
-  })
+  const document = useQuery(api.documents.getById, { documentId })
   const [isLoaded, content] = useContent(document)
 
   const onChange = (_content: string) => {}
@@ -46,6 +41,10 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     return <div>Not found</div>
   }
 
+  // Update url without reloading
+  const url = getUrlFriendlyTitle(document.title, document._id)
+  window.history.replaceState({ ...window.history.state, as: url, url }, '', url)
+
   return (
     <div className="pb-40">
       <Cover preview url={document.coverImage} />
@@ -56,5 +55,3 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     </div>
   )
 }
-
-export default DocumentIdPage
