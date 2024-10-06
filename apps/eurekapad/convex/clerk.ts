@@ -59,16 +59,33 @@ export const clerkCallback = httpAction(async (ctx, request) => {
   if (evt.type === 'user.created') {
     const email = evt.data.email_addresses.length > 0 ? evt.data.email_addresses[0].email_address : null
     const firstName = evt.data.first_name
+    const lastName = evt.data.last_name
     if (email && firstName) {
       console.log(`User ${firstName} with email ${email} was created`)
 
       const RESEND_API_KEY = process.env.RESEND_API_KEY
+      const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID
+
       if (!RESEND_API_KEY) {
-        throw new Error('Please add RESEND_API_KEY from Resend Dashboard to .env or .env.local')
+        throw new Error('Please add RESEND_API_KEY from Resend Dashboard to Convex')
+      }
+
+      if (!RESEND_AUDIENCE_ID) {
+        throw new Error('Please add RESEND_AUDIENCE_ID from Resend Dashboard to Convex')
       }
 
       const resend = new Resend(RESEND_API_KEY)
 
+      // Add user to the audience list
+      const { error: contactError } = await resend.contacts.create({
+        email,
+        firstName,
+        lastName: lastName || undefined,
+        unsubscribed: false,
+        audienceId: RESEND_AUDIENCE_ID,
+      })
+
+      // Send welcome email
       const { data, error } = await resend.emails.send({
         from: 'Zayne <contact@eurekapad.app>',
         to: [email],
@@ -76,8 +93,8 @@ export const clerkCallback = httpAction(async (ctx, request) => {
         html: signupEmailHTML(firstName),
       })
 
-      if (error) {
-        return new Response(JSON.stringify(error), {
+      if (error || contactError) {
+        return new Response(JSON.stringify(error || contactError), {
           status: 500,
         })
       }
