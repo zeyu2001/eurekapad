@@ -67,11 +67,11 @@ export const clerkCallback = httpAction(async (ctx, request) => {
       const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID
 
       if (!RESEND_API_KEY) {
-        throw new Error('Please add RESEND_API_KEY from Resend Dashboard to .env or .env.local')
+        throw new Error('Please add RESEND_API_KEY from Resend Dashboard to Convex')
       }
 
       if (!RESEND_AUDIENCE_ID) {
-        throw new Error('Please add RESEND_AUDIENCE_ID from Resend Dashboard to .env or .env.local')
+        throw new Error('Please add RESEND_AUDIENCE_ID from Resend Dashboard to Convex')
       }
 
       const resend = new Resend(RESEND_API_KEY)
