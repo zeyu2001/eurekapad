@@ -10,10 +10,10 @@ import { useEffect, useState } from 'react'
 import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import cambridgeImage from '@/images/cambridge.png'
+import heroImage from '@/images/hero.svg'
+import heroImageDark from '@/images/hero-dark.svg'
 import imperialImage from '@/images/imperial.png'
 import nusImage from '@/images/nus.png'
-import heroImage from '@/images/two-humans.svg'
-import heroImageDark from '@/images/two-humans-dark.svg'
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth()
@@ -31,8 +31,8 @@ export const Heading = () => {
   return (
     <div className="text-center lg:text-left">
       <div className="h-screen container flex justify-center items-center mx-auto max-w-7xl py-16">
-        <div className="grid gap-8 md:gap-16 lg:grid-cols-5 justify-center items-center">
-          <div className="col-span-3">
+        <div className="grid gap-8 md:gap-16 lg:grid-cols-4 justify-center items-center">
+          <div className="col-span-2">
             <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight text-slate-900 sm:text-7xl dark:text-slate-100">
               Where{' '}
               <span className="relative whitespace-nowrap text-blue-600 dark:text-blue-400">
