@@ -16,9 +16,7 @@ export const useJSRunner = () => {
       return
     }
 
-    runner.initJS().then(() => {
-      setLoaded(true)
-    })
+    runner.initJS().then(() => setLoaded(true))
   }, [])
 
   return { runner, loaded }

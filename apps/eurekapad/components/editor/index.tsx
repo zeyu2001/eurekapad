@@ -32,11 +32,12 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
 
-  const editorContext = useEditorContext()
+  const { setAuthenticated, setSavable } = useEditorContext()
+
   useEffect(() => {
-    editorContext.setAuthenticated(isAuthenticated && !isLoading)
-    editorContext.setSavable(savable ?? false)
-  }, [isAuthenticated, isLoading, savable])
+    setAuthenticated(isAuthenticated && !isLoading)
+    setSavable(savable ?? false)
+  }, [isAuthenticated, isLoading, savable, setAuthenticated, setSavable])
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 

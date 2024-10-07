@@ -2,11 +2,11 @@
 
 import { SignInButton } from '@clerk/nextjs'
 import { useConvexAuth } from 'convex/react'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 
+import { Chevron } from '@/components/chevron'
 import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import cambridgeImage from '@/images/cambridge.png'
@@ -17,16 +17,6 @@ import nusImage from '@/images/nus.png'
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth()
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  })
 
   return (
     <div className="text-center lg:text-left">
@@ -53,20 +43,18 @@ export const Heading = () => {
               people deserve smart tools.
             </p>
             <div className="mt-10 flex justify-center gap-x-6">
-              {isLoading && (
+              {isLoading ? (
                 <div className="w-full flex items-center justify-center">
                   <Spinner size="lg" />
                 </div>
-              )}
-              {isAuthenticated && !isLoading && (
+              ) : isAuthenticated ? (
                 <Button asChild className="rounded-full">
                   <Link href="/documents">
                     Enter EurekaPad
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>
-              )}
-              {!isAuthenticated && !isLoading && (
+              ) : (
                 <SignInButton mode="modal">
                   <Button className="rounded-full">
                     Get EurekaPad free
@@ -82,9 +70,7 @@ export const Heading = () => {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-4 flex justify-center w-full">
-        {!scrolled && <ChevronDown className="h-8 w-8 transform animate-bounce" />}
-      </div>
+      <Chevron />
       <div className="pb-16 container text-center">
         <p className="font-display text-base text-slate-900 dark:text-slate-100">
           Built by students from Cambridge and NUS. Trusted by students from

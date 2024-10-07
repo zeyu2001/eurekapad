@@ -16,9 +16,7 @@ export const usePythonRunner = () => {
       return
     }
 
-    runner.initPyodide().then(() => {
-      setLoaded(true)
-    })
+    runner.initPyodide().then(() => setLoaded(true))
   }, [])
 
   return { runner, loaded }

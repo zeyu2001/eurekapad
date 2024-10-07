@@ -17,7 +17,7 @@ export const InlineMathExtension = Node.create({
         type: this.type,
         handler({ range, match, chain, state }) {
           const start = range.from
-          let end = range.to
+          const end = range.to
           if (match[1]) {
             const text = state.schema.text(match[1])
             chain()
