@@ -9,7 +9,7 @@ import { ReactNode } from 'react'
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
 
-export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
+export function ConvexClientProvider({ children }: { children: ReactNode }) {
   const { resolvedTheme } = useTheme()
   const currentTheme = (resolvedTheme || 'light') as keyof typeof themeMap
 

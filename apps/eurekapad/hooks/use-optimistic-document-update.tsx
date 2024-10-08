@@ -2,7 +2,7 @@ import { useMutation } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 
-export const useOptimisticDocumentUpdate = () => {
+export function useOptimisticDocumentUpdate() {
   const update = useMutation(api.documents.update).withOptimisticUpdate((localStore, args) => {
     const { id, ...rest } = args
     const currentDocument = localStore.getQuery(api.documents.getById, {

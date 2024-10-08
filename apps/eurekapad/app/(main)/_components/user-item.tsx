@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export const UserItem = () => {
+export function UserItem() {
   const { user } = useUser()
 
   return (

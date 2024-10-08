@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { SingletonJSRunner } from '@/lib/singleton-js-runner'
 
-export const useJSRunner = () => {
+export function useJSRunner() {
   const [runner, setRunner] = useState<SingletonJSRunner | null>(null)
   const [loaded, setLoaded] = useState(false)
 

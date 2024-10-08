@@ -37,13 +37,13 @@ interface PickerProps {
   onEmojiSelect: (_emoji: Emoji) => void
 }
 
-const EmojiPicker = (props: PickerProps) => {
+function EmojiPicker(props: PickerProps) {
   return <Picker {...props} />
 }
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export const IconPicker = ({ onChange, children, asChild }: IconPickerProps) => {
+export function IconPicker({ onChange, children, asChild }: IconPickerProps) {
   const { resolvedTheme } = useTheme()
   const currentTheme = resolvedTheme === 'dark' ? 'dark' : resolvedTheme === 'light' ? 'light' : 'auto'
 

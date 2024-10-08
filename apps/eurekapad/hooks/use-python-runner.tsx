@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { SingletonPythonRunner } from '@/lib/singleton-python-runner'
 
-export const usePythonRunner = () => {
+export function usePythonRunner() {
   const [runner, setRunner] = useState<SingletonPythonRunner | null>(null)
   const [loaded, setLoaded] = useState(false)
 

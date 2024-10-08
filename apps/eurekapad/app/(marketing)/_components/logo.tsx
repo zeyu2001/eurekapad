@@ -8,7 +8,7 @@ const font = Poppins({
   weight: ['400', '600'],
 })
 
-export const Logo = ({ className }: { className?: string }) => {
+export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn('hidden md:flex items-center gap-x-2', className)}>
       <Image src="/logo.svg" height="40" width="40" alt="Logo" className="dark:hidden" />

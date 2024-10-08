@@ -20,7 +20,7 @@ import { Navbar } from './navbar'
 import { TrashBox } from './trash-box'
 import { UserItem } from './user-item'
 
-export const Navigation = () => {
+export function Navigation() {
   const router = useRouter()
   const settings = useSettings()
   const search = useSearch()

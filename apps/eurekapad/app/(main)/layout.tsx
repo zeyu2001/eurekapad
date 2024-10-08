@@ -8,7 +8,7 @@ import { Spinner } from '@/components/spinner'
 
 import { Navigation } from './_components/navigation'
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth()
 
   if (isLoading) {
@@ -37,5 +37,3 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     </>
   )
 }
-
-export default MainLayout

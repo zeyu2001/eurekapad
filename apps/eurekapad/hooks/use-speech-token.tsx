@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { api } from '@/convex/_generated/api'
 
-export const useSpeechToken = () => {
+export function useSpeechToken() {
   const [token, setToken] = useState<string | null>(null)
   const [region, setRegion] = useState<string | null>(null)
 

@@ -176,7 +176,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
 )
 Button.displayName = 'Button'
 
-function formatFileSize(bytes?: number) {
+const formatFileSize = (bytes?: number) => {
   if (!bytes) {
     return '0 Bytes'
   }

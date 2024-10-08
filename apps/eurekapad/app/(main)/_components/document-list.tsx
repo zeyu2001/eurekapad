@@ -3,10 +3,10 @@
 import { useQuery } from 'convex/react'
 import { FileIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 
 import { api } from '@/convex/_generated/api'
-import { Doc, Id } from '@/convex/_generated/dataModel'
+import { Id } from '@/convex/_generated/dataModel'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { cn } from '@/lib/utils'
 
@@ -15,10 +15,9 @@ import { Item } from './item'
 interface DocumentListProps {
   parentDocumentId?: Id<'documents'>
   level?: number
-  data?: Doc<'documents'>[]
 }
 
-export const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
+export const DocumentList = memo(function DocumentList({ parentDocumentId, level = 0 }: DocumentListProps) {
   const documentId = useDocumentId()
   const router = useRouter()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -84,4 +83,4 @@ export const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps)
       ))}
     </>
   )
-}
+})

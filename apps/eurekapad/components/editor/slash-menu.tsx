@@ -18,7 +18,7 @@ interface CustomSlashMenuProps {
 
 const groupOrder = ['Headings', 'Basic blocks', 'Advanced', 'Media', 'Others']
 
-export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
+export function CustomSlashMenu({ editor }: CustomSlashMenuProps) {
   return (
     <SuggestionMenuController
       triggerCharacter={'/'}

@@ -20,13 +20,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useSpeechToken } from '@/hooks/use-speech-token'
 import { SingletonSpeechRecognizer } from '@/lib/singleton-recognizer'
 
-const TranscriptionComponent = ({
-  token,
-  region,
-  contentRef,
-  blockId,
-  editor,
-}: {
+interface TranscriptionComponentProps {
   token: string
   region: string
   contentRef: (_node: HTMLElement | null) => void
@@ -36,7 +30,9 @@ const TranscriptionComponent = ({
     InlineContentSchema,
     StyleSchema
   >
-}) => {
+}
+
+function TranscriptionComponent({ token, region, contentRef, blockId, editor }: TranscriptionComponentProps) {
   const [isListening, setIsListening] = useState<boolean>(false)
 
   const speechConfig = SpeechConfig.fromAuthorizationToken(token, region)

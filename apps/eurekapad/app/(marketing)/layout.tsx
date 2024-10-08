@@ -1,6 +1,6 @@
 import { Navbar } from './_components/navbar'
 
-const MarketingLayout = ({ children }: { children: React.ReactNode }) => {
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="dark:bg-[#1F1F1F]">
       <Navbar />
@@ -8,5 +8,3 @@ const MarketingLayout = ({ children }: { children: React.ReactNode }) => {
     </div>
   )
 }
-
-export default MarketingLayout

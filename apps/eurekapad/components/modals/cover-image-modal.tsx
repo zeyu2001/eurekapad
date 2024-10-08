@@ -13,7 +13,7 @@ import { upload } from '@/lib/client-uploads'
 
 import { SingleImageDropzone } from '../single-image-dropzone'
 
-export const CoverImageModal = () => {
+export function CoverImageModal() {
   const documentId = useDocumentId()
   const update = useOptimisticDocumentUpdate()
   const coverImage = useCoverImage()

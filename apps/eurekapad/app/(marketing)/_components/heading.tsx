@@ -15,7 +15,7 @@ import heroImageDark from '@/images/hero-dark.svg'
 import imperialImage from '@/images/imperial.png'
 import nusImage from '@/images/nus.png'
 
-export const Heading = () => {
+export function Heading() {
   const { isAuthenticated, isLoading } = useConvexAuth()
 
   return (

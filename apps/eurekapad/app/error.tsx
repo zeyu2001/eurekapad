@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 
-const Error = () => {
+export default function Error() {
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
       <Image src="/error.png" height="300" width="300" alt="Error" className="dark:hidden" />
@@ -17,5 +17,3 @@ const Error = () => {
     </div>
   )
 }
-
-export default Error

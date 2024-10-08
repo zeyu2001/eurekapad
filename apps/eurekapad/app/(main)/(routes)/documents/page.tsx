@@ -12,7 +12,7 @@ import { api } from '@/convex/_generated/api'
 import homeImage from '@/images/two-humans.svg'
 import homeImageDark from '@/images/two-humans-dark.svg'
 
-const DocumentsPage = () => {
+export default function DocumentsPage() {
   const router = useRouter()
   const { user } = useUser()
   const create = useMutation(api.documents.create)
@@ -39,5 +39,3 @@ const DocumentsPage = () => {
     </div>
   )
 }
-
-export default DocumentsPage

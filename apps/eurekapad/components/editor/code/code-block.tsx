@@ -31,28 +31,27 @@ import { useResizable } from '@/hooks/use-resizable'
 import { upload } from '@/lib/client-uploads'
 import { ansiToSpans, capitalizeFirstLetter, cn } from '@/lib/utils'
 
-const LanguageCommandItem = ({
-  lang,
-  selected,
-  onSelect,
-}: {
+interface LanguageCommandItemProps {
   lang: { key: string; value: string }
   selected: boolean
   onSelect: (_selected: string) => void
-}) => (
-  <CommandItem key={lang.key} value={lang.value} onSelect={onSelect}>
-    <Check className={cn('mr-2 h-4 w-4', selected ? 'opacity-100' : 'opacity-0')} />
-    {capitalizeFirstLetter(lang.value)}
-  </CommandItem>
-)
+}
 
-const LanguageDropdown = ({
-  language,
-  onChange,
-}: Readonly<{
+function LanguageCommandItem({ lang, selected, onSelect }: LanguageCommandItemProps) {
+  return (
+    <CommandItem key={lang.key} value={lang.value} onSelect={onSelect}>
+      <Check className={cn('mr-2 h-4 w-4', selected ? 'opacity-100' : 'opacity-0')} />
+      {capitalizeFirstLetter(lang.value)}
+    </CommandItem>
+  )
+}
+
+interface LanguageDropdownProps {
   language: string
   onChange: (_lang: string) => void
-}>) => {
+}
+
+function LanguageDropdown({ language, onChange }: Readonly<LanguageDropdownProps>) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState(language)
 

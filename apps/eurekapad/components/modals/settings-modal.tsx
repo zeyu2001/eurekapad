@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Label } from '@/components/ui/label'
 import { useSettings } from '@/hooks/use-settings'
 
-export const SettingsModal = () => {
+export function SettingsModal() {
   const settings = useSettings()
 
   return (

@@ -15,7 +15,7 @@ interface PublishProps {
   initialData: Doc<'documents'>
 }
 
-export const Publish = ({ initialData }: PublishProps) => {
+export function Publish({ initialData }: PublishProps) {
   const origin = useOrigin()
   const update = useOptimisticDocumentUpdate()
 

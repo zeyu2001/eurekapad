@@ -18,7 +18,7 @@ interface ToolbarProps {
   preview?: boolean
 }
 
-export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
+export function Toolbar({ initialData, preview }: ToolbarProps) {
   const inputRef = useRef<ElementRef<'textarea'>>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(initialData.title)

@@ -12,7 +12,7 @@ interface TitleProps {
   initialData: Doc<'documents'>
 }
 
-export const Title = ({ initialData }: TitleProps) => {
+export function Title({ initialData }: TitleProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const update = useOptimisticDocumentUpdate()
 

@@ -28,7 +28,7 @@ interface EditorProps {
 
 type CustomBlock = typeof customSchema.Block
 
-const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
+function Editor({ onChange, initialContent, editable, savable }: EditorProps) {
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
 
