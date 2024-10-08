@@ -16,7 +16,7 @@ interface CoverImageProps {
   preview?: boolean
 }
 
-export const Cover = ({ url, preview }: CoverImageProps) => {
+export function Cover({ url, preview }: CoverImageProps) {
   const documentId = useDocumentId()
 
   const coverImage = useCoverImage()

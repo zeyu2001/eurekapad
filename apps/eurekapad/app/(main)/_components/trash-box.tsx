@@ -13,7 +13,7 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useDocumentId } from '@/hooks/use-documentId'
 
-export const TrashBox = () => {
+export function TrashBox() {
   const router = useRouter()
   const documents = useQuery(api.documents.getTrash)
   const restore = useMutation(api.documents.restore)

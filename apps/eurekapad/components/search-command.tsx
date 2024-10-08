@@ -17,7 +17,7 @@ import {
 import { api } from '@/convex/_generated/api'
 import { useSearch } from '@/hooks/use-search'
 
-export const SearchCommand = () => {
+export function SearchCommand() {
   const { user } = useUser()
   const router = useRouter()
 

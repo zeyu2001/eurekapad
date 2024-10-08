@@ -26,23 +26,20 @@ interface MathInlineConfig {
 
 const mathInlineConfig: MathInlineConfig = {
   type: 'mathInline',
-  propSchema: {
-    ...defaultProps,
-  },
+  propSchema: defaultProps,
   content: 'styled',
+}
+
+interface MathInlineProps {
+  inlineContent: InlineContentFromConfig<MathInlineConfig, StyleSchema>
+  contentRef: (_node: HTMLElement | null) => void
 }
 
 MathfieldElement.fontsDirectory = `${window.location.origin}/_next/static/fonts`
 // Setting `soundsDirectory` to null to prevent loading of custom sounds
 MathfieldElement.soundsDirectory = null
 
-const MathInline = ({
-  inlineContent,
-  contentRef,
-}: {
-  inlineContent: InlineContentFromConfig<MathInlineConfig, StyleSchema>
-  contentRef: (_node: HTMLElement | null) => void
-}): JSX.Element => {
+function MathInline({ inlineContent, contentRef }: MathInlineProps) {
   const content = inlineContent.content[0] as StyledText<StyleSchema>
 
   const [latex, setLatex] = useState<string>(content?.text || '')

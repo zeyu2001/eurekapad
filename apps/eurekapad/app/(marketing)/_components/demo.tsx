@@ -38,24 +38,19 @@ const features = [
 ]
 
 export function Demo() {
-  let [tabOrientation, setTabOrientation] = useState<'horizontal' | 'vertical'>('horizontal')
-
   const [isLg, setIsLg] = useState(false)
 
   useEffect(() => {
-    let lgMediaQuery = window.matchMedia('(min-width: 1024px)')
+    const lgMediaQuery = window.matchMedia('(min-width: 1024px)')
 
     function onMediaQueryChange({ matches }: { matches: boolean }) {
-      setTabOrientation(matches ? 'vertical' : 'horizontal')
       setIsLg(matches)
     }
 
     onMediaQueryChange(lgMediaQuery)
     lgMediaQuery.addEventListener('change', onMediaQueryChange)
 
-    return () => {
-      lgMediaQuery.removeEventListener('change', onMediaQueryChange)
-    }
+    return () => lgMediaQuery.removeEventListener('change', onMediaQueryChange)
   }, [])
 
   return (
@@ -83,7 +78,7 @@ export function Demo() {
         </div>
         <TabGroup
           className="mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0"
-          vertical={tabOrientation === 'vertical'}
+          vertical={isLg}
         >
           {({ selectedIndex }) => (
             <>

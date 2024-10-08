@@ -5,6 +5,6 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
 
-export const Time = ({ dateTime }: { dateTime: string }) => (
-  <time dateTime={dayjs(dateTime).toISOString()}>{dayjs(dateTime).fromNow()}</time>
-)
+export function Time({ dateTime }: { dateTime: string }) {
+  return <time dateTime={dayjs(dateTime).toISOString()}>{dayjs(dateTime).fromNow()}</time>
+}

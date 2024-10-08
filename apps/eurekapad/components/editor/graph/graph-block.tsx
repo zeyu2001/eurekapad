@@ -2,6 +2,7 @@ import 'desmos'
 
 import { InlineContentSchema, StyleSchema } from '@blocknote/core'
 import { ReactCustomBlockRenderProps } from '@blocknote/react'
+import { usePathname } from 'next/navigation'
 import { FC, useEffect, useRef, useState } from 'react'
 
 import { GraphBlockConfig } from '.'
@@ -12,6 +13,7 @@ export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, Inline
   block,
   editor,
 }) => {
+  const pathname = usePathname()
   const result = graphStateJSONSchema.safeParse(block.props.state)
 
   const graphRef = useRef<HTMLDivElement>(null)
@@ -30,7 +32,7 @@ export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, Inline
   useEffect(() => {
     if (!graphRef.current) return
 
-    const calculator = Desmos.GraphingCalculator(graphRef.current)
+    const calculator = Desmos.GraphingCalculator(graphRef.current, { keypad: !pathname.startsWith('/preview') })
 
     if (graphState) calculator.setState(graphState)
 
@@ -41,7 +43,7 @@ export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, Inline
     // on subsequent callbacks, a duplicate graph is appended to the graphRef
     // this is a workaround to remove the duplicate graphs
     while (graphRef.current.children.length > 1) graphRef.current.removeChild(graphRef.current.lastChild as ChildNode)
-  }, [graphRef, graphState])
+  }, [graphRef, graphState, pathname])
 
   return (
     <div

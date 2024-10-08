@@ -6,8 +6,11 @@ export const InlineMathExtension = Node.create({
   name: 'mathInline', // this must match the name of the inlineContentSpec
   content: 'text*',
   group: 'inline',
+  inline: true,
+  atom: true,
   marks: '',
   draggable: true,
+  selectable: true,
 
   addInputRules() {
     // when a user types $$...$$, add a new math node
@@ -15,20 +18,8 @@ export const InlineMathExtension = Node.create({
       {
         find: INPUT_REGEX,
         type: this.type,
-        handler({ range, match, chain, state }) {
-          const start = range.from
-          let end = range.to
-          if (match[1]) {
-            const text = state.schema.text(match[1])
-            chain()
-              .command(({ tr }) => {
-                //@ts-ignore
-                tr.replaceRangeWith(start, end, this.type.create(null, text))
-                return true
-              })
-              .run()
-          }
-        },
+        handler: ({ range: { from, to }, match, state }) =>
+          state.tr.replaceWith(from, to, this.type.create(null, state.schema.text(match[1]))),
       },
     ]
   },

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export const useResizable = (initialHeight: number, minHeight: number, maxHeight: number) => {
+export function useResizable(initialHeight: number, minHeight: number, maxHeight: number) {
   const [height, setHeight] = useState(initialHeight)
   const [isResizing, setIsResizing] = useState(false)
   const startY = useRef(0)

@@ -16,7 +16,7 @@ import { getTitle } from '@/lib/utils'
  * We automatically generate static paths for all the files in the directory.
  **/
 
-function getContent(params: { slug: string }) {
+const getContent = (params: { slug: string }) => {
   try {
     const data = require(`@/content/help/${params.slug}.mdx`)
 

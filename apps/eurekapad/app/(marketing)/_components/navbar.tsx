@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 
 import { Logo } from './logo'
 
-export const Navbar = () => {
+export function Navbar() {
   const { isAuthenticated, isLoading } = useConvexAuth()
   const scrolled = useScrollTop()
 

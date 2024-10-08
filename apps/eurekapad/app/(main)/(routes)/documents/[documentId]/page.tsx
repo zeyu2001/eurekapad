@@ -27,7 +27,7 @@ export default function DocumentIdPage() {
 
   const update = useOptimisticDocumentUpdate()
 
-  const onChange = async (content: string) => {
+  const onChange = (content: string) => {
     setContent(content)
   }
 

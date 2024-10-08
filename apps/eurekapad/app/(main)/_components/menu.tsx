@@ -22,7 +22,7 @@ interface MenuProps {
   documentId: Id<'documents'>
 }
 
-export const Menu = ({ documentId }: MenuProps) => {
+export function Menu({ documentId }: MenuProps) {
   const router = useRouter()
   const { user } = useUser()
 

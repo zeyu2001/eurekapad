@@ -8,9 +8,8 @@ import { Doc } from '@/convex/_generated/dataModel'
  * Fetches the content of a document from the storage service.
  * Returns the content, or undefined if the content is not yet fetched.
  */
-export const useContent = (document: Doc<'documents'> | undefined): [boolean, string | undefined] => {
+export function useContent(document: Doc<'documents'> | undefined): [boolean, string | undefined] {
   const [content, setContent] = useState<string | undefined>(undefined)
-  const [isLoaded, setIsLoaded] = useState(false)
 
   // document might not be loaded yet, in that case contentUrl is undefined
   const contentUrl = useQuery(api.documents.getContentUrl, document ? { contentId: document.contentId } : 'skip')
@@ -25,11 +24,5 @@ export const useContent = (document: Doc<'documents'> | undefined): [boolean, st
     }
   }, [contentUrl])
 
-  useEffect(() => {
-    if (content !== undefined) {
-      setIsLoaded(true)
-    }
-  }, [content])
-
-  return [isLoaded, content]
+  return [content !== undefined, content]
 }

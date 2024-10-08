@@ -31,7 +31,7 @@ interface ItemProps {
   icon: LucideIcon
 }
 
-export const Item = ({
+export function Item({
   id,
   label,
   onClick,
@@ -42,7 +42,7 @@ export const Item = ({
   level = 0,
   onExpand,
   expanded,
-}: ItemProps) => {
+}: ItemProps) {
   const { user } = useUser()
   const router = useRouter()
   const create = useMutation(api.documents.create)

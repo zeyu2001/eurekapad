@@ -2,6 +2,7 @@
 
 import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
+import { memo } from 'react'
 import { toast } from 'sonner'
 
 import { ConfirmModal } from '@/components/modals/confirm-modal'
@@ -13,7 +14,7 @@ interface BannerProps {
   documentId: Id<'documents'>
 }
 
-export const Banner = ({ documentId }: BannerProps) => {
+export const Banner = memo(function Banner({ documentId }: BannerProps) {
   const router = useRouter()
 
   const remove = useMutation(api.documents.remove)
@@ -41,6 +42,8 @@ export const Banner = ({ documentId }: BannerProps) => {
     })
   }
 
+  // TODO: Improve UI/UX of buttons (specifically color and hover colors)
+
   return (
     <div className="w-full bg-rose-500 text-center text-sm p-2 text-white flex items-center gap-x-2 justify-center">
       <p>This page is in the Trash.</p>
@@ -63,4 +66,4 @@ export const Banner = ({ documentId }: BannerProps) => {
       </ConfirmModal>
     </div>
   )
-}
+})

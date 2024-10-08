@@ -18,7 +18,7 @@ interface ToolbarProps {
   preview?: boolean
 }
 
-export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
+export function Toolbar({ initialData, preview }: ToolbarProps) {
   const inputRef = useRef<ElementRef<'textarea'>>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(initialData.title)
@@ -32,16 +32,14 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
     if (preview) return
 
     setIsEditing(true)
-    setTimeout(() => {
-      setValue(initialData.title)
-      inputRef.current?.focus()
-    }, 0)
+    inputRef.current?.focus()
   }
 
   const disableInput = () => setIsEditing(false)
 
   const onInput = (value: string) => {
     setValue(value)
+    // Add a debounce to the updating of title
     update({
       id: initialData._id,
       title: value || 'Untitled',
