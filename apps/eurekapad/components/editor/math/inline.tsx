@@ -26,9 +26,7 @@ interface MathInlineConfig {
 
 const mathInlineConfig: MathInlineConfig = {
   type: 'mathInline',
-  propSchema: {
-    ...defaultProps,
-  },
+  propSchema: defaultProps,
   content: 'styled',
 }
 
