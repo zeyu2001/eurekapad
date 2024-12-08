@@ -33,7 +33,7 @@ export const parsePdf = action({
       body: {
         urlSource: args.fileUrl,
       },
-      queryParameters: { features: ['formulas'] },
+      queryParameters: { features: ['formulas'], pages: '1-2' }, // TODO: only limit free tier to 2 pages
     })
 
     if (isUnexpected(initialResponse)) {
