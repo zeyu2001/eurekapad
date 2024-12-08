@@ -1,6 +1,6 @@
 'use client'
 
-import { UploadCloudIcon, X } from 'lucide-react'
+import { File, UploadCloudIcon, X } from 'lucide-react'
 import * as React from 'react'
 import { type DropzoneOptions, useDropzone } from 'react-dropzone'
 import { twMerge } from 'tailwind-merge'
@@ -128,11 +128,9 @@ const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           <input ref={ref} {...getInputProps()} />
 
           {fileUrl ? (
-            fileType === 'image' ? (
+            fileType === 'image' && (
               // Image Preview
               <img className="h-full w-full rounded-md object-cover" src={fileUrl} alt={acceptedFiles[0]?.name} />
-            ) : (
-              <div>test</div>
             )
           ) : (
             // Upload Icon

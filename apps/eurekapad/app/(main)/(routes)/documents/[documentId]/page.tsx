@@ -1,8 +1,8 @@
 'use client'
 
-import { useMutation, useQuery } from 'convex/react'
+import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
-import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
+import { useSaveContentCallback } from '@/hooks/use-save-content-callback'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
@@ -20,44 +20,21 @@ export default function DocumentIdPage() {
   const documentId = useDocumentId()
   const document = useQuery(api.documents.getById, { documentId })
 
-  const generateUploadUrl = useMutation(api.documents.generateContentUploadUrl)
   const [isLoaded, initialContent] = useContent(document)
 
   const [debouncedContent, setContent] = useDebounceValue(initialContent, 1000)
-
-  const update = useOptimisticDocumentUpdate()
 
   const onChange = async (content: string) => {
     setContent(content)
   }
 
-  const saveContent = useCallback(
-    async (content: string) => {
-      const uploadUrl = await generateUploadUrl({})
-
-      const result = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: content,
-      })
-
-      const { storageId } = await result.json()
-
-      update({
-        id: documentId,
-        contentId: storageId,
-      })
-    },
-    [generateUploadUrl, documentId, update],
-  )
+  const saveContent = useSaveContentCallback()
 
   useEffect(() => {
     if (!isLoaded || debouncedContent === undefined) {
       return
     }
-    saveContent(debouncedContent)
+    saveContent(debouncedContent, documentId)
   }, [debouncedContent, isLoaded])
 
   if (document === undefined || !isLoaded) {

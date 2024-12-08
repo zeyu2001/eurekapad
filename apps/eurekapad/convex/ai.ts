@@ -1,8 +1,14 @@
 'use node'
 
 import DocumentIntelligence from '@azure-rest/ai-document-intelligence'
-import { AnalyzeResultOperationOutput, getLongRunningPoller, isUnexpected } from '@azure-rest/ai-document-intelligence'
+import {
+  AnalyzeResultOperationOutput,
+  AnalyzeResultOutput,
+  getLongRunningPoller,
+  isUnexpected,
+} from '@azure-rest/ai-document-intelligence'
 import { v } from 'convex/values'
+import axios from 'axios'
 
 import { action } from './_generated/server'
 
@@ -10,7 +16,7 @@ export const parsePdf = action({
   args: {
     fileUrl: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<[AnalyzeResultOutput, string[]]> => {
     const identity = await ctx.auth.getUserIdentity()
 
     if (!identity) {
@@ -33,7 +39,7 @@ export const parsePdf = action({
       body: {
         urlSource: args.fileUrl,
       },
-      queryParameters: { features: ['formulas'], pages: '1-2' }, // TODO: only limit free tier to 2 pages
+      queryParameters: { features: ['formulas'], pages: '1-2', output: ['figures'] }, // TODO: only limit free tier to 2 pages
     })
 
     if (isUnexpected(initialResponse)) {
@@ -42,6 +48,40 @@ export const parsePdf = action({
     const poller = await getLongRunningPoller(client, initialResponse)
     const result = (await poller.pollUntilDone()).body as AnalyzeResultOperationOutput
 
-    return result
+    const resultId = poller.getOperationId()
+    const figureIds = result.analyzeResult?.figures?.map(figure => figure.id)
+    const figures = (
+      figureIds
+        ? await Promise.all(
+            figureIds.map(
+              figureId =>
+                figureId &&
+                // TODO: replace with DocumentIntelligence client once this issue is fixed:
+                // https://github.com/Azure/azure-sdk-for-js/pull/31908
+                axios
+                  .get(
+                    `${endpoint}/documentintelligence/documentModels/prebuilt-layout/analyzeResults/${resultId}/figures/${figureId}`,
+                    {
+                      params: {
+                        'api-version': '2024-07-31-preview',
+                      },
+                      headers: {
+                        'Ocp-Apim-Subscription-Key': apiKey,
+                      },
+                      responseType: 'arraybuffer',
+                    },
+                  )
+                  .then(res => res.data),
+            ),
+          )
+        : []
+    ) as ArrayBuffer[]
+
+    const analyzeResult = result.analyzeResult
+    if (!analyzeResult) {
+      throw new Error('No analyze result')
+    }
+
+    return [analyzeResult, figures.map(figure => Buffer.from(figure).toString('base64'))]
   },
 })
