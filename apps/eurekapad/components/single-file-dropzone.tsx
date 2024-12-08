@@ -10,6 +10,7 @@ import { Spinner } from './spinner'
 const variants = {
   base: 'relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
   image: 'border-0 p-0 min-h-0 min-w-0 relative shadow-md bg-slate-200 dark:bg-slate-900 rounded-md',
+  pdf: 'border-0 p-0 min-h-0 min-w-0 relative shadow-md bg-white dark:bg-black rounded-md',
   active: 'border-2',
   disabled: 'bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700',
   accept: 'border border-blue-500 bg-blue-500 bg-opacity-10',
@@ -17,6 +18,7 @@ const variants = {
 }
 
 type InputProps = {
+  fileType: 'image' | 'pdf'
   width?: number
   height?: number
   className?: string
@@ -41,9 +43,13 @@ const ERROR_MESSAGES = {
   },
 }
 
-const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ dropzoneOptions, width, height, value, className, disabled, onChange }, ref) => {
-    const imageUrl = React.useMemo(() => {
+const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ fileType, dropzoneOptions, width, height, value, className, disabled, onChange }, ref) => {
+    if (fileType !== 'image' && fileType !== 'pdf') {
+      throw new Error('fileType must be either "image" or "pdf"')
+    }
+
+    const fileUrl = React.useMemo(() => {
       if (typeof value === 'string') {
         // in case a url is passed in, use it to display the image
         return value
@@ -57,7 +63,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     // dropzone configuration
     const { getRootProps, getInputProps, acceptedFiles, fileRejections, isFocused, isDragAccept, isDragReject } =
       useDropzone({
-        accept: { 'image/*': [] },
+        accept: fileType === 'image' ? { 'image/*': [] } : fileType === 'pdf' ? { 'application/pdf': [] } : undefined,
         multiple: false,
         disabled,
         onDrop: acceptedFiles => {
@@ -76,12 +82,13 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           variants.base,
           isFocused && variants.active,
           disabled && variants.disabled,
-          imageUrl && variants.image,
+          fileUrl && fileType === 'image' && variants.image,
+          fileUrl && fileType === 'pdf' && variants.pdf,
           (isDragReject ?? fileRejections[0]) && variants.reject,
           isDragAccept && variants.accept,
           className,
         ).trim(),
-      [isFocused, imageUrl, fileRejections, isDragAccept, isDragReject, disabled, className],
+      [isFocused, fileUrl, fileRejections, isDragAccept, isDragReject, disabled, className],
     )
 
     // error validation messages
@@ -120,9 +127,13 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {/* Main File Input */}
           <input ref={ref} {...getInputProps()} />
 
-          {imageUrl ? (
-            // Image Preview
-            <img className="h-full w-full rounded-md object-cover" src={imageUrl} alt={acceptedFiles[0]?.name} />
+          {fileUrl ? (
+            fileType === 'image' ? (
+              // Image Preview
+              <img className="h-full w-full rounded-md object-cover" src={fileUrl} alt={acceptedFiles[0]?.name} />
+            ) : (
+              <div>test</div>
+            )
           ) : (
             // Upload Icon
             <div className="flex flex-col items-center justify-center text-xs text-gray-400">
@@ -132,7 +143,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           )}
 
           {/* Remove Image Icon */}
-          {imageUrl && !disabled && (
+          {fileUrl && !disabled && (
             <div
               className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
               onClick={e => {
@@ -153,7 +164,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     )
   },
 )
-SingleImageDropzone.displayName = 'SingleImageDropzone'
+SingleFileDropzone.displayName = 'SingleFileDropzone'
 
 const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
   ({ className, ...props }, ref) => {
@@ -191,4 +202,4 @@ function formatFileSize(bytes?: number) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-export { SingleImageDropzone }
+export { SingleFileDropzone }

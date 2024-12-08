@@ -7,15 +7,12 @@ import { toast } from 'sonner'
 import { SingleFileDropzone } from '@/components/single-file-dropzone'
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog'
 import { api } from '@/convex/_generated/api'
-import { useCoverImage } from '@/hooks/use-cover-image'
-import { useDocumentId } from '@/hooks/use-documentId'
-import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
+import { usePdfDialog } from '@/hooks/use-pdf-dialog'
 import { upload } from '@/lib/client-uploads'
 
-export const CoverImageModal = () => {
-  const documentId = useDocumentId()
-  const update = useOptimisticDocumentUpdate()
-  const coverImage = useCoverImage()
+export const PdfUploadModal = () => {
+  const parsePdf = useAction(api.ai.parsePdf)
+  const pdfDialog = usePdfDialog()
 
   const [file, setFile] = useState<File>()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -25,7 +22,7 @@ export const CoverImageModal = () => {
   const onClose = () => {
     setFile(undefined)
     setIsSubmitting(false)
-    coverImage.onClose()
+    pdfDialog.onClose()
   }
 
   const onChange = async (file?: File) => {
@@ -46,23 +43,21 @@ export const CoverImageModal = () => {
         return
       }
 
-      await update({
-        id: documentId,
-        coverImage: url.href,
-      })
+      const result = await parsePdf({ fileUrl: url.href })
+      console.log(result)
 
       onClose()
     }
   }
 
   return (
-    <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
+    <Dialog open={pdfDialog.isOpen} onOpenChange={pdfDialog.onClose}>
       <DialogContent>
         <DialogHeader>
-          <h2 className="text-center text-lg font-semibold">Cover Image</h2>
+          <h2 className="text-center text-lg font-semibold">Upload PDF</h2>
         </DialogHeader>
         <SingleFileDropzone
-          fileType="image"
+          fileType="pdf"
           className="w-full outline-none"
           disabled={isSubmitting}
           value={file}
