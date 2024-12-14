@@ -7,8 +7,8 @@ import {
   getLongRunningPoller,
   isUnexpected,
 } from '@azure-rest/ai-document-intelligence'
-import { v } from 'convex/values'
 import axios from 'axios'
+import { v } from 'convex/values'
 
 import { action } from './_generated/server'
 
@@ -30,16 +30,20 @@ export const parsePdf = action({
     const endpoint = process.env.DOCUMENT_INTELLIGENCE_ENDPOINT
     const apiKey = process.env.DOCUMENT_INTELLIGENCE_API_KEY
 
-    const client = DocumentIntelligence(endpoint, {
-      key: apiKey,
-    })
+    const client = DocumentIntelligence(
+      endpoint,
+      {
+        key: apiKey,
+      },
+      { apiVersion: '2024-11-30' },
+    )
 
     const initialResponse = await client.path('/documentModels/{modelId}:analyze', 'prebuilt-layout').post({
       contentType: 'application/json',
       body: {
         urlSource: args.fileUrl,
       },
-      queryParameters: { features: ['formulas'], pages: '1-2', output: ['figures'] }, // TODO: only limit free tier to 2 pages
+      queryParameters: { features: ['formulas'], pages: '1-5', output: ['figures'] }, // TODO: only limit free tier to 2 pages
     })
 
     if (isUnexpected(initialResponse)) {
@@ -63,7 +67,7 @@ export const parsePdf = action({
                     `${endpoint}/documentintelligence/documentModels/prebuilt-layout/analyzeResults/${resultId}/figures/${figureId}`,
                     {
                       params: {
-                        'api-version': '2024-07-31-preview',
+                        'api-version': '2024-11-30',
                       },
                       headers: {
                         'Ocp-Apim-Subscription-Key': apiKey,

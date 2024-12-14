@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation } from 'convex/react'
-import { ChevronsLeft, MenuIcon, Plus, Search, Settings, Trash } from 'lucide-react'
+import { ChevronsLeft, MenuIcon, Plus, Search, Settings, Trash, Upload } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -10,6 +10,7 @@ import { useMediaQuery } from 'usehooks-ts'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { api } from '@/convex/_generated/api'
 import { useDocumentId } from '@/hooks/use-documentId'
+import { usePdfDialog } from '@/hooks/use-pdf-dialog'
 import { useSearch } from '@/hooks/use-search'
 import { useSettings } from '@/hooks/use-settings'
 import { cn } from '@/lib/utils'
@@ -27,6 +28,7 @@ export const Navigation = () => {
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const create = useMutation(api.documents.create)
+  const pdfDialog = usePdfDialog()
 
   const documentId = useDocumentId()
 
@@ -140,6 +142,7 @@ export const Navigation = () => {
         </div>
         <div className="mt-4">
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
+          <Item onClick={pdfDialog.onOpen} icon={Upload} label="Page from PDF" />
           <DocumentList />
           <Popover>
             <PopoverTrigger className="w-full mt-4">

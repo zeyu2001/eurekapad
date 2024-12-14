@@ -11,7 +11,7 @@ import { api } from '@/convex/_generated/api'
 import { usePdfDialog } from '@/hooks/use-pdf-dialog'
 import { useSaveContentCallback } from '@/hooks/use-save-content-callback'
 import { upload } from '@/lib/client-uploads'
-import { analysisResultToBlocks } from '@/lib/docIntelligence'
+import { analysisResultToBlocks } from '@/lib/docintelligence'
 
 export const PdfUploadModal = () => {
   const parsePdf = useAction(api.ai.parsePdf)
@@ -101,6 +101,9 @@ export const PdfUploadModal = () => {
         <DialogHeader>
           <h2 className="text-center text-lg font-semibold">Upload PDF</h2>
         </DialogHeader>
+        <p className="text-center text-sm text-gray-500">
+          As a beta feature, only the first 5 pages will be processed.
+        </p>
         <SingleFileDropzone
           fileType="pdf"
           className="w-full outline-none"
