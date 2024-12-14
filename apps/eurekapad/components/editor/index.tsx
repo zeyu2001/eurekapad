@@ -4,9 +4,10 @@ import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import './styles.css'
 
-import { PartialBlock, StyledText, StyleSchema } from '@blocknote/core'
+import { locales, StyledText, StyleSchema } from '@blocknote/core'
 import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
+import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
 import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
@@ -69,7 +70,12 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
 
   const editor = useCreateBlockNote({
     schema: customSchema,
-    initialContent: initialContent ? (JSON.parse(initialContent) as PartialBlock[]) : undefined,
+    dropCursor: multiColumnDropCursor,
+    dictionary: {
+      ...locales.en,
+      multi_column: multiColumnLocales.en,
+    },
+    initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     uploadFile: handleUpload,
     _tiptapOptions: {
       extensions: [InlineMathExtension, ArrowConversionExtension],
