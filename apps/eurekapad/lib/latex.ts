@@ -14,26 +14,27 @@ const fromTemplate = (latex: string) => {
 \\usepackage{listings}
 \\usepackage{xcolor}
 
+\\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 \\definecolor{mauve}{rgb}{0.58,0,0.82}
 \\definecolor{codegreen}{rgb}{0,0.6,0}
 \\definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \\lstset{
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\\small\\ttfamily},
-  numbers=none,
   numberstyle=\\tiny\\color{gray},
   keywordstyle=\\color{blue},
   commentstyle=\\color{codegreen},
   stringstyle=\\color{mauve},
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=3,
-  numbers=left,                    
-  numbersep=5pt,
-  numberstyle=\\tiny\\color{codegray}
+  backgroundcolor=\\color{backcolour},
+  basicstyle=\\ttfamily\\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  keepspaces=true,                 
+  numbers=left,       
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  frame=single
 }
 
 \\begin{document}\n` +
