@@ -57,7 +57,7 @@ export const Export = ({ document }: ExportProps) => {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button size="sm" variant="ghost">
           Export

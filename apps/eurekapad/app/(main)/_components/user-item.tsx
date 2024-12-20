@@ -16,7 +16,7 @@ export const UserItem = () => {
   const { user } = useUser()
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <div role="button" className="flex items-center text-sm p-3 w-full hover:bg-primary/5">
           <div className="gap-x-2 flex items-center max-w-[150px]">
