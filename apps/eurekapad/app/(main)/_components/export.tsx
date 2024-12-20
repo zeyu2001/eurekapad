@@ -4,6 +4,12 @@ import { CompileResult } from '@eurekapad/swiftlatex/dist/common'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from '@/components/ui/dropdown-menu'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Doc } from '@/convex/_generated/dataModel'
 import { useContent } from '@/hooks/use-content'
@@ -14,9 +20,35 @@ interface ExportProps {
   document: Doc<'documents'>
 }
 
+enum ExportMode {
+  Copy = 1,
+  Download = 2,
+}
+
 export const Export = ({ document }: ExportProps) => {
   const { engine, loaded } = useSwiftLatexEngine()
   const [contentLoaded, content] = useContent(document)
+
+  const handleLateXExport = async (mode: ExportMode) => {
+    if (!contentLoaded) {
+      toast.error("Hang tight, we're getting things ready...")
+      return
+    }
+
+    const latex = blocksToLaTeX(JSON.parse(content || '[]'))
+    if (mode === ExportMode.Download) {
+      const blob = new Blob([latex], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${document.title}.tex`
+      a.click()
+      return
+    } else if (mode === ExportMode.Copy) {
+      navigator.clipboard.writeText(latex)
+      toast.success('LaTeX copied to clipboard!')
+    }
+  }
 
   const handlePdfExport = async () => {
     if (!loaded || !contentLoaded || !engine) {
@@ -64,7 +96,15 @@ export const Export = ({ document }: ExportProps) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" alignOffset={8}>
-        <DropdownMenuItem>LaTeX</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>LaTeX</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => handleLateXExport(ExportMode.Copy)}>Copy</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleLateXExport(ExportMode.Download)}>Download</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
         <DropdownMenuItem onClick={handlePdfExport}>PDF</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
