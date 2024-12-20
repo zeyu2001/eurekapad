@@ -90,7 +90,7 @@ function processNode(node: CustomPartialBlock): string {
   } else if (nodeType === 'codeblock') {
     // Use lstlisting environment
     const props = (node as Extract<CustomPartialBlock, { type: 'codeblock' }>).props || {}
-    const code = escapeLatex(props.code || '')
+    const code = props.code || ''
     const language = (props.language || 'text').charAt(0).toUpperCase() + (props.language || 'text').slice(1)
     return `\\begin{lstlisting}[language=${language}]\n${code}\n\\end{lstlisting}\n\n`
   } else if (nodeType === 'table') {
