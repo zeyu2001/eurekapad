@@ -1,0 +1,30 @@
+{
+  "name": "@eurekapad/swiftlatex",
+  "version": "0.0.0",
+  "description": "TipTap extensions for EurekaPad",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && rollup -c --bundleConfigAsCjs",
+    "dev": "npm run clean && rollup -c -w --bundleConfigAsCjs",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eurekapad/eslint-config": "workspace:*",
+    "@eurekapad/prettier-config": "workspace:*",
+    "eslint": "^8",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "rollup": "^3.17.3",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "typescript": "^4.9.5"
+  },
+  "prettier": "@eurekapad/prettier-config"
+}

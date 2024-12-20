@@ -82,6 +82,7 @@
     "@eurekapad/eslint-config": "workspace:*",
     "@eurekapad/prettier-config": "workspace:*",
     "@eurekapad/tiptap-extensions": "workspace:*",
+    "@eurekapad/swiftlatex": "workspace:*",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@jupyterlab/nbformat": "^4.2.4",
     "@jupyterlab/services": "^7.2.4",

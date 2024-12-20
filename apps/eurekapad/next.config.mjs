@@ -28,6 +28,10 @@ const nextConfig = {
             from: './node_modules/mathlive/dist/fonts',
             to: 'static/fonts/',
           },
+          {
+            from: './node_modules/@eurekapad/swiftlatex/dist/swiftlatex*.{wasm,js}',
+            to: 'static/swiftlatex/[name][ext]',
+          },
         ],
       }),
     )
