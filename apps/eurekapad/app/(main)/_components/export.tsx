@@ -39,9 +39,9 @@ export const Export = ({ document }: ExportProps) => {
     if (mode === ExportMode.Download) {
       const blob = new Blob([latex], { type: 'text/plain' })
       const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
+      const a = window.document.createElement('a')
       a.href = url
-      a.download = `${document.title}.tex`
+      a.download = `${window.document.title}.tex`
       a.click()
       return
     } else if (mode === ExportMode.Copy) {
