@@ -56,8 +56,13 @@ export const Export = ({ document }: ExportProps) => {
       return
     }
 
+    if (!content) {
+      toast.error('No content to export')
+      return
+    }
+
     const pdfDownload = new Promise<string>((resolve, reject) => {
-      const latex = blocksToLaTeX(JSON.parse(content || '[]'))
+      const latex = blocksToLaTeX(JSON.parse(content))
       console.log(latex)
       engine.compile(latex).then((result: CompileResult) => {
         if (result.status === 0 && result.pdf) {

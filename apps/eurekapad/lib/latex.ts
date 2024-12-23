@@ -34,7 +34,8 @@ const fromTemplate = (latex: string) => {
   showstringspaces=false,
   showtabs=false,                  
   tabsize=2,
-  frame=single
+  frame=single,
+  columns=flexible
 }
 
 \\begin{document}\n` +
