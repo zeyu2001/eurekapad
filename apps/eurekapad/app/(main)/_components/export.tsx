@@ -17,6 +17,7 @@ import { useDebounceValue } from 'usehooks-ts'
 import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Doc } from '@/convex/_generated/dataModel'
 import { useContainerDimensions } from '@/hooks/use-container-dimensions'
 import { useContent } from '@/hooks/use-content'
@@ -32,7 +33,7 @@ const Loading = () => (
   </div>
 )
 
-const CopyButton = ({ text, className }: { text: string; className: string }) => {
+const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false)
 
   const copy = () => {
@@ -43,9 +44,16 @@ const CopyButton = ({ text, className }: { text: string; className: string }) =>
   }
 
   return (
-    <Button onClick={() => copy()} variant="ghost" size="sm" className={className}>
-      {copied ? <CheckIcon size={16} className="text-green-500" /> : <CopyIcon size={16} />}
-    </Button>
+    <Tooltip>
+      <TooltipTrigger>
+        <Button onClick={() => copy()} variant="ghost" size="sm">
+          {copied ? <CheckIcon size={16} className="text-green-500" /> : <CopyIcon size={16} />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="text-sm">Copy</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -63,9 +71,21 @@ const DownloadButton = ({ pdfUrl }: { pdfUrl: string }) => {
   }
 
   return (
-    <Button onClick={download} variant="ghost" size="icon" className="text-black hover:bg-gray-200 hover:text-black">
-      {downloaded ? <CheckIcon size={16} className="text-green-500" /> : <DownloadIcon size={16} />}
-    </Button>
+    <Tooltip>
+      <TooltipTrigger>
+        <Button
+          onClick={download}
+          variant="ghost"
+          size="icon"
+          className="text-black hover:bg-gray-200 hover:text-black"
+        >
+          {downloaded ? <CheckIcon size={16} className="text-green-500" /> : <DownloadIcon size={16} />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="text-sm">Download</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -75,9 +95,16 @@ const PreviewButton = ({ pdfUrl }: { pdfUrl: string }) => {
   }
 
   return (
-    <Button onClick={preview} variant="ghost" size="icon" className="text-black hover:bg-gray-200 hover:text-black">
-      <ExternalLinkIcon size={16} />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger>
+        <Button onClick={preview} variant="ghost" size="icon" className="text-black hover:bg-gray-200 hover:text-black">
+          <ExternalLinkIcon size={16} />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="text-sm">Open in new tab</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -148,7 +175,9 @@ export const Export = ({ document }: ExportProps) => {
         </DialogHeader>
         <div className="grid md:grid-cols-2 gap-4 h-[70vh]">
           <div ref={editorContainerRef} className="h-full overflow-auto relative">
-            <CopyButton text={latex} className="absolute top-0 right-4 z-10" />
+            <div className="absolute top-0 right-4 z-10">
+              <CopyButton text={latex} />
+            </div>
             <div className="h-full overflow-auto">
               <ReactCodeMirror
                 value={latex}
