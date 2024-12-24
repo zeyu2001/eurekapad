@@ -1,117 +1,199 @@
 'use client'
 
-import { CompileResult } from '@eurekapad/swiftlatex/dist/common'
-import { toast } from 'sonner'
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import 'react-pdf/dist/esm/Page/TextLayer.css'
 
+import { CompileResult } from '@eurekapad/swiftlatex/dist/common'
+import { langs } from '@uiw/codemirror-extensions-langs'
+import { vscodeDarkInit, vscodeLightInit } from '@uiw/codemirror-theme-vscode'
+import ReactCodeMirror from '@uiw/react-codemirror'
+import { CheckIcon, CopyIcon, DownloadIcon, ExternalLinkIcon } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { useEffect, useRef, useState } from 'react'
+import { Document, Page, pdfjs } from 'react-pdf'
+import { toast } from 'sonner'
+import { useDebounceValue } from 'usehooks-ts'
+
+import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Doc } from '@/convex/_generated/dataModel'
+import { useContainerDimensions } from '@/hooks/use-container-dimensions'
 import { useContent } from '@/hooks/use-content'
 import { useSwiftLatexEngine } from '@/hooks/use-swiftlatex-engine'
 import { blocksToLaTeX } from '@/lib/latex'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
+
+const Loading = () => (
+  <div className="flex items-center justify-center w-full h-full">
+    <Spinner />
+    <p className="text-sm text-gray-500 ml-2">Exporting PDF...</p>
+  </div>
+)
+
+const CopyButton = ({ text, className }: { text: string; className: string }) => {
+  const [copied, setCopied] = useState(false)
+
+  const copy = () => {
+    navigator.clipboard.writeText(text)
+    toast.success('Copied to clipboard!')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 3000)
+  }
+
+  return (
+    <Button onClick={() => copy()} variant="ghost" size="sm" className={className}>
+      {copied ? <CheckIcon size={16} className="text-green-500" /> : <CopyIcon size={16} />}
+    </Button>
+  )
+}
+
+const DownloadButton = ({ pdfUrl }: { pdfUrl: string }) => {
+  const [downloaded, setDownloaded] = useState(false)
+
+  const download = () => {
+    const a = document.createElement('a')
+    a.href = pdfUrl
+    a.download = 'document.pdf'
+    a.click()
+    toast.success('Downloaded PDF!')
+    setDownloaded(true)
+    setTimeout(() => setDownloaded(false), 3000)
+  }
+
+  return (
+    <Button onClick={download} variant="ghost" size="icon" className="text-black hover:bg-gray-200 hover:text-black">
+      {downloaded ? <CheckIcon size={16} className="text-green-500" /> : <DownloadIcon size={16} />}
+    </Button>
+  )
+}
+
+const PreviewButton = ({ pdfUrl }: { pdfUrl: string }) => {
+  const preview = () => {
+    window.open(pdfUrl, '_blank')
+  }
+
+  return (
+    <Button onClick={preview} variant="ghost" size="icon" className="text-black hover:bg-gray-200 hover:text-black">
+      <ExternalLinkIcon size={16} />
+    </Button>
+  )
+}
 
 interface ExportProps {
   document: Doc<'documents'>
 }
 
-enum ExportMode {
-  Copy = 1,
-  Download = 2,
-}
-
 export const Export = ({ document }: ExportProps) => {
   const { engine, loaded } = useSwiftLatexEngine()
+  const [open, setOpen] = useState(false)
   const [contentLoaded, content] = useContent(document)
+  const [latex, setLatex] = useDebounceValue<string>(blocksToLaTeX(JSON.parse(content || '[]')), 1000)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [numPages, setNumPages] = useState(0)
+  const { theme } = useTheme()
+  const editorContainerRef = useRef<HTMLDivElement>(null)
+  const { height: editorHeight } = useContainerDimensions(editorContainerRef)
+  const pdfContainerRef = useRef<HTMLDivElement>(null)
+  const { width: pdfWidth } = useContainerDimensions(pdfContainerRef)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleLateXExport = async (mode: ExportMode) => {
-    if (!contentLoaded) {
-      toast.error("Hang tight, we're getting things ready...")
-      return
-    }
+  useEffect(() => {
+    if (!loaded || !engine || !contentLoaded || !latex || !open) return
 
-    const latex = blocksToLaTeX(JSON.parse(content || '[]'))
-    if (mode === ExportMode.Download) {
-      const blob = new Blob([latex], { type: 'text/plain' })
-      const url = URL.createObjectURL(blob)
-      const a = window.document.createElement('a')
-      a.href = url
-      a.download = `${window.document.title}.tex`
-      a.click()
-      return
-    } else if (mode === ExportMode.Copy) {
-      navigator.clipboard.writeText(latex)
-      toast.success('LaTeX copied to clipboard!')
-    }
-  }
-
-  const handlePdfExport = async () => {
-    if (!loaded || !contentLoaded || !engine) {
-      toast.error("Hang tight, we're getting things ready...")
-      return
-    }
-
-    if (!content) {
-      toast.error('No content to export')
-      return
-    }
-
-    const pdfDownload = new Promise<string>((resolve, reject) => {
-      const latex = blocksToLaTeX(JSON.parse(content))
-      console.log(latex)
-      engine.compile(latex).then((result: CompileResult) => {
-        if (result.status === 0 && result.pdf) {
-          const blob = new Blob([result.pdf], { type: 'application/pdf' })
-          const url = URL.createObjectURL(blob)
-          window.open(url, '_blank')
-          resolve(url)
-        }
+    engine.compile(latex).then((result: CompileResult) => {
+      if (result.status === 0 && result.pdf) {
+        const blob = new Blob([result.pdf], { type: 'application/pdf' })
+        const url = URL.createObjectURL(blob)
+        setError(null)
+        setPdfUrl(url)
+      } else {
         console.error(result.log)
-        reject()
-      })
+        setError(result.log)
+        toast.error('Failed to compile LaTeX')
+      }
     })
+  }, [loaded, engine, contentLoaded, latex, open])
 
-    toast.promise(pdfDownload, {
-      loading: 'Exporting PDF...',
-      success: url => (
-        <span>
-          PDF exported successfully! If the download did not start automatically, you can{' '}
-          <a href={url} target="_blank" rel="noopener noreferrer" className="underline text-blue-600">
-            click here to download
-          </a>
-          .
-        </span>
-      ),
-      error: 'Failed to export PDF',
-    })
+  const editorTheme =
+    theme === 'light'
+      ? vscodeLightInit({
+          settings: {
+            caret: '#000000',
+            fontFamily: 'monospace',
+          },
+        })
+      : vscodeDarkInit({
+          settings: {
+            caret: '#c6c6c6',
+            fontFamily: 'monospace',
+          },
+        })
 
-    await pdfDownload
+  const onDocumentLoadSuccess = ({ numPages: nextNumPages }: { numPages: number }): void => {
+    setNumPages(nextNumPages)
   }
 
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="ghost">
+    <Dialog modal={false} open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="sm">
           Export
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" alignOffset={8}>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>LaTeX</DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => handleLateXExport(ExportMode.Copy)}>Copy</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleLateXExport(ExportMode.Download)}>Download</DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
-        <DropdownMenuItem onClick={handlePdfExport}>PDF</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DialogTrigger>
+      <DialogContent className="max-w-[80%]">
+        <DialogHeader className="flex items-center justify-between">
+          <DialogTitle>Export LaTeX and PDF</DialogTitle>
+        </DialogHeader>
+        <div className="grid md:grid-cols-2 gap-4 h-[70vh]">
+          <div ref={editorContainerRef} className="h-full overflow-auto relative">
+            <CopyButton text={latex} className="absolute top-0 right-4 z-10" />
+            <div className="h-full overflow-auto">
+              <ReactCodeMirror
+                value={latex}
+                extensions={[langs.stex()]}
+                theme={editorTheme}
+                height={editorHeight.toString()}
+                onChange={setLatex}
+              />
+            </div>
+          </div>
+          <div ref={pdfContainerRef} className="h-full overflow-auto relative">
+            {error ? (
+              <div className="w-full h-full overflow-auto p-4 bg-red-50">
+                {error.split('\n').map((line, index) => (
+                  <p key={index} className="text-sm text-red-500 font-mono">
+                    {line}
+                  </p>
+                ))}
+              </div>
+            ) : pdfUrl ? (
+              <>
+                <div className="absolute top-0 right-4 z-10 space-x-2">
+                  <DownloadButton pdfUrl={pdfUrl} />
+                  <PreviewButton pdfUrl={pdfUrl} />
+                </div>
+                <div className="h-full overflow-auto">
+                  <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<></>}>
+                    {Array.from(new Array(numPages), (_el, index) => (
+                      <Page
+                        key={`page_${index + 1}`}
+                        pageNumber={index + 1}
+                        width={pdfWidth - 16}
+                        renderAnnotationLayer={true}
+                        renderTextLayer={true}
+                      />
+                    ))}
+                  </Document>
+                </div>
+              </>
+            ) : (
+              <Loading />
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }

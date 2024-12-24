@@ -123,6 +123,10 @@ function processNode(node: CustomPartialBlock): string {
 }
 
 export function blocksToLaTeX(data: CustomPartialBlock[]): string {
+  if (data.length === 0) {
+    // hack to prevent empty document from erroring
+    return fromTemplate('No content')
+  }
   const content = data.map(node => processNode(node)).join('')
   return fromTemplate(content)
 }
