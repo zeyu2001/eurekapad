@@ -17,7 +17,7 @@ import { useDebounceValue } from 'usehooks-ts'
 import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Doc } from '@/convex/_generated/dataModel'
 import { useContainerDimensions } from '@/hooks/use-container-dimensions'
 import { useContent } from '@/hooks/use-content'
@@ -44,16 +44,18 @@ const CopyButton = ({ text }: { text: string }) => {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger>
-        <Button onClick={() => copy()} variant="ghost" size="sm">
-          {copied ? <CheckIcon size={16} className="text-green-500" /> : <CopyIcon size={16} />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p className="text-sm">Copy</p>
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button onClick={() => copy()} variant="ghost" size="sm">
+            {copied ? <CheckIcon size={16} className="text-green-500" /> : <CopyIcon size={16} />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-sm">Copy</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 
@@ -71,21 +73,23 @@ const DownloadButton = ({ pdfUrl }: { pdfUrl: string }) => {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger>
-        <Button
-          onClick={download}
-          variant="ghost"
-          size="icon"
-          className="text-black hover:bg-gray-200 hover:text-black"
-        >
-          {downloaded ? <CheckIcon size={16} className="text-green-500" /> : <DownloadIcon size={16} />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p className="text-sm">Download</p>
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={download}
+            variant="ghost"
+            size="icon"
+            className="text-black hover:bg-gray-200 hover:text-black"
+          >
+            {downloaded ? <CheckIcon size={16} className="text-green-500" /> : <DownloadIcon size={16} />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-sm">Download</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 
@@ -95,16 +99,23 @@ const PreviewButton = ({ pdfUrl }: { pdfUrl: string }) => {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger>
-        <Button onClick={preview} variant="ghost" size="icon" className="text-black hover:bg-gray-200 hover:text-black">
-          <ExternalLinkIcon size={16} />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p className="text-sm">Open in new tab</p>
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={preview}
+            variant="ghost"
+            size="icon"
+            className="text-black hover:bg-gray-200 hover:text-black"
+          >
+            <ExternalLinkIcon size={16} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-sm">Open in new tab</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 
@@ -169,7 +180,7 @@ export const Export = ({ document }: ExportProps) => {
           Export
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[80%]">
+      <DialogContent className="max-w-[80%]" onOpenAutoFocus={e => e.preventDefault()}>
         <DialogHeader className="flex items-center justify-between">
           <DialogTitle>Export LaTeX and PDF</DialogTitle>
         </DialogHeader>
@@ -212,6 +223,7 @@ export const Export = ({ document }: ExportProps) => {
                         width={pdfWidth - 16}
                         renderAnnotationLayer={true}
                         renderTextLayer={true}
+                        className="mt-1"
                       />
                     ))}
                   </Document>
