@@ -76,21 +76,26 @@ function extractTextFromContent(content: CustomInlineContent, escape: boolean = 
   return parts.join('')
 }
 
+let currentListType: 'bullet' | 'numbered' | null = null
+let listBuffer: string[] = []
+
 function processNode(node: CustomPartialBlock): string {
   const nodeType = node.type || ''
+
+  if (nodeType !== 'bulletListItem' && nodeType !== 'numberedListItem' && currentListType) {
+    const result = flushList()
+    currentListType = null
+    return result + processNonListNode(node)
+  }
 
   if (nodeType === 'paragraph') {
     const text = extractTextFromContent((node.content as CustomInlineContent) || []).trim()
     return text ? text + '\n\n' : '\n\n'
   } else if (nodeType === 'math') {
-    // Display math: \[...\]
     const mathText = extractTextFromContent((node.content as CustomInlineContent) || [], false)
-    if (mathText.length === 0) {
-      return ''
-    }
+    if (mathText.length === 0) return ''
     return `\\[\n${mathText}\n\\]\n\n`
   } else if (nodeType === 'codeblock') {
-    // Use lstlisting environment
     const props = (node as Extract<CustomPartialBlock, { type: 'codeblock' }>).props || {}
     const code = props.code || ''
     const language = (props.language || 'text').charAt(0).toUpperCase() + (props.language || 'text').slice(1)
@@ -104,7 +109,6 @@ function processNode(node: CustomPartialBlock): string {
       const rowLines = rows.map(r => {
         const cells = r.cells || []
         const cellTexts = cells.map(cell => {
-          // cell is an array of content nodes
           return cell
             .map(x =>
               x.type === 'text' ? escapeLatex((x as StyledText<typeof customSchema.styleSchema>).text || '') : '',
@@ -116,9 +120,66 @@ function processNode(node: CustomPartialBlock): string {
       return `\\begin{tabular}{${alignment}}\n${rowLines.join('\n')}\n\\end{tabular}\n\n`
     }
     return ''
+  } else if (nodeType === 'heading') {
+    const props: any = node.props
+    const headingLevel: number = props.level
+    const headingMap: Record<number, string> = {
+      1: 'section',
+      2: 'subsection',
+      3: 'subsubsection',
+    }
+    const sectionType = headingMap[headingLevel]
+    if (!sectionType) return ''
+    const text = extractTextFromContent((node.content as CustomInlineContent) || []).trim()
+    return text ? `\\${sectionType}{${text}}\n\n` : '\n\n'
+  } else if (nodeType === 'bulletListItem' || nodeType === 'numberedListItem') {
+    const text = extractTextFromContent((node.content as CustomInlineContent) || []).trim()
+    const isNewListType =
+      (nodeType === 'bulletListItem' && currentListType !== 'bullet') ||
+      (nodeType === 'numberedListItem' && currentListType !== 'numbered')
+
+    if (currentListType && isNewListType) {
+      const result = flushList()
+      currentListType = null
+      listBuffer = []
+      return result + processListItem(nodeType, text)
+    }
+
+    return processListItem(nodeType, text)
   }
 
-  // Unknown or unsupported node type
+  return ''
+}
+
+function processListItem(type: string, text: string): string {
+  if (!currentListType) {
+    currentListType = type === 'bulletListItem' ? 'bullet' : 'numbered'
+    listBuffer = []
+  }
+
+  listBuffer.push(`\\item ${text}`)
+  return ''
+}
+
+function flushList(): string {
+  if (!currentListType || listBuffer.length === 0) return ''
+
+  const environment = currentListType === 'bullet' ? 'itemize' : 'enumerate'
+  const result = `\\begin{${environment}}\n${listBuffer.join('\n')}\n\\end{${environment}}\n\n`
+  listBuffer = []
+  return result
+}
+
+function processNonListNode(node: CustomPartialBlock): string {
+  return processNode(node)
+}
+
+function finalizeProcessing(): string {
+  if (currentListType) {
+    const result = flushList()
+    currentListType = null
+    return result
+  }
   return ''
 }
 
@@ -127,6 +188,11 @@ export function blocksToLaTeX(data: CustomPartialBlock[]): string {
     // hack to prevent empty document from erroring
     return fromTemplate('No content')
   }
-  const content = data.map(node => processNode(node)).join('')
-  return fromTemplate(content)
+  // const content = data.map(node => processNode(node)).join('')
+  let output = ''
+  for (const node of data) {
+    output += processNode(node)
+  }
+  output += finalizeProcessing()
+  return fromTemplate(output)
 }
