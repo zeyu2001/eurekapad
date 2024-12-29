@@ -70,6 +70,22 @@ function escapeLatex(text: string): string {
     .join('')
 }
 
+function fixLatexArray(input: string): string {
+  return input.replace(/\\begin{array}(?!\{[lcr|]+\})(\s*[\s\S]*?)\\end{array}/g, (match, content) => {
+    // Split the content by line breaks or double backslashes to detect columns
+    const rows = content.split(/\\\\/).map((row: string) => row.trim())
+
+    // Determine the maximum number of columns
+    const maxColumns = Math.max(...rows.map((row: string) => (row.match(/&/g) || []).length + 1))
+
+    // Generate alignment specifier (e.g., "ccc" for 3 columns)
+    const alignment = 'c'.repeat(maxColumns)
+
+    // Add the alignment specifier to the \begin{array}
+    return match.replace(/\\begin{array}/, `\\begin{array}{${alignment}}`)
+  })
+}
+
 function extractTextFromContent(content: CustomInlineContent, escape: boolean = true): string {
   let parts = []
   for (const c of content) {
@@ -78,7 +94,7 @@ function extractTextFromContent(content: CustomInlineContent, escape: boolean = 
       const text = (c as StyledText<typeof customSchema.styleSchema>).text || ''
       parts.push(escape ? escapeLatex(text) : text)
     } else if (ctype === 'mathInline') {
-      const innerText = extractTextFromContent(c.content || [], false)
+      const innerText = fixLatexArray(extractTextFromContent(c.content || [], false))
       if (innerText.length === 0) {
         continue
       }
@@ -104,7 +120,7 @@ function processNode(node: CustomPartialBlock): string {
     const text = extractTextFromContent((node.content as CustomInlineContent) || []).trim()
     return text ? text + '\n\n' : '\n\n'
   } else if (nodeType === 'math') {
-    const mathText = extractTextFromContent((node.content as CustomInlineContent) || [], false)
+    const mathText = fixLatexArray(extractTextFromContent((node.content as CustomInlineContent) || [], false))
     if (mathText.length === 0) return ''
     return `\\[\n${mathText}\n\\]\n\n`
   } else if (nodeType === 'codeblock') {
