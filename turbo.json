@@ -10,7 +10,7 @@
         "RESEND_AUDIENCE_ID"
       ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "build:deploy": {
       "dependsOn": ["^build"],

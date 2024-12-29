@@ -1,29 +1,27 @@
-import { Node } from '@tiptap/core'
+import { Extension } from '@tiptap/core'
 
 const INPUT_REGEX = /\$\$(.*?[^\\])\$\$/gi // matches for text inside $$
 
-export const InlineMathExtension = Node.create({
-  name: 'mathInline', // this must match the name of the inlineContentSpec
-  content: 'text*',
-  group: 'inline',
-  marks: '',
-  draggable: true,
+export const InlineMathExtension = Extension.create({
+  name: 'inlineMathInput',
 
   addInputRules() {
-    // when a user types $$...$$, add a new math node
     return [
       {
         find: INPUT_REGEX,
-        type: this.type,
         handler({ range, match, chain, state }) {
           const start = range.from
-          let end = range.to
+          const end = range.to
           if (match[1]) {
-            const text = state.schema.text(match[1])
+            const textNode = state.schema.text(match[1])
+
+            // this should have been loaded through the blocknote schema
+            const mathInlineType = state.schema.nodes.mathInline
+            if (!mathInlineType) return
+
             chain()
               .command(({ tr }) => {
-                //@ts-ignore
-                tr.replaceRangeWith(start, end, this.type.create(null, text))
+                tr.replaceRangeWith(start, end, mathInlineType.create(null, textNode))
                 return true
               })
               .run()

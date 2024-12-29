@@ -41,7 +41,7 @@ export const Menu = ({ documentId }: MenuProps) => {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button size="sm" variant="ghost">
           <MoreHorizontal className="h-4 w-4" />

@@ -3,7 +3,9 @@
 import '@blocknote/core/fonts/inter.css'
 
 import { filterSuggestionItems } from '@blocknote/core'
+import { combineByGroup } from '@blocknote/core'
 import { getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react'
+import { getMultiColumnSlashMenuItems } from '@blocknote/xl-multi-column'
 
 import { insertCodeBlock } from '@/components/editor/code'
 import { insertMathBlock } from '@/components/editor/math/block'
@@ -24,17 +26,20 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
       triggerCharacter={'/'}
       getItems={async query =>
         filterSuggestionItems(
-          [
-            ...getDefaultReactSlashMenuItems(editor),
-            insertMathBlock(editor),
-            insertCodeBlock(editor),
-            insertTranscriptionBlock(editor),
-            insertGraphBlock(editor),
-          ].sort((a, b) => {
-            return (
-              groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title)
-            )
-          }),
+          combineByGroup(
+            [
+              ...getDefaultReactSlashMenuItems(editor),
+              insertMathBlock(editor),
+              insertCodeBlock(editor),
+              insertTranscriptionBlock(editor),
+              insertGraphBlock(editor),
+            ].sort((a, b) => {
+              return (
+                groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title)
+              )
+            }),
+            getMultiColumnSlashMenuItems(editor),
+          ),
           query,
         )
       }
