@@ -56,7 +56,7 @@ export const CoverImageModal = () => {
   }
 
   return (
-    <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
+    <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose} modal={false}>
       <DialogContent>
         <DialogHeader>
           <h2 className="text-center text-lg font-semibold">Cover Image</h2>

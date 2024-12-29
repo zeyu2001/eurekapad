@@ -118,7 +118,7 @@ export const Item = ({
       )}
       {!!id && (
         <div className="ml-auto flex items-center gap-x-2">
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger onClick={e => e.stopPropagation()} asChild>
               <div
                 role="button"

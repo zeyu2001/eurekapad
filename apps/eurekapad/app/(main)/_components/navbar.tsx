@@ -7,6 +7,7 @@ import { api } from '@/convex/_generated/api'
 import { useDocumentId } from '@/hooks/use-documentId'
 
 import { Banner } from './banner'
+import { Export } from './export'
 import { Menu } from './menu'
 import { Publish } from './publish'
 import { Title } from './title'
@@ -43,6 +44,7 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
         <div className="flex items-center justify-between w-full">
           <Title initialData={document} />
           <div className="flex items-center gap-x-2">
+            <Export document={document} />
             <Publish initialData={document} />
             <Menu documentId={document._id} />
           </div>
