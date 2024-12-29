@@ -1,5 +1,6 @@
 import { PartialInlineContent, StyledText } from '@blocknote/core'
 
+import { imagesJSONSchema } from '@/components/editor/code/schemas'
 import { customSchema } from '@/components/editor/schema'
 
 type CustomPartialBlock = typeof customSchema.Block
@@ -86,6 +87,11 @@ function fixLatexArray(input: string): string {
   })
 }
 
+function processImageUrl(url: string): string {
+  const fileName = fileNameFromUrl(url)
+  return `\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.75\\textwidth]{./${fileName}}\n\\end{figure}\n\n`
+}
+
 function extractTextFromContent(content: CustomInlineContent, escape: boolean = true): string {
   let parts = []
   for (const c of content) {
@@ -141,6 +147,9 @@ function processNode(node: CustomPartialBlock): string {
         })
         .join('')}\n\\end{lstlisting}\n\n`
     }
+    for (const imgUrl of imagesJSONSchema.parse(props.images)) {
+      result += processImageUrl(imgUrl.href)
+    }
     return result
   } else if (nodeType === 'table') {
     const tableContent = (node as Extract<CustomPartialBlock, { type: 'table' }>).content || {}
@@ -190,11 +199,8 @@ function processNode(node: CustomPartialBlock): string {
     return processListItem(nodeType, text)
   } else if (nodeType === 'image') {
     const props = (node as Extract<CustomPartialBlock, { type: 'image' }>).props || {}
-    const fileName = fileNameFromUrl(props.url)
-
-    return `\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.75\\textwidth]{./${fileName}}\n\\end{figure}\n\n`
+    return processImageUrl(props.url)
   }
-
   return ''
 }
 
@@ -240,20 +246,29 @@ function fileNameFromUrl(url: string): string {
 
 export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<string, Uint8Array>> {
   const images: Record<string, Uint8Array> = {}
+  let urls: string[] = []
   for (const node of data) {
     if (node.type === 'image') {
       const props = (node as Extract<CustomPartialBlock, { type: 'image' }>).props || {}
-      const res = await fetch(props.url)
-
-      const buffer = await res.arrayBuffer()
-      const fileData = new Uint8Array(buffer)
-      const fileName = fileNameFromUrl(props.url)
-
-      if (fileName) {
-        images[fileName] = fileData
-      }
+      urls.push(props.url)
+    } else if (node.type === 'codeblock') {
+      const props = (node as Extract<CustomPartialBlock, { type: 'codeblock' }>).props || {}
+      urls = urls.concat(imagesJSONSchema.parse(props.images).map((url: URL) => url.href))
     }
   }
+  console.log(urls)
+
+  for (const url of urls) {
+    const res = await fetch(url)
+    const buffer = await res.arrayBuffer()
+    const fileData = new Uint8Array(buffer)
+    const fileName = fileNameFromUrl(url)
+
+    if (fileName) {
+      images[fileName] = fileData
+    }
+  }
+  console.log(images)
   return images
 }
 
