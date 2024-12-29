@@ -23,19 +23,24 @@ export const parsePdf = action({
       throw new Error('Not authenticated')
     }
 
-    if (!process.env.DOCUMENT_INTELLIGENCE_ENDPOINT || !process.env.DOCUMENT_INTELLIGENCE_API_KEY) {
+    if (
+      !process.env.DOCUMENT_INTELLIGENCE_ENDPOINT ||
+      !process.env.DOCUMENT_INTELLIGENCE_API_KEY ||
+      !process.env.DOCUMENT_INTELLIGENCE_API_VERSION
+    ) {
       throw new Error('Document Intelligence is not configured')
     }
 
     const endpoint = process.env.DOCUMENT_INTELLIGENCE_ENDPOINT
     const apiKey = process.env.DOCUMENT_INTELLIGENCE_API_KEY
+    const apiVersion = process.env.DOCUMENT_INTELLIGENCE_API_VERSION
 
     const client = DocumentIntelligence(
       endpoint,
       {
         key: apiKey,
       },
-      { apiVersion: '2024-11-30' },
+      { apiVersion: apiVersion },
     )
 
     const initialResponse = await client.path('/documentModels/{modelId}:analyze', 'prebuilt-layout').post({
@@ -67,7 +72,7 @@ export const parsePdf = action({
                     `${endpoint}/documentintelligence/documentModels/prebuilt-layout/analyzeResults/${resultId}/figures/${figureId}`,
                     {
                       params: {
-                        'api-version': '2024-11-30',
+                        'api-version': apiVersion,
                       },
                       headers: {
                         'Ocp-Apim-Subscription-Key': apiKey,
