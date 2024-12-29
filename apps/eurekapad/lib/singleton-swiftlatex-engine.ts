@@ -5,7 +5,7 @@ const WORKER_PATH = '/_next/static/swiftlatex/swiftlatexpdftex.js'
 
 export class SingletonSwiftLatexEngine {
   private static instance: SingletonSwiftLatexEngine
-  private idle: Promise<void> = Promise.resolve()
+  private idle: Promise<CompileResult> = Promise.resolve({ status: 0, log: '', pdf: undefined })
   private engine: PdfTeXEngine
 
   private constructor() {
@@ -23,17 +23,18 @@ export class SingletonSwiftLatexEngine {
     return this.engine.isReady()
   }
 
-  public compile(latex: string) {
-    return this.idle.then(() => {
-      return new Promise<CompileResult>((resolve, _reject) => {
-        this.engine.flushCache
-        this.engine.writeMemFSFile('main.tex', latex)
-        this.engine.setEngineMainFile('main.tex')
-        this.engine.compileLaTeX().then(result => {
-          resolve(result)
-        })
-      })
+  public compile(latex: string, files: Record<string, Uint8Array> = {}) {
+    // Ensure that only one compilation is running at a time
+    this.idle = this.idle.then(() => {
+      this.engine.flushCache()
+      this.engine.writeMemFSFile('main.tex', latex)
+      this.engine.setEngineMainFile('main.tex')
+      for (const [fileName, fileData] of Object.entries(files)) {
+        this.engine.writeMemFSFile(fileName, fileData)
+      }
+      return this.engine.compileLaTeX()
     })
+    return this.idle
   }
 
   public async initEngine() {

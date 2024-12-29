@@ -13,6 +13,8 @@ const fromTemplate = (latex: string) => {
 \\usepackage{amssymb}
 \\usepackage{listings}
 \\usepackage{xcolor}
+\\usepackage{graphicx}
+\\usepackage{float}
 
 \\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 \\definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -36,6 +38,13 @@ const fromTemplate = (latex: string) => {
   tabsize=2,
   frame=single,
   columns=flexible
+}
+
+\\lstdefinestyle{redText}{
+    basicstyle=\\color{red}\\ttfamily\\footnotesize,
+    breaklines=true,
+    breakatwhitespace=true,
+    showstringspaces=false,
 }
 
 \\begin{document}\n` +
@@ -99,13 +108,27 @@ function processNode(node: CustomPartialBlock): string {
     const props = (node as Extract<CustomPartialBlock, { type: 'codeblock' }>).props || {}
     const code = props.code || ''
     const language = (props.language || 'text').charAt(0).toUpperCase() + (props.language || 'text').slice(1)
-    return `\\begin{lstlisting}[language=${language}]\n${code}\n\\end{lstlisting}\n\n`
+    let result = `\\begin{lstlisting}[language=${language}]\n${code}\n\\end{lstlisting}\n\n`
+
+    if (props.stdout) {
+      result += `\\begin{lstlisting}\n${props.stdout}\n\\end{lstlisting}\n\n`
+    }
+    if (props.stderr) {
+      result += `\\begin{lstlisting}[style=redText]\n${props.stderr
+        .split('')
+        .filter(char => {
+          const code = char.charCodeAt(0)
+          return (code >= 32 && code <= 126) || char === '\n' || char === '\t' // printable ASCII characters
+        })
+        .join('')}\n\\end{lstlisting}\n\n`
+    }
+    return result
   } else if (nodeType === 'table') {
     const tableContent = (node as Extract<CustomPartialBlock, { type: 'table' }>).content || {}
     if (tableContent.type === 'tableContent') {
       const rows = tableContent.rows || []
       const colWidths = tableContent.columnWidths || []
-      const alignment = colWidths.map(() => 'l').join('')
+      const alignment = colWidths.map(() => 'l').join('|')
       const rowLines = rows.map(r => {
         const cells = r.cells || []
         const cellTexts = cells.map(cell => {
@@ -117,7 +140,7 @@ function processNode(node: CustomPartialBlock): string {
         })
         return cellTexts.join(' & ') + ' \\\\'
       })
-      return `\\begin{tabular}{${alignment}}\n${rowLines.join('\n')}\n\\end{tabular}\n\n`
+      return `\\begin{tabular}{${alignment}}\n${rowLines.join('\n\\hline\n')}\n\\end{tabular}\n\n`
     }
     return ''
   } else if (nodeType === 'heading') {
@@ -146,6 +169,11 @@ function processNode(node: CustomPartialBlock): string {
     }
 
     return processListItem(nodeType, text)
+  } else if (nodeType === 'image') {
+    const props = (node as Extract<CustomPartialBlock, { type: 'image' }>).props || {}
+    const fileName = fileNameFromUrl(props.url)
+
+    return `\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.75\\textwidth]{./${fileName}}\n\\end{figure}\n\n`
   }
 
   return ''
@@ -181,6 +209,33 @@ function finalizeProcessing(): string {
     return result
   }
   return ''
+}
+
+function fileNameFromUrl(url: string): string {
+  const result = url.match(/[^/]+$/)?.[0] || url.slice(-10)
+  if (/\.\w+$/.test(result)) {
+    return result
+  }
+  return result + '.png'
+}
+
+export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<string, Uint8Array>> {
+  const images: Record<string, Uint8Array> = {}
+  for (const node of data) {
+    if (node.type === 'image') {
+      const props = (node as Extract<CustomPartialBlock, { type: 'image' }>).props || {}
+      const res = await fetch(props.url)
+
+      const buffer = await res.arrayBuffer()
+      const fileData = new Uint8Array(buffer)
+      const fileName = fileNameFromUrl(props.url)
+
+      if (fileName) {
+        images[fileName] = fileData
+      }
+    }
+  }
+  return images
 }
 
 export function blocksToLaTeX(data: CustomPartialBlock[]): string {

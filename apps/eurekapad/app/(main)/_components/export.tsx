@@ -22,7 +22,7 @@ import { Doc } from '@/convex/_generated/dataModel'
 import { useContainerDimensions } from '@/hooks/use-container-dimensions'
 import { useContent } from '@/hooks/use-content'
 import { useSwiftLatexEngine } from '@/hooks/use-swiftlatex-engine'
-import { blocksToLaTeX } from '@/lib/latex'
+import { blocksToLaTeX, getAllImages } from '@/lib/latex'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
 
@@ -138,20 +138,24 @@ export const Export = ({ document }: ExportProps) => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!loaded || !engine || !contentLoaded || !latex || !open) return
+    const compileLatex = async () => {
+      const images = await getAllImages(JSON.parse(content || '[]'))
+      if (!loaded || !engine || !contentLoaded || !latex || !open) return
 
-    engine.compile(latex).then((result: CompileResult) => {
-      if (result.status === 0 && result.pdf) {
-        const blob = new Blob([result.pdf], { type: 'application/pdf' })
-        const url = URL.createObjectURL(blob)
-        setError(null)
-        setPdfUrl(url)
-      } else {
-        console.error(result.log)
-        setError(result.log)
-        toast.error('Failed to compile LaTeX')
-      }
-    })
+      engine.compile(latex, images).then((result: CompileResult) => {
+        if (result.status === 0 && result.pdf) {
+          const blob = new Blob([result.pdf], { type: 'application/pdf' })
+          const url = URL.createObjectURL(blob)
+          setError(null)
+          setPdfUrl(url)
+        } else {
+          console.error(result.log)
+          setError(result.log)
+          toast.error('Failed to compile LaTeX')
+        }
+      })
+    }
+    compileLatex()
   }, [loaded, engine, contentLoaded, latex, open])
 
   const editorTheme =
