@@ -2,13 +2,14 @@
 
 import { useUser } from '@clerk/nextjs'
 import { useMutation } from 'convex/react'
-import { PlusCircle } from 'lucide-react'
+import { PlusCircle, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
+import { usePdfDialog } from '@/hooks/use-pdf-dialog'
 import homeImage from '@/images/two-humans.svg'
 import homeImageDark from '@/images/two-humans-dark.svg'
 
@@ -16,6 +17,7 @@ const DocumentsPage = () => {
   const router = useRouter()
   const { user } = useUser()
   const create = useMutation(api.documents.create)
+  const pdfDialog = usePdfDialog()
 
   const onCreate = () => {
     const promise = create({ title: 'Untitled' }).then(documentId => router.push(`/documents/${documentId}`))
@@ -32,10 +34,16 @@ const DocumentsPage = () => {
       <Image src={homeImage} width="350" alt="Empty" className="dark:hidden" />
       <Image src={homeImageDark} width="350" alt="Empty" className="hidden dark:block" />
       <h2 className="text-lg font-medium">Welcome to {user?.firstName}&apos;s EurekaPad</h2>
-      <Button onClick={onCreate}>
-        <PlusCircle className="h-4 w-4 mr-2" />
-        Create a note
-      </Button>
+      <div className="flex space-x-4">
+        <Button onClick={onCreate}>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Create a note
+        </Button>
+        <Button onClick={pdfDialog.onOpen}>
+          <Upload className="h-4 w-4 mr-2" />
+          Create from PDF
+        </Button>
+      </div>
     </div>
   )
 }

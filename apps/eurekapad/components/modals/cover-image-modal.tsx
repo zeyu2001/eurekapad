@@ -4,14 +4,13 @@ import { useAction } from 'convex/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import { SingleFileDropzone } from '@/components/single-file-dropzone'
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog'
 import { api } from '@/convex/_generated/api'
 import { useCoverImage } from '@/hooks/use-cover-image'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { useOptimisticDocumentUpdate } from '@/hooks/use-optimistic-document-update'
 import { upload } from '@/lib/client-uploads'
-
-import { SingleImageDropzone } from '../single-age-dropzone'
 
 export const CoverImageModal = () => {
   const documentId = useDocumentId()
@@ -62,7 +61,13 @@ export const CoverImageModal = () => {
         <DialogHeader>
           <h2 className="text-center text-lg font-semibold">Cover Image</h2>
         </DialogHeader>
-        <SingleImageDropzone className="w-full outline-none" disabled={isSubmitting} value={file} onChange={onChange} />
+        <SingleFileDropzone
+          fileType="image"
+          className="w-full outline-none"
+          disabled={isSubmitting}
+          value={file}
+          onChange={onChange}
+        />
       </DialogContent>
     </Dialog>
   )

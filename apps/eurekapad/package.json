@@ -15,6 +15,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@azure-rest/ai-document-intelligence": "1.0.0-beta.3",
     "@azure/storage-blob": "^12.24.0",
     "@blocknote/core": "^0.21.0",
     "@blocknote/mantine": "^0.21.0",
@@ -56,6 +57,7 @@
     "dayjs": "^1.11.12",
     "desmos": "^1.5.4",
     "emoji-mart": "^5.6.0",
+    "install": "^0.13.0",
     "lucide-react": "^0.417.0",
     "mathlive": "^0.101.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.38.0",

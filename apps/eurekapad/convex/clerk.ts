@@ -87,7 +87,7 @@ export const clerkCallback = httpAction(async (ctx, request) => {
 
       // Send welcome email
       const { data, error } = await resend.emails.send({
-        from: 'Zayne <contact@eurekapad.app>',
+        from: 'Zayne from EurekaPad <contact@eurekapad.app>',
         to: [email],
         subject: `Welcome to EurekaPad, ${firstName}!`,
         html: signupEmailHTML(firstName),

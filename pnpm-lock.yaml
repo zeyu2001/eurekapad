@@ -23,6 +23,9 @@ importers:
 
   apps/eurekapad:
     dependencies:
+      '@azure-rest/ai-document-intelligence':
+        specifier: 1.0.0-beta.3
+        version: 1.0.0-beta.3
       '@azure/storage-blob':
         specifier: ^12.24.0
         version: 12.24.0
@@ -146,6 +149,9 @@ importers:
       emoji-mart:
         specifier: ^5.6.0
         version: 5.6.0
+      install:
+        specifier: ^0.13.0
+        version: 0.13.0
       lucide-react:
         specifier: ^0.417.0
         version: 0.417.0(react@18.3.1)
@@ -435,6 +441,14 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
+  '@azure-rest/ai-document-intelligence@1.0.0-beta.3':
+    resolution: {integrity: sha512-VSW6tnAZ3XL1LGh3fmI2OMCHkLjzwg7r75V25jWsrpwhW8FQfVLVjp4TQtYNTGuAyz3g53u2C6vZj0yDXo7+7A==}
+    engines: {node: '>=18.0.0'}
+
+  '@azure-rest/core-client@2.3.1':
+    resolution: {integrity: sha512-sGTdh2Ln95F/Jqikr9OybQvx00EVvljwgxjfcxTqjID0PBVGDuNR0ie9e9HsTA1vJT23BlVRd/dCIGzJriYw9g==}
+    engines: {node: '>=18.0.0'}
+
   '@azure/abort-controller@1.1.0':
     resolution: {integrity: sha512-TrRLIoSQVzfAJX9H1JeFjzAoDGcoK1IYX1UImfceTZpsyYfWr09Ss1aHW1y5TrrR3iq6RZLBwJ3E24uwPhwahw==}
     engines: {node: '>=12.0.0'}
@@ -457,6 +471,10 @@ packages:
 
   '@azure/core-lro@2.7.2':
     resolution: {integrity: sha512-0YIpccoX8m/k00O7mDDMdJpbr6mf1yWo2dfmxt5A8XVZVVMz2SSKaEbMCeJRvgQ0IaSlqhjT47p4hVIRRy90xw==}
+    engines: {node: '>=18.0.0'}
+
+  '@azure/core-lro@3.1.0':
+    resolution: {integrity: sha512-W/vVbZumJLFMvmiUspyBzKai0O3HiD6KmsWnpCLasFr92qmafwgz+tThmnpMFH7vCS4MUl4ehFd0Z6OWb8BPog==}
     engines: {node: '>=18.0.0'}
 
   '@azure/core-paging@1.6.2':
@@ -3708,6 +3726,10 @@ packages:
   inline-style-parser@0.2.4:
     resolution: {integrity: sha512-0aO8FkhNZlj/ZIbNi7Lxxr12obT7cL1moPfE4tg1LkX7LlLfC6DeX4l2ZEud1ukP9jNQyNnfzQVqwbwmAATY4Q==}
 
+  install@0.13.0:
+    resolution: {integrity: sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA==}
+    engines: {node: '>= 0.10'}
+
   internal-slot@1.0.7:
     resolution: {integrity: sha512-NGnrKwXzSms2qUUih/ILZ5JBqNTSa1+ZmP6flaIp6KmSElgE9qdndzS3cqjrDovwFdmwsGsLdeFgB6suw+1e9g==}
     engines: {node: '>= 0.4'}
@@ -5988,6 +6010,30 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
+  '@azure-rest/ai-document-intelligence@1.0.0-beta.3':
+    dependencies:
+      '@azure-rest/core-client': 2.3.1
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-auth': 1.8.0
+      '@azure/core-lro': 3.1.0
+      '@azure/core-paging': 1.6.2
+      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/logger': 1.1.4
+      tslib: 2.7.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure-rest/core-client@2.3.1':
+    dependencies:
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-auth': 1.8.0
+      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-tracing': 1.1.2
+      '@azure/core-util': 1.10.0
+      tslib: 2.7.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@azure/abort-controller@1.1.0':
     dependencies:
       tslib: 2.7.0
@@ -6023,6 +6069,13 @@ snapshots:
       - supports-color
 
   '@azure/core-lro@2.7.2':
+    dependencies:
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-util': 1.10.0
+      '@azure/logger': 1.1.4
+      tslib: 2.7.0
+
+  '@azure/core-lro@3.1.0':
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-util': 1.10.0
@@ -10163,6 +10216,8 @@ snapshots:
   inline-style-parser@0.1.1: {}
 
   inline-style-parser@0.2.4: {}
+
+  install@0.13.0: {}
 
   internal-slot@1.0.7:
     dependencies:
