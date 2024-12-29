@@ -142,7 +142,7 @@ export const Navigation = () => {
         </div>
         <div className="mt-4">
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
-          <Item onClick={pdfDialog.onOpen} icon={Upload} label="Page from PDF" />
+          <Item onClick={pdfDialog.onOpen} icon={Upload} label="Upload from PDF" />
           <DocumentList />
           <Popover>
             <PopoverTrigger className="w-full mt-4">
