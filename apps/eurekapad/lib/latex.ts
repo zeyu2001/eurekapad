@@ -65,6 +65,9 @@ function escapeLatex(text: string): string {
     escaped = escaped.replace(pattern, replacement)
   }
   return escaped
+    .split('')
+    .filter(char => char.charCodeAt(0) <= 126)
+    .join('')
 }
 
 function extractTextFromContent(content: CustomInlineContent, escape: boolean = true): string {
