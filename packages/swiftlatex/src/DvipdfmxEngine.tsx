@@ -43,8 +43,8 @@ export class DvipdfmxEngine {
         }
       }
     })
-    this.latexWorker!.onmessage = (_: any) => {}
-    this.latexWorker!.onerror = (_: any) => {}
+    this.latexWorker.onmessage = (_: any) => {}
+    this.latexWorker.onerror = (_: any) => {}
   }
 
   isReady(): boolean {

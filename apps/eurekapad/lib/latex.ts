@@ -256,7 +256,6 @@ export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<s
       urls = urls.concat(imagesJSONSchema.parse(props.images).map((url: URL) => url.href))
     }
   }
-  console.log(urls)
 
   for (const url of urls) {
     const res = await fetch(url)
@@ -268,7 +267,6 @@ export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<s
       images[fileName] = fileData
     }
   }
-  console.log(images)
   return images
 }
 
