@@ -4,11 +4,16 @@ EurekaPad is a specialized note-taking application designed to provide a superio
 
 ## Table of Contents
 
-1. [Setup](#setup)
-2. [Core Features](#core-features)
-3. [Project Structure](#project-structure)
-4. [Key Implementations](#key-implementations)
-5. [Development Guidelines](#development-guidelines)
+- [EurekaPad](#eurekapad)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+  - [Core Features](#core-features)
+  - [Project Structure](#project-structure)
+    - [Next.js App](#nextjs-app)
+  - [Key Implementations](#key-implementations)
+  - [Development Guidelines](#development-guidelines)
+  - [Running Migrations](#running-migrations)
+  - [Available Scripts](#available-scripts)
 
 ## Setup
 
@@ -107,16 +112,16 @@ for more information on migrations.
 To test a migration before running it:
 
 ```
-npx convex run migrations:deprecateContent '{"dryRun": true, "fn": "migrations:deprecateContent"}'
+pnpx convex run migrations:deprecateContent '{"dryRun": true, "fn": "migrations:deprecateContent"}'
 ```
 
 To run a migration:
 
 ```
-npx convex run migrations:deprecateContent '{"fn": "migrations:deprecateContent"}'
+pnpx convex run migrations:deprecateContent '{"fn": "migrations:deprecateContent"}'
 ```
 
-These can be run in production with the `--prod` flag, but only _after_ deploying with `npx convex deploy`.
+These can be run in production with the `--prod` flag, but only _after_ deploying with `pnpx convex deploy`.
 
 ## Available Scripts
 
