@@ -9,6 +9,7 @@ import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
 import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
+import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
 import { memo, useEffect } from 'react'
@@ -28,6 +29,11 @@ interface EditorProps {
 }
 
 type CustomBlock = typeof customSchema.Block
+
+type TriggerAction = {
+  condition: (b: CustomBlock) => boolean
+  action: (b: CustomBlock) => void
+}
 
 const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
   const { resolvedTheme } = useTheme()
@@ -90,18 +96,30 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     onChange(JSON.stringify(editor.document, null, 2))
   }
 
-  // Update the type of applyTriggerActions
   const applyTriggerActions = (block: CustomBlock) => {
-    const triggerActions = [
+    const triggerActions: TriggerAction[] = [
       {
         condition: (b: CustomBlock) =>
           b.type === 'paragraph' &&
           b.content?.[0]?.type === 'text' &&
           (b.content[0] as StyledText<StyleSchema>).text.startsWith('```'),
-        action: (b: CustomBlock) =>
-          editor.updateBlock(b.id, {
-            type: 'codeblock',
-          }),
+        action: (b: CustomBlock) => {
+          if (b.type !== 'paragraph' || b.content?.[0]?.type !== 'text') return
+
+          const language = (b.content[0] as StyledText<StyleSchema>).text.substring(3)
+          if (langNames.includes(language as LanguageName)) {
+            editor.updateBlock(b.id, {
+              type: 'codeblock',
+              props: { language },
+            })
+          } else {
+            editor.updateBlock(b.id, {
+              type: 'codeblock',
+            })
+          }
+
+          editor.setTextCursorPosition({ id: b.id })
+        },
       },
     ]
 

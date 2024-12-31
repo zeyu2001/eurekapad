@@ -13,14 +13,6 @@ export function insertBlockAndFocus(
 ) {
   const currentBlock = editor.getTextCursorPosition().block
   const id = uuidv4()
-  editor.insertBlocks(
-    [
-      {
-        id: id,
-        ...block,
-      },
-    ],
-    currentBlock,
-  )
-  editor.setTextCursorPosition({ id: id })
+  editor.insertBlocks([{ id, ...block }], currentBlock)
+  editor.setTextCursorPosition({ id })
 }
