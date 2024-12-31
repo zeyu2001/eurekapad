@@ -58,34 +58,37 @@ export const parsePdf = action({
     const poller = getLongRunningPoller(client, initialResponse)
     const analyzeResult = ((await poller.pollUntilDone()).body as AnalyzeOperationOutput).analyzeResult
 
-    if (!analyzeResult || !analyzeResult.figures) {
+    if (!analyzeResult) {
       throw new Error('No analyze result')
     }
 
-    const figureIds = analyzeResult.figures.map(figure => figure.id)
-    if (!figureIds.every(figureId => figureId !== undefined)) {
-      throw new Error('No analyze result')
-    }
+    const figureIds = analyzeResult.figures?.map(figure => figure.id)
 
-    const figures = await Promise.all(
-      figureIds.map(async figureId => {
-        const output = await client
-          .path(
-            '/documentModels/{modelId}/analyzeResults/{resultId}/figures/{figureId}',
-            'prebuilt-layout',
-            resultId,
-            figureId,
-          )
-          .get()
-          .asNodeStream()
-        if (output.status !== '200' || !output.body) {
-          throw new Error('The response was unexpected, expected NodeJS.ReadableStream in the body.')
-        }
+    const figures = figureIds
+      ? await Promise.all(
+          figureIds.map(async figureId => {
+            if (figureId === undefined) return undefined
+            const output = await client
+              .path(
+                '/documentModels/{modelId}/analyzeResults/{resultId}/figures/{figureId}',
+                'prebuilt-layout',
+                resultId,
+                figureId,
+              )
+              .get()
+              .asNodeStream()
+            if (output.status !== '200' || !output.body) {
+              throw new Error('The response was unexpected, expected NodeJS.ReadableStream in the body.')
+            }
 
-        return streamToUint8Array(output.body)
-      }),
-    )
+            return streamToUint8Array(output.body)
+          }),
+        )
+      : []
 
-    return [analyzeResult, figures.map(figure => Buffer.from(figure).toString('base64'))]
+    return [
+      analyzeResult,
+      figures.filter(figure => figure !== undefined).map(figure => Buffer.from(figure).toString('base64')),
+    ]
   },
 })
