@@ -271,6 +271,9 @@ export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<s
 }
 
 export function blocksToLaTeX(data: CustomPartialBlock[]): string {
+  // TODO: this check is incomplete
+  // TODO: For some reason document https://www.eurekapad.app/documents/hello-j575yh515gxdp8gp6y956xfkz972937w is invalid
+  // TODO: https://www.eurekapad.app/documents/Test-j574hjs9s13vbh2ef732xjsmcd70g5m6 this too
   if (data.length === 0) {
     // hack to prevent empty document from erroring
     return fromTemplate('No content')

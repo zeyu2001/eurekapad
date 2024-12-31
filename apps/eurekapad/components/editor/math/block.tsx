@@ -1,7 +1,5 @@
-declare global {
-  // eslint-disable-next-line unused-imports/no-unused-vars
+declare module 'react' {
   namespace JSX {
-    // eslint-disable-next-line unused-imports/no-unused-vars
     interface IntrinsicElements {
       'math-field': React.DetailedHTMLProps<React.HTMLAttributes<MathMLElement>, MathMLElement>
     }

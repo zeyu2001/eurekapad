@@ -40,7 +40,6 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  swcMinify: false,
 }
 
 const withMDX = createMDX({

@@ -1,7 +1,5 @@
-declare global {
-  // eslint-disable-next-line unused-imports/no-unused-vars
+declare module 'react' {
   namespace JSX {
-    // eslint-disable-next-line unused-imports/no-unused-vars
     interface IntrinsicElements {
       'math-field': React.DetailedHTMLProps<React.HTMLAttributes<MathMLElement>, MathMLElement>
     }
@@ -14,7 +12,7 @@ import 'mathlive'
 import { defaultProps, InlineContentFromConfig, StyledText, StyleSchema } from '@blocknote/core'
 import { createReactInlineContentSpec, ReactInlineContentImplementation } from '@blocknote/react'
 import { MathfieldElement } from 'mathlive'
-import { useEffect, useRef, useState } from 'react'
+import { type JSX, useEffect, useRef, useState } from 'react'
 
 import { useCustomizeMathlive } from '@/hooks/use-customize-mathlive'
 

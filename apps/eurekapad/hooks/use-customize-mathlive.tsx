@@ -7,7 +7,11 @@ import React, { useEffect } from 'react'
  * @param keyboard - Whether to show the virtual keyboard
  * @param menu - Whether to show the menu
  */
-export const useCustomizeMathlive = (ref: React.RefObject<MathfieldElement>, keyboard: boolean, menu: boolean) => {
+export const useCustomizeMathlive = (
+  ref: React.RefObject<MathfieldElement | null>,
+  keyboard: boolean,
+  menu: boolean,
+) => {
   useEffect(() => {
     if (ref.current) {
       ref.current.style.setProperty('--virtual-keyboard-toggle-display', keyboard ? 'flex' : 'none')

@@ -17,21 +17,17 @@
   "devDependencies": {
     "@eurekapad/eslint-config": "workspace:*",
     "@eurekapad/prettier-config": "workspace:*",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^24.0.1",
-    "@tiptap/core": "^2.7.1",
-    "@tiptap/pm": "^2.7.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@tiptap/core": "^2.11.0",
+    "@tiptap/pm": "^2.11.0",
     "eslint": "^8",
     "rimraf": "^6.0.1",
-    "rollup": "^3.17.3",
+    "rollup": "^4.29.1",
     "rollup-plugin-auto-external": "^2.0.0",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-typescript2": "^0.34.1",
-    "typescript": "^4.9.5"
-  },
-  "peerDependencies": {
-    "@tiptap/core": "^2.4.0",
-    "@tiptap/pm": "^2.4.0"
+    "rollup-plugin-sourcemaps2": "^0.4.3",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.7.2"
   },
   "prettier": "@eurekapad/prettier-config"
 }

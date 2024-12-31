@@ -24,7 +24,7 @@ function getContent(params: { slug: string }) {
       mdx: data.default,
       meta: data.meta,
     }
-  } catch (error) {
+  } catch {
     notFound()
   }
 }
@@ -42,7 +42,8 @@ export function generateStaticParams() {
   })
 }
 
-export default function Content({ params }: { params: { slug: string } }) {
+export default async function Content(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const content = getContent(params)
 
   return (

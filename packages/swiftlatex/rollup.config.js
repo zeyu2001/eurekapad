@@ -1,5 +1,5 @@
 const autoExternal = require('rollup-plugin-auto-external')
-const sourcemaps = require('rollup-plugin-sourcemaps')
+const sourcemaps = require('rollup-plugin-sourcemaps2')
 const commonjs = require('@rollup/plugin-commonjs')
 const babel = require('@rollup/plugin-babel')
 const typescript = require('rollup-plugin-typescript2')

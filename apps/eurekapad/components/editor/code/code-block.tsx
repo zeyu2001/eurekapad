@@ -11,7 +11,7 @@ import { Check, ChevronsDown, CircleAlert, Delete, Play } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { useDebounce } from 'usehooks-ts'
+import { useDebounceValue } from 'usehooks-ts'
 
 import { CodeBlockConfig } from '@/components/editor/code'
 import { RUNNABLE_LANGUAGES } from '@/components/editor/code/constants'
@@ -206,7 +206,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
       } else {
         throw new Error('Unexpected runner configuration')
       }
-    } catch (error) {
+    } catch {
       toast.error('An error occurred while running the code.')
     } finally {
       setIsRunning(false)
@@ -243,7 +243,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   const runnable = RUNNABLE_LANGUAGES.includes(language)
 
   const { height, handleMouseDown, isResizing } = useResizable(block.props.height || 300, 100, 1000)
-  const debouncedHeight = useDebounce(height, 1000)
+  const [debouncedHeight] = useDebounceValue(height, 1000)
 
   useEffect(() => {
     handleInputChange({ height: debouncedHeight })
