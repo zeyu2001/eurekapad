@@ -5,10 +5,9 @@ import {
   AnalyzeOperationOutput,
   AnalyzeResultOutput,
   getLongRunningPoller,
-  parseResultIdFromResponse,
   isUnexpected,
+  parseResultIdFromResponse,
 } from '@azure-rest/ai-document-intelligence'
-import axios from 'axios'
 import { v } from 'convex/values'
 
 import { action } from './_generated/server'
@@ -64,7 +63,7 @@ export const parsePdf = action({
     }
 
     const figureIds = analyzeResult.figures.map(figure => figure.id)
-    if (figureIds.some(figureId => figureId !== undefined)) {
+    if (!figureIds.every(figureId => figureId !== undefined)) {
       throw new Error('No analyze result')
     }
 
@@ -75,7 +74,7 @@ export const parsePdf = action({
             '/documentModels/{modelId}/analyzeResults/{resultId}/figures/{figureId}',
             'prebuilt-layout',
             resultId,
-            figureId as string,
+            figureId,
           )
           .get()
           .asNodeStream()
