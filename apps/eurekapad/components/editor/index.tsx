@@ -9,6 +9,7 @@ import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
 import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
+import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
 import { memo, useEffect } from 'react'
@@ -98,10 +99,21 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
           b.type === 'paragraph' &&
           b.content?.[0]?.type === 'text' &&
           (b.content[0] as StyledText<StyleSchema>).text.startsWith('```'),
-        action: (b: CustomBlock) =>
-          editor.updateBlock(b.id, {
+        action: (b: CustomBlock) => {
+          if (b.type !== 'paragraph' || b.content?.[0]?.type !== 'text') return
+
+          const language = (b.content[0] as StyledText<StyleSchema>).text.substring(3)
+          if (langNames.includes(language as LanguageName)) {
+            return editor.updateBlock(b.id, {
+              type: 'codeblock',
+              props: { language },
+            })
+          }
+
+          return editor.updateBlock(b.id, {
             type: 'codeblock',
-          }),
+          })
+        },
       },
     ]
 
