@@ -104,15 +104,17 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
 
           const language = (b.content[0] as StyledText<StyleSchema>).text.substring(3)
           if (langNames.includes(language as LanguageName)) {
-            return editor.updateBlock(b.id, {
+            editor.updateBlock(b.id, {
               type: 'codeblock',
               props: { language },
             })
+          } else {
+            editor.updateBlock(b.id, {
+              type: 'codeblock',
+            })
           }
 
-          return editor.updateBlock(b.id, {
-            type: 'codeblock',
-          })
+          editor.setTextCursorPosition({ id: b.id })
         },
       },
     ]
