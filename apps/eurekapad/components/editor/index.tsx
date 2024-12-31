@@ -30,6 +30,11 @@ interface EditorProps {
 
 type CustomBlock = typeof customSchema.Block
 
+type TriggerAction = {
+  condition: (b: CustomBlock) => boolean
+  action: (b: CustomBlock) => void
+}
+
 const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
@@ -91,9 +96,8 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     onChange(JSON.stringify(editor.document, null, 2))
   }
 
-  // Update the type of applyTriggerActions
   const applyTriggerActions = (block: CustomBlock) => {
-    const triggerActions = [
+    const triggerActions: TriggerAction[] = [
       {
         condition: (b: CustomBlock) =>
           b.type === 'paragraph' &&
