@@ -25,7 +25,7 @@ export default {
   plugins: [
     autoExternal({ packagePath: './package.json' }),
     sourcemaps(),
-    babel(),
+    babel({ babelHelpers: 'bundled' }),
     commonjs(),
     typescript(),
     copyFiles('./wasm', './dist', true),
