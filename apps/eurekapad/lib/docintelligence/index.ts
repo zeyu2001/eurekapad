@@ -61,9 +61,8 @@ export function analysisResultToBlocks(
 
         case 'figures':
           if (!figures) break
-          const figure = figures[index]
-          if (!figure) break
-          blocks.push(createImageBlock(figure, figureUrls[figureIdx++]))
+          if (!figures[index]) break
+          blocks.push(createImageBlock(figures[index], figureUrls[figureIdx++]))
           break
       }
     }

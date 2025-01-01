@@ -21,7 +21,6 @@ const XDVPDFMX_ENGINE_PATH = 'swiftlatexdvipdfm.js'
 export class DvipdfmxEngine {
   private latexWorker: Worker | undefined = undefined
   latexWorkerStatus: EngineStatus = EngineStatus.Init
-  constructor() {}
 
   async loadEngine(workerPath: string = XDVPDFMX_ENGINE_PATH): Promise<void> {
     if (this.latexWorker !== undefined) {
@@ -31,9 +30,9 @@ export class DvipdfmxEngine {
     this.latexWorkerStatus = EngineStatus.Init
     await new Promise<void>((resolve, reject) => {
       this.latexWorker = new Worker(workerPath)
-      this.latexWorker.onmessage = (ev: any) => {
-        const data: any = ev.data
-        const cmd: string = data.result as string
+      this.latexWorker.onmessage = ev => {
+        const data = ev.data
+        const cmd = data.result as string
         if (cmd === 'ok') {
           this.latexWorkerStatus = EngineStatus.Ready
           resolve()
@@ -43,8 +42,8 @@ export class DvipdfmxEngine {
         }
       }
     })
-    this.latexWorker.onmessage = (_: any) => {}
-    this.latexWorker.onerror = (_: any) => {}
+    this.latexWorker.onmessage = () => {}
+    this.latexWorker.onerror = () => {}
   }
 
   isReady(): boolean {
@@ -61,29 +60,29 @@ export class DvipdfmxEngine {
     this.checkEngineStatus()
     this.latexWorkerStatus = EngineStatus.Busy
     const start_compile_time = performance.now()
-    const res: CompileResult = await new Promise((resolve, _) => {
-      this.latexWorker!.onmessage = (ev: any) => {
-        const data: any = ev.data
-        const cmd: string = data.cmd as string
+    const res = await new Promise<CompileResult>(resolve => {
+      this.latexWorker.onmessage = ev => {
+        const data = ev.data
+        const cmd = data.cmd as string
         if (cmd !== 'compile') return
-        const result: string = data.result as string
-        const log: string = data.log as string
-        const status: number = data.status as number
+        const result = data.result as string
+        const log = data.log as string
+        const status = data.status as number
         this.latexWorkerStatus = EngineStatus.Ready
         console.log('Engine compilation finish ' + (performance.now() - start_compile_time))
         const nice_report = new CompileResult()
         nice_report.status = status
         nice_report.log = log
         if (result === 'ok') {
-          const pdf: Uint8Array = new Uint8Array(data.pdf)
+          const pdf = new Uint8Array(data.pdf)
           nice_report.pdf = pdf
         }
         resolve(nice_report)
       }
-      this.latexWorker!.postMessage({ cmd: 'compilepdf' })
+      this.latexWorker.postMessage({ cmd: 'compilepdf' })
       console.log('Engine compilation start')
     })
-    this.latexWorker!.onmessage = (_: any) => {}
+    this.latexWorker.onmessage = () => {}
 
     return res
   }

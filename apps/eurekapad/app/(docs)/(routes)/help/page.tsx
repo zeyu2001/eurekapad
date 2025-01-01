@@ -13,20 +13,23 @@ import {
 
 import { Time } from './time'
 
-export default function Help() {
-  const posts = glob
-    .sync(`content/**/*.mdx`)
-    .map(file => file.split('/')[2].replace(/ /g, '-').slice(0, -4).trim())
-    .map(slug => {
-      const data = require(`@/content/help/${slug}.mdx`)
-      return {
-        id: slug,
-        title: data.meta.title,
-        href: `/help/${slug}`,
-        dateTime: data.meta.lastUpdated,
-      }
-    })
-    .sort((a, b) => dayjs(b.dateTime).unix() - dayjs(a.dateTime).unix())
+export default async function Help() {
+  const posts = (
+    await Promise.all(
+      glob
+        .sync(`*.mdx`, { cwd: 'content/help/' })
+        .map(file => file.replace(/ /g, '-').slice(0, -4).trim())
+        .map(async slug => {
+          const data = await import(`@/content/help/${slug}.mdx`)
+          return {
+            id: slug,
+            title: data.meta.title,
+            href: `/help/${slug}`,
+            dateTime: data.meta.lastUpdated,
+          }
+        }),
+    )
+  ).sort((a, b) => dayjs(b.dateTime).unix() - dayjs(a.dateTime).unix())
 
   return (
     <div className="px-6 py-32 lg:px-8 mx-auto max-w-3xl text-base leading-7 text-gray-700 dark:text-gray-300">

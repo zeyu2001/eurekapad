@@ -14,6 +14,7 @@ type Block = PartialBlock<
   CustomEditor['schema']['styleSchema']
 >
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Content = Extract<Block['content'], PartialInlineContent<any, any>>
 
 /**

@@ -1,4 +1,5 @@
 declare module 'react' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
       'math-field': React.DetailedHTMLProps<React.HTMLAttributes<MathMLElement>, MathMLElement>

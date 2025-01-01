@@ -1,7 +1,6 @@
 import { CSSProp } from 'styled-components'
 
 declare module 'react' {
-  // eslint-disable-next-line unused-imports/no-unused-vars
   interface Attributes {
     css?: CSSProp
   }
@@ -19,6 +18,7 @@ export const capitalizeFirstLetter = (string: string) => {
 
 export const ansiToSpans = (text: string) => {
   return parse(text).spans.map((span, i) => (
+    // eslint-disable-next-line react/no-unknown-property
     <span key={i} css={span.css}>
       {span.text}
     </span>
@@ -31,7 +31,7 @@ export const getUrlFriendlyTitle = (title: string, id: string) =>
   `${title
     .trim()
     .replace(/[^0-9a-z_]/gi, '-')
-    .replace(/\-+/g, '-')
+    .replace(/-+/g, '-')
     .replace(/-$/, '')
     .split(/-/)
     .reduce((acc, curr) => (`${acc}-${curr}`.length <= 100 ? `${acc}-${curr}` : acc))}-${id}`
