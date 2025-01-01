@@ -40,6 +40,9 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  experimental: {
+    reactCompiler: true,
+  },
 }
 
 const withMDX = createMDX({
