@@ -6,6 +6,7 @@ import typescript from 'rollup-plugin-typescript2'
 
 import copyFiles from './copyFiles'
 
+/** @type {import('rollup').RollupOptions} */
 export default {
   input: 'src/index.ts',
   output: [

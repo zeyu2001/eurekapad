@@ -5,7 +5,7 @@ import pluginNext from "@next/eslint-plugin-next";
 import tsEslintParser from "@typescript-eslint/parser"
 import { config as baseConfig } from "./base.js";
 
-/** @type {import("eslint").Linter.Config} */
+/** @type {import("eslint").Linter.Config[]} */
 export const nextJsConfig = [
   ...baseConfig,
   {

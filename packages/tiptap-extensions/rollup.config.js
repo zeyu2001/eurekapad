@@ -4,6 +4,7 @@ import autoExternal from 'rollup-plugin-auto-external'
 import sourcemaps from 'rollup-plugin-sourcemaps2'
 import typescript from 'rollup-plugin-typescript2'
 
+/** @type {import('rollup').RollupOptions} */
 export default {
   input: 'src/index.ts',
   output: [

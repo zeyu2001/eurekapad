@@ -1,6 +1,6 @@
 import { nextJsConfig } from '@eurekapad/eslint-config/next-js'
 
-/** @type {import("eslint").Linter.Config} */
+/** @type {import("eslint").Linter.Config[]} */
 export default [
   ...nextJsConfig,
   {
