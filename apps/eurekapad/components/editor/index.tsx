@@ -30,11 +30,6 @@ interface EditorProps {
 
 type CustomBlock = typeof customSchema.Block
 
-type TriggerAction = {
-  condition: (b: CustomBlock) => boolean
-  action: (b: CustomBlock) => void
-}
-
 const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
@@ -88,46 +83,22 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     },
   })
 
-  const handleEditorChange = () => {
-    const blocks = editor.document
+  const replaceWithCodeBlock = (block: CustomBlock) => {
+    if (block.type !== 'paragraph' || block.content?.[0]?.type !== 'text') return
 
-    blocks.forEach(applyTriggerActions)
-
-    onChange(JSON.stringify(editor.document, null, 2))
-  }
-
-  const applyTriggerActions = (block: CustomBlock) => {
-    const triggerActions: TriggerAction[] = [
-      {
-        condition: (b: CustomBlock) =>
-          b.type === 'paragraph' &&
-          b.content?.[0]?.type === 'text' &&
-          (b.content[0] as StyledText<StyleSchema>).text.startsWith('```'),
-        action: (b: CustomBlock) => {
-          if (b.type !== 'paragraph' || b.content?.[0]?.type !== 'text') return
-
-          const language = (b.content[0] as StyledText<StyleSchema>).text.substring(3)
-          if (langNames.includes(language as LanguageName)) {
-            editor.updateBlock(b.id, {
-              type: 'codeblock',
-              props: { language },
-            })
-          } else {
-            editor.updateBlock(b.id, {
-              type: 'codeblock',
-            })
-          }
-
-          editor.setTextCursorPosition({ id: b.id })
-        },
-      },
-    ]
-
-    for (const { condition, action } of triggerActions) {
-      if (condition(block)) {
-        action(block)
-      }
+    const language = (block.content[0] as StyledText<StyleSchema>).text.substring(3)
+    if (langNames.includes(language as LanguageName)) {
+      editor.updateBlock(block.id, {
+        type: 'codeblock',
+        props: { language },
+      })
+    } else {
+      editor.updateBlock(block.id, {
+        type: 'codeblock',
+      })
     }
+
+    editor.setTextCursorPosition({ id: block.id })
   }
 
   return (
@@ -137,7 +108,22 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
         editable={editable}
         theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
         slashMenu={false}
-        onChange={handleEditorChange}
+        onChange={() => onChange(JSON.stringify(editor.document, null, 2))}
+        onKeyDownCapture={event => {
+          if (event.key === 'Enter') {
+            // Check if user is enterring a code block
+            const currentBlock = editor.getTextCursorPosition().block
+
+            if (
+              currentBlock.type === 'paragraph' &&
+              currentBlock.content?.[0]?.type === 'text' &&
+              (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('```')
+            ) {
+              event.preventDefault()
+              replaceWithCodeBlock(currentBlock)
+            }
+          }
+        }}
       >
         <CustomSlashMenu editor={editor} />
       </BlockNoteView>
