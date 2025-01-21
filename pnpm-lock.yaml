@@ -30,17 +30,17 @@ importers:
         specifier: ^12.26.0
         version: 12.26.0
       '@blocknote/core':
-        specifier: ^0.22.0
-        version: 0.22.0(@types/hast@3.0.4)
+        specifier: ^0.23.0
+        version: 0.23.0(@types/hast@3.0.4)
       '@blocknote/mantine':
-        specifier: ^0.22.0
-        version: 0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.23.0
+        version: 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@blocknote/react':
-        specifier: ^0.22.0
-        version: 0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.23.0
+        version: 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@blocknote/xl-multi-column':
-        specifier: ^0.22.0
-        version: 0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.23.0
+        version: 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@clerk/nextjs':
         specifier: ^6.9.6
         version: 6.9.6(next@15.1.3(babel-plugin-react-compiler@19.0.0-beta-55955c9-20241229)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -568,23 +568,26 @@ packages:
     resolution: {integrity: sha512-vN5p+1kl59GVKMvTHt55NzzmYVxprfJD+ql7U9NFIfKCBkYE55LYtS+WtPlaYOyzydrKI8Nezd+aZextrd+FMA==}
     engines: {node: '>=6.9.0'}
 
-  '@blocknote/core@0.22.0':
-    resolution: {integrity: sha512-AAEx01zK6u+b1SsZniMm/aogEMjasF4vA9ZHgFGj04G7AwK5Hjwa0Sxre58qcW+KzuvR09CQHTkwjmgVmJX/HA==}
+  '@blocknote/core@0.23.0':
+    resolution: {integrity: sha512-ulwJ6svm94rpAxzQhv4WybEbzkJUBz6lZa6HYiehHHqUkup2TgxMXqMXDV0lAl4EzuXJoYKhh1Xtv8W3MbBv2Q==}
 
-  '@blocknote/mantine@0.22.0':
-    resolution: {integrity: sha512-6irIKCGUpE47X8qWLx9oa5ndztSrvLEHgVRp+fdVUHMJCx0/OzijJyYTTFKw8yEI9qc01pjmwdYMZrMMZybyGw==}
+  '@blocknote/mantine@0.23.0':
+    resolution: {integrity: sha512-nnWGm2eTN+13iDRUAlTwfVQjjwb1m1DRNHrSpoDnHB4moECaehYxwxuDgdK/CtfG01tVcc/OcGUCQB1WwetQ6g==}
     peerDependencies:
       react: ^18.0 || ^19.0 || >= 19.0.0-rc
       react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
 
-  '@blocknote/react@0.22.0':
-    resolution: {integrity: sha512-Y6Oj99iOKnlh2FE/lgy8kO5PziPnA8MyEJyjCH9Jbvlc9t493L9EFmLK8iKBZek7sh0TOzhXGBOA6lIpk02X6A==}
+  '@blocknote/react@0.23.0':
+    resolution: {integrity: sha512-FkHDVgM87aIbI1OW3XGpKrA0q7SfN433jj9UsLc79iAvSHxMRCtq+ZYW+JS9ycayutFHKVtG1sRWB99+I916Sw==}
     peerDependencies:
       react: ^18.0 || ^19.0 || >= 19.0.0-rc
       react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
 
-  '@blocknote/xl-multi-column@0.22.0':
-    resolution: {integrity: sha512-RcrCbH3VPGojB+R5gFLKQ48c2nnr0AqoiAsdpR3w13FvynRY4qVjq3ZVzpHPfKFs0/2D0YNxhQu4fny9roaazQ==}
+  '@blocknote/xl-multi-column@0.23.0':
+    resolution: {integrity: sha512-wpnu4yRmYr1BK23xyAcHItSD8kfMba2RVa9wWghBJkoesZJRKzvEid+hzU6eICeWXDDCMX0v7GJrmEZJ2V7zXg==}
+    peerDependencies:
+      react: ^18.0 || ^19.0 || >= 19.0.0-rc
+      react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
 
   '@clerk/backend@1.21.4':
     resolution: {integrity: sha512-PHJzBJrTxBAvHwscXwUwpippT7nHhphgycVcFb3655Dq6q0nRdKfo5GlkDHscEKxLOdmppB/168nXsVwSWf86w==}
@@ -6306,7 +6309,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@blocknote/core@0.22.0(@types/hast@3.0.4)':
+  '@blocknote/core@0.23.0(@types/hast@3.0.4)':
     dependencies:
       '@emoji-mart/data': 1.2.1
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
@@ -6359,10 +6362,10 @@ snapshots:
       - sugar-high
       - supports-color
 
-  '@blocknote/mantine@0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/mantine@0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.22.0(@types/hast@3.0.4)
-      '@blocknote/react': 0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@blocknote/core': 0.23.0(@types/hast@3.0.4)
+      '@blocknote/react': 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@mantine/core': 7.15.2(@mantine/hooks@7.15.2(react@19.0.0))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@mantine/hooks': 7.15.2(react@19.0.0)
       '@mantine/utils': 6.0.22(react@19.0.0)
@@ -6379,9 +6382,9 @@ snapshots:
       - sugar-high
       - supports-color
 
-  '@blocknote/react@0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/react@0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.22.0(@types/hast@3.0.4)
+      '@blocknote/core': 0.23.0(@types/hast@3.0.4)
       '@floating-ui/react': 0.26.28(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
       '@tiptap/react': 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -6398,24 +6401,24 @@ snapshots:
       - sugar-high
       - supports-color
 
-  '@blocknote/xl-multi-column@0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/xl-multi-column@0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.22.0(@types/hast@3.0.4)
-      '@blocknote/react': 0.22.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@blocknote/core': 0.23.0(@types/hast@3.0.4)
+      '@blocknote/react': 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
       prosemirror-model: 1.24.1
       prosemirror-state: 1.4.3
       prosemirror-tables: 1.6.2
       prosemirror-transform: 1.10.2
       prosemirror-view: 1.37.1
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
       react-icons: 5.4.0(react@19.0.0)
     transitivePeerDependencies:
       - '@tiptap/pm'
       - '@types/hast'
       - highlight.js
       - lowlight
-      - react
-      - react-dom
       - refractor
       - sugar-high
       - supports-color
