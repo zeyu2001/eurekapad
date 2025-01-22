@@ -2,8 +2,8 @@
 
 import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
-import { useEffect } from 'react'
-import { useDebounceValue } from 'usehooks-ts'
+import { useEffect, useState } from 'react'
+import { useDebounceCallback } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
@@ -22,20 +22,21 @@ export default function DocumentIdPage() {
 
   const [isLoaded, initialContent] = useContent(document)
 
-  const [debouncedContent, setContent] = useDebounceValue(initialContent, 1000)
+  const [content, setContent] = useState(initialContent)
+  const debouncedSetContent = useDebounceCallback(setContent)
 
   const onChange = async (content: string) => {
-    setContent(content)
+    debouncedSetContent(content)
   }
 
   const saveContent = useSaveContentCallback()
 
   useEffect(() => {
-    if (!isLoaded || debouncedContent === undefined) {
+    if (!isLoaded || content === undefined) {
       return
     }
-    saveContent(debouncedContent, documentId)
-  }, [debouncedContent, isLoaded])
+    saveContent(content, documentId)
+  }, [content, isLoaded])
 
   if (document === undefined || !isLoaded) {
     return (
