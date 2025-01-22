@@ -3,6 +3,7 @@ import * as swc from '@swc/wasm-web'
 import { getWorkerMessenger } from './js-worker/get-worker-messenger'
 
 type FunctionConstructor = {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   new (_code: string): Function
 }
 

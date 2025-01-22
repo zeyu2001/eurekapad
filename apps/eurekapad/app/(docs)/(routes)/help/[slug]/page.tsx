@@ -16,25 +16,25 @@ import { getTitle } from '@/lib/utils'
  * We automatically generate static paths for all the files in the directory.
  **/
 
-function getContent(params: { slug: string }) {
+async function getContent(params: { slug: string }) {
   try {
-    const data = require(`@/content/help/${params.slug}.mdx`)
+    const data = await import(`@/content/help/${params.slug}.mdx`)
 
     return {
       mdx: data.default,
       meta: data.meta,
     }
-  } catch (error) {
+  } catch {
     notFound()
   }
 }
 
 export function generateStaticParams() {
   // getting all .mdx files from the posts directory
-  const posts = glob.sync(`content/help/*.mdx`)
+  const posts = glob.sync(`*.mdx`, { cwd: 'content/help/' })
 
   // converting the file names to their slugs
-  const postSlugs = posts.map(file => file.split('/')[2].replace(/ /g, '-').slice(0, -4).trim())
+  const postSlugs = posts.map(file => file.replace(/ /g, '-').slice(0, -4).trim())
 
   // creating a path for each of the `slug` parameter
   return postSlugs.map(slug => {
@@ -42,8 +42,9 @@ export function generateStaticParams() {
   })
 }
 
-export default function Content({ params }: { params: { slug: string } }) {
-  const content = getContent(params)
+export default async function Content(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
+  const content = await getContent(params)
 
   return (
     <>

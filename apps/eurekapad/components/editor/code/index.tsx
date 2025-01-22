@@ -69,7 +69,7 @@ const codeBlockImpl: ReactCustomBlockImplementation<CodeBlockConfig, InlineConte
   toExternalHTML: ({ block }) => {
     return (
       <pre>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error: data exists here */}
         <code>{block?.props?.data}</code>
       </pre>
     )

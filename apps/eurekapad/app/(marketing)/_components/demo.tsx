@@ -38,12 +38,11 @@ const features = [
 ]
 
 export function Demo() {
-  let [tabOrientation, setTabOrientation] = useState<'horizontal' | 'vertical'>('horizontal')
-
+  const [tabOrientation, setTabOrientation] = useState<'horizontal' | 'vertical'>('horizontal')
   const [isLg, setIsLg] = useState(false)
 
   useEffect(() => {
-    let lgMediaQuery = window.matchMedia('(min-width: 1024px)')
+    const lgMediaQuery = window.matchMedia('(min-width: 1024px)')
 
     function onMediaQueryChange({ matches }: { matches: boolean }) {
       setTabOrientation(matches ? 'vertical' : 'horizontal')

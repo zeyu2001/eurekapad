@@ -4,6 +4,7 @@ import { imagesJSONSchema } from '@/components/editor/code/schemas'
 import { customSchema } from '@/components/editor/schema'
 
 type CustomPartialBlock = typeof customSchema.Block
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CustomInlineContent = Extract<CustomPartialBlock['content'], PartialInlineContent<any, any>>
 
 const fromTemplate = (latex: string) => {
@@ -93,7 +94,7 @@ function processImageUrl(url: string): string {
 }
 
 function extractTextFromContent(content: CustomInlineContent, escape: boolean = true): string {
-  let parts = []
+  const parts = []
   for (const c of content) {
     const ctype = c.type
     if (ctype === 'text') {
@@ -172,6 +173,7 @@ function processNode(node: CustomPartialBlock): string {
     }
     return ''
   } else if (nodeType === 'heading') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const props: any = node.props
     const headingLevel: number = props.level
     const headingMap: Record<number, string> = {
@@ -271,6 +273,9 @@ export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<s
 }
 
 export function blocksToLaTeX(data: CustomPartialBlock[]): string {
+  // TODO: this check is incomplete
+  // TODO: For some reason document https://www.eurekapad.app/documents/hello-j575yh515gxdp8gp6y956xfkz972937w is invalid
+  // TODO: https://www.eurekapad.app/documents/Test-j574hjs9s13vbh2ef732xjsmcd70g5m6 this too
   if (data.length === 0) {
     // hack to prevent empty document from erroring
     return fromTemplate('No content')

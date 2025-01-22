@@ -606,7 +606,7 @@ const signupEmailTemplateHTML = `
 </html>`
 
 const htmlEncode = (rawStr: string) =>
-  rawStr.replace(/[\u00A0-\u9999<>\&]/g, i => {
+  rawStr.replace(/[\u00A0-\u9999<>&]/g, i => {
     return '&#' + i.charCodeAt(0) + ';'
   })
 

@@ -165,6 +165,7 @@ const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 SingleFileDropzone.displayName = 'SingleFileDropzone'
 
 const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
+  // eslint-disable-next-line react/prop-types
   ({ className, ...props }, ref) => {
     return (
       <button

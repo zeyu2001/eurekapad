@@ -1,13 +1,13 @@
 'use node'
 
-import DocumentIntelligence from '@azure-rest/ai-document-intelligence'
+import DocumentIntelligence, { streamToUint8Array } from '@azure-rest/ai-document-intelligence'
 import {
-  AnalyzeResultOperationOutput,
+  AnalyzeOperationOutput,
   AnalyzeResultOutput,
   getLongRunningPoller,
   isUnexpected,
+  parseResultIdFromResponse,
 } from '@azure-rest/ai-document-intelligence'
-import axios from 'axios'
 import { v } from 'convex/values'
 
 import { action } from './_generated/server'
@@ -54,43 +54,41 @@ export const parsePdf = action({
     if (isUnexpected(initialResponse)) {
       throw initialResponse.body.error
     }
-    const poller = await getLongRunningPoller(client, initialResponse)
-    const result = (await poller.pollUntilDone()).body as AnalyzeResultOperationOutput
+    const resultId = parseResultIdFromResponse(initialResponse)
+    const poller = getLongRunningPoller(client, initialResponse)
+    const analyzeResult = ((await poller.pollUntilDone()).body as AnalyzeOperationOutput).analyzeResult
 
-    const resultId = poller.getOperationId()
-    const figureIds = result.analyzeResult?.figures?.map(figure => figure.id)
-    const figures = (
-      figureIds
-        ? await Promise.all(
-            figureIds.map(
-              figureId =>
-                figureId &&
-                // TODO: replace with DocumentIntelligence client once this issue is fixed:
-                // https://github.com/Azure/azure-sdk-for-js/pull/31908
-                axios
-                  .get(
-                    `${endpoint}/documentintelligence/documentModels/prebuilt-layout/analyzeResults/${resultId}/figures/${figureId}`,
-                    {
-                      params: {
-                        'api-version': apiVersion,
-                      },
-                      headers: {
-                        'Ocp-Apim-Subscription-Key': apiKey,
-                      },
-                      responseType: 'arraybuffer',
-                    },
-                  )
-                  .then(res => res.data),
-            ),
-          )
-        : []
-    ) as ArrayBuffer[]
-
-    const analyzeResult = result.analyzeResult
     if (!analyzeResult) {
       throw new Error('No analyze result')
     }
 
-    return [analyzeResult, figures.map(figure => Buffer.from(figure).toString('base64'))]
+    const figureIds = analyzeResult.figures?.map(figure => figure.id)
+
+    const figures = figureIds
+      ? await Promise.all(
+          figureIds.map(async figureId => {
+            if (figureId === undefined) return undefined
+            const output = await client
+              .path(
+                '/documentModels/{modelId}/analyzeResults/{resultId}/figures/{figureId}',
+                'prebuilt-layout',
+                resultId,
+                figureId,
+              )
+              .get()
+              .asNodeStream()
+            if (output.status !== '200' || !output.body) {
+              throw new Error('The response was unexpected, expected NodeJS.ReadableStream in the body.')
+            }
+
+            return streamToUint8Array(output.body)
+          }),
+        )
+      : []
+
+    return [
+      analyzeResult,
+      figures.filter(figure => figure !== undefined).map(figure => Buffer.from(figure).toString('base64')),
+    ]
   },
 })

@@ -33,11 +33,10 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
               insertCodeBlock(editor),
               insertTranscriptionBlock(editor),
               insertGraphBlock(editor),
-            ].sort((a, b) => {
-              return (
-                groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title)
-              )
-            }),
+            ].sort(
+              (a, b) =>
+                groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title),
+            ),
             getMultiColumnSlashMenuItems(editor),
           ),
           query,

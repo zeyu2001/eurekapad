@@ -32,7 +32,7 @@ const findFirstFocusableElement = (container: HTMLElement) => {
 // Focuses the block when the text cursor is placed on it
 // e.g. so that when inserting a new block, we can set the cursor position to the new block
 export function useBlockFocus<T extends CustomBlockConfig, I extends InlineContentSchema, S extends StyleSchema>(
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   editor: BlockNoteEditor<BlockSchemaWithBlock<T['type'], T>, I, S>,
   blockId: string,
 ) {

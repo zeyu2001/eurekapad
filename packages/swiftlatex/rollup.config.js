@@ -1,12 +1,13 @@
-const autoExternal = require('rollup-plugin-auto-external')
-const sourcemaps = require('rollup-plugin-sourcemaps')
-const commonjs = require('@rollup/plugin-commonjs')
-const babel = require('@rollup/plugin-babel')
-const typescript = require('rollup-plugin-typescript2')
+import babel from '@rollup/plugin-babel'
+import commonjs from '@rollup/plugin-commonjs'
+import autoExternal from 'rollup-plugin-auto-external'
+import sourcemaps from 'rollup-plugin-sourcemaps2'
+import typescript from 'rollup-plugin-typescript2'
 
 import copyFiles from './copyFiles'
 
-const config = {
+/** @type {import('rollup').RollupOptions} */
+export default {
   input: 'src/index.ts',
   output: [
     {
@@ -25,11 +26,9 @@ const config = {
   plugins: [
     autoExternal({ packagePath: './package.json' }),
     sourcemaps(),
-    babel(),
+    babel({ babelHelpers: 'bundled' }),
     commonjs(),
     typescript(),
     copyFiles('./wasm', './dist', true),
   ],
 }
-
-module.exports = config

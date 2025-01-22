@@ -14,7 +14,7 @@ export const imagesJSONSchema = z
   .transform((val, ctx) => {
     try {
       return JSON.parse(val)
-    } catch (error) {
+    } catch {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'invalid json',

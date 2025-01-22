@@ -61,7 +61,7 @@ export class SingletonPythonRunner {
       },
       contentsManager: new ContentsManager(),
     })
-    // @ts-ignore: _parent is a private property
+    // @ts-expect-error: _parent is a private property
     // this should have been a parent Jupyter kernel, but we don't need it
     this.kernel._parent = new Object()
 

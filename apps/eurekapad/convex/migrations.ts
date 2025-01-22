@@ -43,7 +43,7 @@ export const migrateContentToFiles = internalAction({
           id: document._id,
           contentId: storageId,
         })
-      } catch (error) {
+      } catch {
         continue
       }
     }
