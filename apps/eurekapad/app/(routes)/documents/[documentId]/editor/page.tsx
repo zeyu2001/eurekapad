@@ -1,22 +1,16 @@
 'use client'
 
+import { langs } from '@uiw/codemirror-extensions-langs'
+import { vscodeDarkInit, vscodeLightInit } from '@uiw/codemirror-theme-vscode'
+import ReactCodeMirror from '@uiw/react-codemirror'
 import { useQuery } from 'convex/react'
-import {
-  ArrowLeft,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Copy,
-  Download,
-  HelpCircle,
-  ZoomIn,
-  ZoomOut,
-} from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { ArrowLeft, Copy, Download } from 'lucide-react'
+import Link from 'next/link'
+import { useTheme } from 'next-themes'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,29 +18,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 // import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/convex/_generated/api'
 import { useContent } from '@/hooks/use-content'
+import { useCustomizationStore } from '@/hooks/use-customization-store'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { useSwiftLatexEngine } from '@/hooks/use-swiftlatex-engine'
 import { blocksToLaTeX, getAllImages } from '@/lib/latex'
 
 export default function LatexExportEditor() {
-  const router = useRouter()
   const documentId = useDocumentId()
   const document = useQuery(api.documents.getById, { documentId })
   const [isLoaded, initialContent] = useContent(document)
   const { engine, loaded: engineLoaded } = useSwiftLatexEngine()
 
-  const [font, setFont] = useState('Computer Modern')
-  const [fontSize, setFontSize] = useState('Medium')
-  const [colorTheme, setColorTheme] = useState('Default')
-  const [margins, setMargins] = useState('1.0')
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  // const [customPackages, setCustomPackages] = useState('')
-  // const [customMacros, setCustomMacros] = useState('')
-  // const [customPreamble, setCustomPreamble] = useState('')
+  const {
+    fontType,
+    fontSize,
+    textColor,
+    headingsColor,
+    margins,
+    lineSpacing,
+    setFontType,
+    setFontSize,
+    setTextColor,
+    setHeadingsColor,
+    setMargins,
+    setLineSpacing,
+    reset: resetCustomization,
+  } = useCustomizationStore()
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, _] = useState(1)
+  const [pdfLoadingState, setPdfLoadingState] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const { theme } = useTheme()
 
   const handleUpdatePreview = async () => {
     if (!isLoaded || !engineLoaded || !engine || !document) {
@@ -55,6 +56,7 @@ export default function LatexExportEditor() {
     }
 
     try {
+      setPdfLoadingState(true)
       const latex = blocksToLaTeX(JSON.parse(initialContent || '[]'))
       const images = await getAllImages(JSON.parse(initialContent || '[]'))
 
@@ -72,6 +74,8 @@ export default function LatexExportEditor() {
     } catch (err) {
       console.error(err)
       toast.error('Failed to generate preview')
+    } finally {
+      setPdfLoadingState(false)
     }
   }
 
@@ -104,6 +108,21 @@ export default function LatexExportEditor() {
     }
   }
 
+  const editorTheme =
+    theme === 'light'
+      ? vscodeLightInit({
+          settings: {
+            caret: '#000000',
+            fontFamily: 'monospace',
+          },
+        })
+      : vscodeDarkInit({
+          settings: {
+            caret: '#c6c6c6',
+            fontFamily: 'monospace',
+          },
+        })
+
   if (!document || !isLoaded) {
     return <div>Loading...</div>
   }
@@ -111,35 +130,36 @@ export default function LatexExportEditor() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-2xl font-bold">NotePro</h1>
+      <header className="flex justify-between items-center px-3 py-2 border-b">
+        <h1 className="text-2xl font-bold">EurekaPad</h1>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" className="flex items-center gap-2" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4" />
-            Back to Notes
-          </Button>
-          <Button variant="ghost" size="icon">
-            <HelpCircle className="h-5 w-5" />
-          </Button>
+          <Link href={`/documents/${documentId}`}>
+            <Button variant="ghost" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Notes
+            </Button>
+          </Link>
         </div>
       </header>
 
       {/* Customization Toolbar */}
-      <div className="flex flex-col p-4 border-b">
-        <div className="flex items-center gap-4 mb-4">
+      <div className="flex flex-col px-3 py-2 border-b">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Font Settings */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="font">Font:</Label>
-            <Select value={font} onValueChange={setFont}>
+            <Label htmlFor="fontType">Font:</Label>
+            <Select value={fontType} onValueChange={setFontType}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select font" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Computer Modern">Computer Modern</SelectItem>
-                <SelectItem value="Times New Roman">Times New Roman</SelectItem>
-                <SelectItem value="Arial">Arial</SelectItem>
+                <SelectItem value="Times">Times</SelectItem>
+                <SelectItem value="Sans Serif">Sans Serif</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
           <div className="flex items-center gap-2">
             <Label htmlFor="fontSize">Size:</Label>
             <Select value={fontSize} onValueChange={setFontSize}>
@@ -147,82 +167,75 @@ export default function LatexExportEditor() {
                 <SelectValue placeholder="Select size" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Small">Small</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="Large">Large</SelectItem>
+                <SelectItem value="10pt">10pt</SelectItem>
+                <SelectItem value="11pt">11pt</SelectItem>
+                <SelectItem value="12pt">12pt</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {/* Color Settings */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="colorTheme">Color Theme:</Label>
-            <Select value={colorTheme} onValueChange={setColorTheme}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Select theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Default">Default</SelectItem>
-                <SelectItem value="Dark">Dark</SelectItem>
-                <SelectItem value="Sepia">Sepia</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="textColor">Text Color:</Label>
+            <Input
+              id="textColor"
+              type="color"
+              value={textColor}
+              onChange={e => setTextColor(e.target.value)}
+              className="w-[60px] h-[38px] p-1"
+            />
           </div>
+
+          <div className="flex items-center gap-2">
+            <Label htmlFor="headingsColor">Headings Color:</Label>
+            <Input
+              id="headingsColor"
+              type="color"
+              value={headingsColor}
+              onChange={e => setHeadingsColor(e.target.value)}
+              className="w-[60px] h-[38px] p-1"
+            />
+          </div>
+
+          {/* Layout Settings */}
           <div className="flex items-center gap-2">
             <Label htmlFor="margins">Margins:</Label>
-            <Input
-              id="margins"
-              type="number"
-              value={margins}
-              onChange={e => setMargins(e.target.value)}
-              className="w-20"
-            />
-            <span>in</span>
+            <Select value={margins} onValueChange={setMargins}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Select margins" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1.0">1 inch</SelectItem>
+                <SelectItem value="0.75">0.75 inch</SelectItem>
+                <SelectItem value="0.5">0.5 inch</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Button onClick={handleUpdatePreview}>Update Preview</Button>
-          <Button variant="outline" onClick={() => setShowAdvanced(!showAdvanced)} className="ml-auto">
-            {showAdvanced ? (
-              <>
-                <ChevronUp className="h-4 w-4 mr-2" />
-                Hide Advanced
-              </>
-            ) : (
-              <>
-                <ChevronDown className="h-4 w-4 mr-2" />
-                Show Advanced
-              </>
-            )}
-          </Button>
+
+          <div className="flex items-center gap-2">
+            <Label htmlFor="lineSpacing">Line Spacing:</Label>
+            <Select value={lineSpacing} onValueChange={setLineSpacing}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Select spacing" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1.0">Single</SelectItem>
+                <SelectItem value="1.5">1.5</SelectItem>
+                <SelectItem value="2.0">Double</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2 ml-auto">
+            <Button variant="ghost" onClick={resetCustomization}>
+              Reset
+            </Button>
+            <Button variant="ghost" onClick={handleUpdatePreview}>
+              Update Preview
+            </Button>
+          </div>
         </div>
-        {showAdvanced && (
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            <div>
-              <Label htmlFor="customPackages">Custom Packages</Label>
-              {/* <Textarea
-                id="customPackages"
-                placeholder="Enter custom LaTeX packages"
-                value={customPackages}
-                onChange={(e) => setCustomPackages(e.target.value)}
-              /> */}
-            </div>
-            <div>
-              <Label htmlFor="customMacros">Custom Macros</Label>
-              {/* <Textarea
-                id="customMacros"
-                placeholder="Enter custom LaTeX macros"
-                value={customMacros}
-                onChange={(e) => setCustomMacros(e.target.value)}
-              /> */}
-            </div>
-            <div>
-              <Label htmlFor="customPreamble">Custom Preamble</Label>
-              {/* <Textarea
-                id="customPreamble"
-                placeholder="Enter custom LaTeX preamble"
-                value={customPreamble}
-                onChange={(e) => setCustomPreamble(e.target.value)}
-              /> */}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Main Content */}
@@ -230,14 +243,24 @@ export default function LatexExportEditor() {
         {/* LaTeX Code */}
         <div className="w-1/2 p-4 border-r">
           <h2 className="text-lg font-semibold mb-2">LaTeX Code</h2>
-          <pre className="bg-gray-100 p-4 rounded-md overflow-auto h-[calc(100vh-240px)]">
-            <code>{isLoaded ? blocksToLaTeX(JSON.parse(initialContent || '[]')) : 'Loading...'}</code>
+          <pre className="bg-background rounded-md overflow-auto h-[calc(100vh-240px)]">
+            {isLoaded ? (
+              <ReactCodeMirror
+                value={blocksToLaTeX(JSON.parse(initialContent || '[]'))}
+                extensions={[langs.stex()]}
+                theme={editorTheme}
+                height="100%"
+                // onChange={setLatex}
+              />
+            ) : (
+              'Loading...'
+            )}
           </pre>
         </div>
         {/* PDF Preview */}
         <div className="w-1/2 p-4">
           <h2 className="text-lg font-semibold mb-2">PDF Preview</h2>
-          <div className="bg-white border rounded-md p-4 h-[calc(100vh-240px)] flex flex-col">
+          <div className="h-[calc(100vh-240px)] flex flex-col">
             {error ? (
               <div className="flex-1 bg-red-50 p-4 overflow-auto">
                 <pre className="text-red-500 text-sm">{error}</pre>
@@ -246,53 +269,26 @@ export default function LatexExportEditor() {
               <div className="flex-1 bg-gray-100 flex items-center justify-center">
                 <iframe src={pdfUrl} className="w-full h-full" />
               </div>
+            ) : pdfLoadingState ? (
+              <div className="flex-1 bg-gray-200 flex items-center justify-center">
+                <Spinner />
+              </div>
             ) : (
               <div className="flex-1 bg-gray-200 flex items-center justify-center">
                 <p className="text-gray-500">Click &quot;Update Preview&quot; to generate PDF</p>
               </div>
             )}
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex items-center gap-2">
-                <Button size="icon" variant="outline">
-                  <ZoomOut className="h-4 w-4" />
-                </Button>
-                <Button size="icon" variant="outline">
-                  <ZoomIn className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage <= 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span>
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage >= totalPages}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="flex justify-end gap-4 p-4 border-t">
+      <footer className="flex justify-end gap-4 px-3 py-2 border-t">
         <Button className="flex items-center gap-2" onClick={handleDownload}>
           <Download className="h-4 w-4" />
           Download PDF
         </Button>
-        <Button variant="outline" className="flex items-center gap-2" onClick={handleCopyLatex}>
+        <Button variant="secondary" className="flex items-center gap-2" onClick={handleCopyLatex}>
           <Copy className="h-4 w-4" />
           Copy LaTeX
         </Button>

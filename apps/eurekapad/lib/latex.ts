@@ -2,14 +2,29 @@ import { PartialInlineContent, StyledText } from '@blocknote/core'
 
 import { imagesJSONSchema } from '@/components/editor/code/schemas'
 import { customSchema } from '@/components/editor/schema'
+import { useCustomizationStore } from '@/hooks/use-customization-store'
 
 type CustomPartialBlock = typeof customSchema.Block
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CustomInlineContent = Extract<CustomPartialBlock['content'], PartialInlineContent<any, any>>
 
 const fromTemplate = (latex: string) => {
+  const { fontType, fontSize, textColor, headingsColor, margins, lineSpacing, generateTOC, numberEquations } =
+    useCustomizationStore.getState()
+
+  // Font packages based on selection
+  const fontPackages = {
+    'Computer Modern': '',
+    Times: '\\usepackage{times}',
+    'Sans Serif': '\\usepackage{helvet}\\renewcommand{\\familydefault}{\\sfdefault}',
+  }
+
+  // Convert margins to LaTeX geometry
+  const geometrySettings = `\\usepackage[margin=${margins}in]{geometry}`
+
   return (
-    `\\documentclass[a4paper,12pt]{article}
+    `\\documentclass[a4paper,${fontSize}]{article}
+${fontPackages[fontType as keyof typeof fontPackages]}
 \\usepackage{amsmath}
 \\usepackage{amsfonts}
 \\usepackage{amssymb}
@@ -17,7 +32,24 @@ const fromTemplate = (latex: string) => {
 \\usepackage{xcolor}
 \\usepackage{graphicx}
 \\usepackage{float}
+${geometrySettings}
 
+% Line spacing
+\\linespread{${lineSpacing}}
+
+% Custom colors
+\\definecolor{customtext}{HTML}{${textColor.substring(1)}}
+\\definecolor{customheadings}{HTML}{${headingsColor.substring(1)}}
+\\color{customtext}
+
+% Heading colors
+\\usepackage{sectsty}
+\\allsectionsfont{\\color{customheadings}}
+
+% Equation numbering
+${numberEquations ? '\\numberwithin{equation}{section}' : ''}
+
+% Code block colors
 \\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 \\definecolor{mauve}{rgb}{0.58,0,0.82}
 \\definecolor{codegreen}{rgb}{0,0.6,0}
@@ -49,7 +81,9 @@ const fromTemplate = (latex: string) => {
     showstringspaces=false,
 }
 
-\\begin{document}\n` +
+\\begin{document}
+
+${generateTOC ? '\\tableofcontents\n\\newpage\n\n' : ''}\n` +
     latex +
     `\n\\end{document}`
   )
