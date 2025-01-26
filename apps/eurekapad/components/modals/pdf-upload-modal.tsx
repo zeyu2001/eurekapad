@@ -106,7 +106,7 @@ export const PdfUploadModal = () => {
         </p>
         <SingleFileDropzone
           fileType="pdf"
-          className="w-full outline-none"
+          className="w-full outline-hidden"
           disabled={isSubmitting}
           value={file}
           onChange={onChange}
