@@ -15,7 +15,9 @@ import type {
 } from "convex/server";
 import type * as ai from "../ai.js";
 import type * as clerk from "../clerk.js";
+import type * as documentPermissions from "../documentPermissions.js";
 import type * as documents from "../documents.js";
+import type * as emails_share from "../emails/share.js";
 import type * as emails_signup from "../emails/signup.js";
 import type * as http from "../http.js";
 import type * as migrations from "../migrations.js";
@@ -33,7 +35,9 @@ import type * as uploads from "../uploads.js";
 declare const fullApi: ApiFromModules<{
   ai: typeof ai;
   clerk: typeof clerk;
+  documentPermissions: typeof documentPermissions;
   documents: typeof documents;
+  "emails/share": typeof emails_share;
   "emails/signup": typeof emails_signup;
   http: typeof http;
   migrations: typeof migrations;

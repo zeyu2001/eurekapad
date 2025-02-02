@@ -16,5 +16,12 @@ export default defineSchema({
   })
     .index('by_user', ['userId'])
     .index('by_user_parent', ['userId', 'parentDocument']),
+  documentPermisisons: defineTable({
+    documentId: v.id('documents'),
+    userId: v.string(),
+    canEdit: v.boolean(),
+  })
+    .index('by_user', ['userId'])
+    .index('by_document', ['documentId']),
   migrations: migrationsTable,
 })
