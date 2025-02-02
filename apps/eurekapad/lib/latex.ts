@@ -9,8 +9,7 @@ type CustomPartialBlock = typeof customSchema.Block
 type CustomInlineContent = Extract<CustomPartialBlock['content'], PartialInlineContent<any, any>>
 
 const fromTemplate = (latex: string) => {
-  const { fontType, fontSize, textColor, headingsColor, margins, lineSpacing, generateTOC, numberEquations } =
-    useCustomizationStore.getState()
+  const { fontType, fontSize, textColor, headingsColor, margins, lineSpacing } = useCustomizationStore.getState()
 
   // Font packages based on selection
   const fontPackages = {
@@ -47,7 +46,6 @@ ${geometrySettings}
 \\allsectionsfont{\\color{customheadings}}
 
 % Equation numbering
-${numberEquations ? '\\numberwithin{equation}{section}' : ''}
 
 % Code block colors
 \\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
@@ -83,7 +81,7 @@ ${numberEquations ? '\\numberwithin{equation}{section}' : ''}
 
 \\begin{document}
 
-${generateTOC ? '\\tableofcontents\n\\newpage\n\n' : ''}\n` +
+\n` +
     latex +
     `\n\\end{document}`
   )
