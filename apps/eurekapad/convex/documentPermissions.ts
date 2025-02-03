@@ -68,6 +68,7 @@ export const share = mutation({
       invitedByName: identity.name || identity.email,
       documentTitle: document.title,
       inviteLink: `https://eurekapad.app/document/${document._id}`,
+      invitedByImage: identity.pictureUrl,
     })
   },
 })

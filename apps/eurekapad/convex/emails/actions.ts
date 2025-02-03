@@ -13,6 +13,7 @@ export const sendShareEmails = internalAction({
     invitedByEmail: v.string(),
     documentTitle: v.string(),
     inviteLink: v.string(),
+    invitedByImage: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -38,7 +39,7 @@ export const sendShareEmails = internalAction({
           isEditor,
           documentName: args.documentTitle,
           inviteLink: args.inviteLink,
-          invitedByImage: 'https://example.com',
+          invitedByImage: args.invitedByImage,
         }),
       })
     }

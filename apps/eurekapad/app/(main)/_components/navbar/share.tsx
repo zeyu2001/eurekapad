@@ -38,7 +38,7 @@ export const Share = ({ document: document }: ShareProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      shares: [{ email: '', role: 'viewer' }], // start with one row
+      shares: [{ email: '', role: 'editor' }], // start with one row
     },
   })
 
