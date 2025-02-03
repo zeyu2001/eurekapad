@@ -11,6 +11,7 @@ import {
   Minus,
   SeparatorHorizontalIcon,
 } from 'lucide-react'
+import { useRef, useState } from 'react'
 
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import { insertBlockAndFocus } from '@/lib/insert-block'
 import { cn } from '@/lib/utils'
 
@@ -94,16 +96,37 @@ const spacingClasses: Record<SeparatorSpacing, string> = {
 }
 
 const lineClasses: Record<SeparatorVariant, string> = {
-  solid: 'border-t border-muted-foreground/30',
-  dotted: 'border-t border-dotted border-muted-foreground/30',
-  dashed: 'border-t border-dashed border-muted-foreground/30',
+  solid: 'border-b border-muted-foreground/30',
+  dotted: 'border-b border-dotted border-muted-foreground/30',
+  dashed: 'border-b border-dashed border-muted-foreground/30',
 }
 
 const separatorBlockImpl: ReactCustomBlockImplementation<SeparatorBlockConfig, InlineContentSchema, StyleSchema> = {
   render: ({ block, editor }) => {
+    // eslint-disable-next-line
+    const inputRef = useRef<HTMLInputElement>(null)
+
     const variant = (block.props.variant as SeparatorVariant) || 'solid'
     const spacing = (block.props.spacing as SeparatorSpacing) || 'default'
     const label = (block.props.label as string) || ''
+
+    // eslint-disable-next-line
+    const [open, setOpen] = useState(false)
+
+    const handleOpenChange = (open: boolean) => {
+      setOpen(open)
+      if (open) {
+        requestAnimationFrame(() => {
+          inputRef.current?.focus()
+        })
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        setOpen(false)
+      }
+    }
 
     return (
       <div
@@ -113,7 +136,7 @@ const separatorBlockImpl: ReactCustomBlockImplementation<SeparatorBlockConfig, I
           'group hover:bg-muted/20 rounded transition-colors cursor-pointer',
         )}
       >
-        <DropdownMenu>
+        <DropdownMenu open={open} onOpenChange={handleOpenChange}>
           <DropdownMenuTrigger asChild>
             <div className="w-full flex items-center justify-center py-2">
               {label ? (
@@ -159,6 +182,22 @@ const separatorBlockImpl: ReactCustomBlockImplementation<SeparatorBlockConfig, I
           <DropdownMenuContent>
             <DropdownMenuLabel>Separator Style</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <div className="py-1.5 px-2">
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Enter label"
+                className="py-0.5 px-2 text-sm/3"
+                value={label}
+                onChange={e => {
+                  editor.updateBlock(block, {
+                    type: 'separator',
+                    props: { ...block.props, label: e.target.value },
+                  })
+                }}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
             {separatorStyles.map(style => {
               const Icon = style.icon
               const isSelected = style.value === variant

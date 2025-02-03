@@ -137,7 +137,6 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
         editable={editable}
         theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
         slashMenu={false}
-        sideMenu={false}
         onChange={() => onChange(JSON.stringify(editor.document, null, 2))}
         onKeyDownCapture={event => {
           if (event.key === 'Enter') {
