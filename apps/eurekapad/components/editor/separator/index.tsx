@@ -127,10 +127,6 @@ const separatorBlockImpl: ReactCustomBlockImplementation<SeparatorBlockConfig, I
                     )}
                   />
                   <div className="flex items-center gap-2">
-                    {/* {(() => {
-                                        const Icon = separatorStyles.find(s => s.value === variant)?.icon || Minus;
-                                        return <Icon size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />;
-                                    })()} */}
                     <span className="text-sm text-muted-foreground/50 whitespace-nowrap px-2 group-hover:text-muted-foreground transition-colors">
                       {label}
                     </span>
@@ -146,10 +142,6 @@ const separatorBlockImpl: ReactCustomBlockImplementation<SeparatorBlockConfig, I
                 </div>
               ) : (
                 <div className="w-full flex items-center gap-2">
-                  {/* {(() => {
-                                    const Icon = separatorStyles.find(s => s.value === variant)?.icon || Minus;
-                                    return <Icon size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground absolute left-2 opacity-0 group-hover:opacity-100 transition-opacity" />;
-                                })()} */}
                   <div
                     role="separator"
                     aria-orientation="horizontal"
@@ -232,10 +224,6 @@ export const separatorBlockSpec = createReactBlockSpec<SeparatorBlockConfig, Inl
   separatorBlockImpl,
 )
 
-// export const insertSeparatorWithLabelBlock = (editor: CustomEditor) => ({
-//     title: 'Separator'
-// })
-
 export const insertSeparatorBlock = (editor: CustomEditor) => ({
   title: 'Separator',
   onItemClick: () => {
@@ -251,47 +239,4 @@ export const insertSeparatorBlock = (editor: CustomEditor) => ({
   icon: <SeparatorHorizontalIcon size={16} />,
   aliases: ['separator', 'horizontal', 'divider', 'line'],
   group: 'Others',
-  subtext: 'Add a separator line with optional text label',
-  children: [
-    {
-      title: 'Solid Line',
-      onItemClick: () => {
-        insertBlockAndFocus(editor, {
-          type: 'separator',
-          props: { variant: 'solid', spacing: 'default' },
-        })
-      },
-      subtext: 'Simple solid line separator',
-    },
-    {
-      title: 'Dotted Line',
-      onItemClick: () => {
-        insertBlockAndFocus(editor, {
-          type: 'separator',
-          props: { variant: 'dotted', spacing: 'default' },
-        })
-      },
-      subtext: 'Dotted line separator',
-    },
-    {
-      title: 'Dashed Line',
-      onItemClick: () => {
-        insertBlockAndFocus(editor, {
-          type: 'separator',
-          props: { variant: 'dashed', spacing: 'default' },
-        })
-      },
-      subtext: 'Dashed line separator',
-    },
-    {
-      title: 'With Label',
-      onItemClick: () => {
-        insertBlockAndFocus(editor, {
-          type: 'separator',
-          props: { variant: 'solid', spacing: 'default', label: 'Section' },
-        })
-      },
-      subtext: 'Separator with centered text label',
-    },
-  ],
 })

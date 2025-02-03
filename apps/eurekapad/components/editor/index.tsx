@@ -102,16 +102,23 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
   }
 
   const replaceWithSeparator = (block: CustomBlock) => {
-    if (block.type !== 'paragraph' || block.content?.[0]?.type !== 'text') return
+    if (block.type !== 'paragraph') return
+    const firstContent = block.content?.[0]
+    if (!firstContent || firstContent.type !== 'text') return
 
-    const separatorWithLabel = (block.content[0] as StyledText<StyleSchema>).text.slice(3).trim().length
+    const text = (firstContent as StyledText<StyleSchema>).text
+    const match = text.match(/^---(.*)$/)
 
-    if (separatorWithLabel > 3) {
+    if (!match) return
+
+    const label = match[1].trim()
+
+    if (label) {
       editor.updateBlock(block.id, {
         type: 'separator',
 
         props: {
-          label: (block.content[0] as StyledText<StyleSchema>).text.slice(3),
+          label,
         },
       })
     } else {
@@ -130,6 +137,7 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
         editable={editable}
         theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
         slashMenu={false}
+        sideMenu={false}
         onChange={() => onChange(JSON.stringify(editor.document, null, 2))}
         onKeyDownCapture={event => {
           if (event.key === 'Enter') {
