@@ -60,7 +60,7 @@ type SeparatorProps = {
 type SeparatorBlockConfig = {
   type: 'separator'
   propSchema: typeof defaultProps & SeparatorProps
-  content: 'inline'
+  content: 'none'
   isFileBlock: false
 }
 
@@ -80,7 +80,7 @@ const separatorBlockConfig: SeparatorBlockConfig = {
       values: ['compact', 'default', 'relaxed'],
     },
   },
-  content: 'inline',
+  content: 'none',
   isFileBlock: false,
 }
 

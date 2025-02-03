@@ -101,6 +101,28 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     editor.setTextCursorPosition({ id: block.id })
   }
 
+  const replaceWithSeparator = (block: CustomBlock) => {
+    if (block.type !== 'paragraph' || block.content?.[0]?.type !== 'text') return
+
+    const separatorWithLabel = (block.content[0] as StyledText<StyleSchema>).text.slice(3).trim().length
+
+    if (separatorWithLabel > 3) {
+      editor.updateBlock(block.id, {
+        type: 'separator',
+
+        props: {
+          label: (block.content[0] as StyledText<StyleSchema>).text.slice(3),
+        },
+      })
+    } else {
+      editor.updateBlock(block.id, {
+        type: 'separator',
+      })
+    }
+
+    editor.setTextCursorPosition({ id: block.id + 1 })
+  }
+
   return (
     <div>
       <BlockNoteView
@@ -121,6 +143,15 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
             ) {
               event.preventDefault()
               replaceWithCodeBlock(currentBlock)
+            }
+
+            if (
+              currentBlock.type === 'paragraph' &&
+              currentBlock.content?.[0]?.type === 'text' &&
+              (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('---')
+            ) {
+              event.preventDefault()
+              replaceWithSeparator(currentBlock)
             }
           }
         }}
