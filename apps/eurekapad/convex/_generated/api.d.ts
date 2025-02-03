@@ -17,6 +17,7 @@ import type * as ai from "../ai.js";
 import type * as clerk from "../clerk.js";
 import type * as documentPermissions from "../documentPermissions.js";
 import type * as documents from "../documents.js";
+import type * as emails_actions from "../emails/actions.js";
 import type * as emails_share from "../emails/share.js";
 import type * as emails_signup from "../emails/signup.js";
 import type * as http from "../http.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   clerk: typeof clerk;
   documentPermissions: typeof documentPermissions;
   documents: typeof documents;
+  "emails/actions": typeof emails_actions;
   "emails/share": typeof emails_share;
   "emails/signup": typeof emails_signup;
   http: typeof http;

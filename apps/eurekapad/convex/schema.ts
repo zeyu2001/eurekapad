@@ -19,7 +19,7 @@ export default defineSchema({
   documentPermisisons: defineTable({
     documentId: v.id('documents'),
     userId: v.string(),
-    canEdit: v.boolean(),
+    isEditor: v.boolean(),
   })
     .index('by_user', ['userId'])
     .index('by_document', ['documentId']),

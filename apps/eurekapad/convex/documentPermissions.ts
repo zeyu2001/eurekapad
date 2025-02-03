@@ -1,12 +1,10 @@
 import { createClerkClient } from '@clerk/backend'
 import { v } from 'convex/values'
-import { Resend } from 'resend'
 
 import { api, internal } from './_generated/api'
-import { internalAction, mutation, query } from './_generated/server'
-import ShareWithUserEmail from './emails/share'
+import { mutation, query } from './_generated/server'
 
-const clerkClient = createClerkClient({
+const _clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
 })
 
@@ -41,11 +39,11 @@ export const sharedWith = query({
 })
 
 export const share = mutation({
-  args: { id: v.id('documents'), emailAddresses: v.array(v.string()) },
+  args: { id: v.id('documents'), shares: v.array(v.object({ email: v.string(), isEditor: v.boolean() })) },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
 
-    if (!identity) {
+    if (!identity || !identity.email) {
       throw new Error('Not authenticated')
     }
 
@@ -61,45 +59,15 @@ export const share = mutation({
       throw new Error('Unauthorized')
     }
 
-    const _shareTo = await clerkClient.users.getUserList({ emailAddress: args.emailAddresses })
+    // const _shareTo = await clerkClient.users.getUserList({ emailAddress: args.emailAddresses })
+    const document = await ctx.runQuery(api.documents.getById, { documentId: args.id })
 
-    await ctx.scheduler.runAfter(0, internal.documentPermissions.sendShareEmails, {
-      emailAddresses: args.emailAddresses,
-      documentId: args.id,
+    await ctx.scheduler.runAfter(0, internal.emails.actions.sendShareEmails, {
+      shares: args.shares,
+      invitedByEmail: identity.email,
+      invitedByName: identity.name || identity.email,
+      documentTitle: document.title,
+      inviteLink: `https://eurekapad.app/document/${document._id}`,
     })
-  },
-})
-
-export const sendShareEmails = internalAction({
-  args: {
-    emailAddresses: v.array(v.string()),
-    documentId: v.id('documents'),
-  },
-  handler: async (ctx, args) => {
-    const document = await ctx.runQuery(api.documents.getById, { documentId: args.documentId })
-
-    const RESEND_API_KEY = process.env.RESEND_API_KEY
-
-    if (!RESEND_API_KEY) {
-      throw new Error('Please add RESEND_API_KEY from Resend Dashboard to Convex')
-    }
-
-    const resend = new Resend(RESEND_API_KEY)
-
-    for (const email of args.emailAddresses) {
-      await resend.emails.send({
-        from: 'EurekaPad <contact@eurekapad.app>',
-        to: email,
-        subject: `You have been invited to collaborate on ${document.title}`,
-        react: ShareWithUserEmail({
-          email: email,
-          invitedByName: document.userId,
-          invitedByEmail: document.userId,
-          canEdit: false,
-          documentName: document.title,
-          inviteLink: `https://eurekapad.app/document/${document._id}`,
-        }),
-      })
-    }
   },
 })

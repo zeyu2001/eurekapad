@@ -19,14 +19,12 @@ import * as React from 'react'
 
 interface ShareWithUserEmailProps {
   email: string
-  invitedByName?: string
-  invitedByEmail?: string
-  canEdit?: boolean
-  documentName?: string
-  invitedByImage?: string
-  inviteLink?: string
-  inviteFromIp?: string
-  inviteFromLocation?: string
+  invitedByName: string
+  invitedByEmail: string
+  isEditor: boolean
+  documentName: string
+  invitedByImage: string
+  inviteLink: string
 }
 
 const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ''
@@ -35,12 +33,10 @@ export const ShareWithUserEmail = ({
   email,
   invitedByName,
   invitedByEmail,
-  canEdit,
+  isEditor,
   documentName,
   invitedByImage,
   inviteLink,
-  inviteFromIp,
-  inviteFromLocation,
 }: ShareWithUserEmailProps) => {
   const previewText = `You have been invited to collaborate on ${documentName}`
 
@@ -69,7 +65,7 @@ export const ShareWithUserEmail = ({
               <Link href={`mailto:${invitedByEmail}`} className="text-blue-600 no-underline">
                 {invitedByEmail}
               </Link>
-              ) has invited you to <strong>{canEdit ? 'edit' : 'view'}</strong> the document{' '}
+              ) has invited you to <strong>{isEditor ? 'edit' : 'view'}</strong> the document{' '}
               <strong>{documentName}</strong> on <strong>EurekaPad</strong>.
             </Text>
             <Section>
@@ -95,11 +91,9 @@ export const ShareWithUserEmail = ({
             </Text>
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             <Text className="text-[#666666] text-[12px] leading-[24px]">
-              This invitation was intended for <span className="text-black">{email}</span>. This invite was sent from{' '}
-              <span className="text-black">{inviteFromIp}</span> located in{' '}
-              <span className="text-black">{inviteFromLocation}</span>. If you were not expecting this invitation, you
-              can ignore this email. If you are concerned about your account&apos;s safety, please reply to this email
-              to get in touch with us.
+              This invitation was intended for <span className="text-black">{email}</span>. If you were not expecting
+              this invitation, you can ignore this email. If you are concerned about your account&apos;s safety, please
+              reply to this email to get in touch with us.
             </Text>
           </Container>
         </Body>

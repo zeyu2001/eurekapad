@@ -1,6 +1,8 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from 'convex/react'
+import { PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -10,28 +12,42 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { api } from '@/convex/_generated/api'
 import { Doc } from '@/convex/_generated/dataModel'
 
 interface ShareProps {
   document: Doc<'documents'>
 }
 
-const formSchema = z
-  .object({
-    email: z.string().email(),
-    role: z.enum(['viewer', 'editor']),
-  })
-  .array()
+const formSchema = z.object({
+  shares: z.array(
+    z.object({
+      email: z.string().email(),
+      role: z.enum(['viewer', 'editor']),
+    }),
+  ),
+})
 
-export const Share = ({ document: _ }: ShareProps) => {
+// Disable react-compiler to fix form validation issue: https://github.com/shadcn-ui/ui/issues/555
+export const Share = ({ document: document }: ShareProps) => {
+  'use no memo'
   const [open, setOpen] = useState(false)
+  const [numShares, setNumShares] = useState(1)
+  const share = useMutation(api.documentPermissions.share)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      shares: [{ email: '', role: 'viewer' }], // start with one row
+    },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    share({
+      id: document._id,
+      shares: values.shares.map(share => ({ email: share.email, isEditor: share.role === 'editor' })),
+    })
   }
 
   return (
@@ -44,15 +60,17 @@ export const Share = ({ document: _ }: ShareProps) => {
       <DialogContent onOpenAutoFocus={e => e.preventDefault()}>
         <DialogHeader className="flex items-center justify-between">
           <DialogTitle>Share Document</DialogTitle>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8">
-              <div className="grid grid-cols-2 gap-4">
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="py-4 space-y-4">
+            {Array.from({ length: numShares }).map((_, i) => (
+              <div className="grid grid-cols-2 gap-4" key={i}>
                 <FormField
                   control={form.control}
-                  name="0.email"
+                  name={`shares.${i}.email`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      {i === 0 && <FormLabel>Email address</FormLabel>}
                       <FormControl>
                         <Input placeholder="jane@example.com" {...field} />
                       </FormControl>
@@ -62,10 +80,10 @@ export const Share = ({ document: _ }: ShareProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="0.role"
+                  name={`shares.${i}.role`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
+                      {i === 0 && <FormLabel>Role</FormLabel>}
                       <Select onValueChange={field.onChange} defaultValue={field.value ?? 'editor'}>
                         <FormControl>
                           <SelectTrigger>
@@ -82,9 +100,18 @@ export const Share = ({ document: _ }: ShareProps) => {
                   )}
                 />
               </div>
-            </form>
-          </Form>
-        </DialogHeader>
+            ))}
+            <div className="flow-root mt-4">
+              <Button variant="outline" onClick={() => setNumShares(numShares + 1)} className="w-fit float-left">
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Add more
+              </Button>
+              <Button className="float-right" type="submit">
+                Share
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )
