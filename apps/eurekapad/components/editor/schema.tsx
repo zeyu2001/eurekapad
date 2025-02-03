@@ -7,6 +7,7 @@ import { transcriptionBlockSpec } from '@/components/editor/transcription'
 
 import { graphBlockSpec } from './graph'
 import { mathInlineSpec } from './math/inline'
+import { separatorBlockSpec } from './separator'
 
 const { codeBlock: _, ...restDefaultBlockSpecs } = defaultBlockSpecs
 
@@ -22,6 +23,7 @@ export const customSchema = withMultiColumn(
       codeblock: codeBlockSpec,
       transcription: transcriptionBlockSpec,
       graph: graphBlockSpec,
+      separator: separatorBlockSpec,
     },
   }),
 )
