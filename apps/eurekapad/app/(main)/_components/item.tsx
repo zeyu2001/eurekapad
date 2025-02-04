@@ -2,8 +2,9 @@
 
 import { useUser } from '@clerk/nextjs'
 import { useMutation } from 'convex/react'
-import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Plus, Trash } from 'lucide-react'
+import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Pencil, Plus, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 import {
@@ -13,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -47,6 +49,39 @@ export const Item = ({
   const router = useRouter()
   const create = useMutation(api.documents.create)
   const archive = useMutation(api.documents.archive)
+  const update = useMutation(api.documents.update)
+  const [isRenaming, setIsRenaming] = useState(false)
+  const [newName, setNewName] = useState(label)
+
+  const onRename = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation()
+    setIsRenaming(true)
+  }
+
+  const onSaveRename = () => {
+    if (!id) return
+    const promise = update({
+      id,
+      title: newName || 'Untitled',
+    }).then(() => {
+      setIsRenaming(false)
+    })
+
+    toast.promise(promise, {
+      loading: 'Renaming...',
+      success: 'Document renamed!',
+      error: 'Failed to rename document.',
+    })
+  }
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onSaveRename()
+    } else if (event.key === 'Escape') {
+      setIsRenaming(false)
+      setNewName(label)
+    }
+  }
 
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation()
@@ -110,7 +145,19 @@ export const Item = ({
       ) : (
         <Icon className="shrink-0 h-[18px] w-[18px] mr-2 text-muted-foreground" />
       )}
-      <span className="truncate">{label}</span>
+      {isRenaming ? (
+        <Input
+          value={newName}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)}
+          onKeyDown={onKeyDown}
+          onBlur={onSaveRename}
+          autoFocus
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          className="h-6 px-2 py-0.5 focus-visible:ring-transparent"
+        />
+      ) : (
+        <span className="truncate">{label}</span>
+      )}
       {isSearch && (
         <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
           <span className="text-xs">⌘</span>K
@@ -128,6 +175,10 @@ export const Item = ({
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-60" align="start" side="right" forceMount>
+              <DropdownMenuItem onClick={onRename}>
+                <Pencil className="h-4 w-4 mr-2" />
+                Rename
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={onArchive}>
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
