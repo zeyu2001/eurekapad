@@ -136,7 +136,7 @@ const separatorBlockImpl: ReactCustomBlockImplementation<SeparatorBlockConfig, I
           'group hover:bg-muted/20 rounded transition-colors cursor-pointer',
         )}
       >
-        <DropdownMenu open={open} onOpenChange={handleOpenChange}>
+        <DropdownMenu open={open} onOpenChange={handleOpenChange} modal={false}>
           <DropdownMenuTrigger asChild>
             <div className="w-full flex items-center justify-center py-2">
               {label ? (
