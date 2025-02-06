@@ -1,9 +1,21 @@
 import Image from 'next/image'
 
+import allthenticateImage from '@/images/allthenticate.png'
 import cambridgeImage from '@/images/cambridge_square.png'
+import nusImage from '@/images/nus_crest.png'
 
 const testimonials = [
-  [],
+  [
+    {
+      content:
+        'EurekaPad is the perfect middle ground between Google Docs and LaTeX. I never knew how much I needed this until I started using it.',
+      author: {
+        name: 'Kai Xuan Lee',
+        role: 'Computer Science at NUS',
+        image: nusImage,
+      },
+    },
+  ],
   [
     {
       content:
@@ -15,7 +27,17 @@ const testimonials = [
       },
     },
   ],
-  [],
+  [
+    {
+      content:
+        'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
+      author: {
+        name: 'Chad Spensky',
+        role: 'CEO @ Allthenticate',
+        image: allthenticateImage,
+      },
+    },
+  ],
 ]
 
 function QuoteIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -65,7 +87,7 @@ export function Testimonials() {
                         </div>
                         <div className="overflow-hidden">
                           <Image
-                            className="h-14 w-14 object-cover"
+                            className="w-14 object-cover"
                             src={testimonial.author.image}
                             alt=""
                             width={56}
