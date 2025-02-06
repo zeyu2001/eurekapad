@@ -1,5 +1,6 @@
 import { v } from 'convex/values'
 
+import { api } from './_generated/api'
 import { Doc, Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
 
@@ -239,7 +240,7 @@ export const getById = query({
     const document = await ctx.db.get(args.documentId)
 
     if (!document) {
-      throw new Error('Not found')
+      return null
     }
 
     if (document.isPublished && !document.isArchived) {
@@ -253,7 +254,13 @@ export const getById = query({
     const userId = identity.subject
 
     if (document.userId !== userId) {
-      throw new Error('Unauthorized')
+      const permissions = await ctx.runQuery(api.documentPermissions.getUserPermissions, {
+        documentId: args.documentId,
+      })
+
+      if (!permissions.isViewer) {
+        return null
+      }
     }
 
     return document

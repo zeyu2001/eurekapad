@@ -1,10 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from 'convex/react'
+import { useAction } from 'convex/react'
 import { PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -33,7 +34,7 @@ export const Share = ({ document: document }: ShareProps) => {
   'use no memo'
   const [open, setOpen] = useState(false)
   const [numShares, setNumShares] = useState(1)
-  const share = useMutation(api.documentPermissions.share)
+  const share = useAction(api.documentPermissions.share)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,12 +43,14 @@ export const Share = ({ document: document }: ShareProps) => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
-    share({
+    await share({
       id: document._id,
       shares: values.shares.map(share => ({ email: share.email, isEditor: share.role === 'editor' })),
     })
+    setOpen(false)
+    toast.success('Document shared successfully')
   }
 
   return (

@@ -14,7 +14,6 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as ai from "../ai.js";
-import type * as clerk from "../clerk.js";
 import type * as documentPermissions from "../documentPermissions.js";
 import type * as documents from "../documents.js";
 import type * as emails_actions from "../emails/actions.js";
@@ -24,6 +23,7 @@ import type * as http from "../http.js";
 import type * as migrations from "../migrations.js";
 import type * as speech from "../speech.js";
 import type * as uploads from "../uploads.js";
+import type * as utils_users from "../utils/users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -35,7 +35,6 @@ import type * as uploads from "../uploads.js";
  */
 declare const fullApi: ApiFromModules<{
   ai: typeof ai;
-  clerk: typeof clerk;
   documentPermissions: typeof documentPermissions;
   documents: typeof documents;
   "emails/actions": typeof emails_actions;
@@ -45,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   speech: typeof speech;
   uploads: typeof uploads;
+  "utils/users": typeof utils_users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

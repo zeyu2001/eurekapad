@@ -2,6 +2,7 @@
 
 import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
+import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
@@ -19,6 +20,7 @@ const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 export default function DocumentIdPage() {
   const documentId = useDocumentId()
   const document = useQuery(api.documents.getById, { documentId })
+  const documentPermissions = useQuery(api.documentPermissions.getUserPermissions, { documentId })
 
   const [isLoaded, initialContent] = useContent(document)
 
@@ -38,7 +40,13 @@ export default function DocumentIdPage() {
     saveContent(content, documentId)
   }, [content, isLoaded])
 
-  if (document === undefined || !isLoaded) {
+  console.log(document, documentPermissions, isLoaded)
+
+  if (documentPermissions && !documentPermissions.isViewer) {
+    return notFound()
+  }
+
+  if (document === undefined || documentPermissions === undefined || !isLoaded) {
     return (
       <div>
         <Cover.Skeleton />
@@ -55,7 +63,7 @@ export default function DocumentIdPage() {
   }
 
   if (document === null) {
-    return <div>Not found</div>
+    return notFound()
   }
 
   // Update url without reloading
@@ -69,7 +77,12 @@ export default function DocumentIdPage() {
         <Cover url={document.coverImage} />
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
-          <Editor onChange={onChange} savable initialContent={initialContent} />
+          <Editor
+            onChange={onChange}
+            savable={documentPermissions.isEditor}
+            editable={documentPermissions.isEditor}
+            initialContent={initialContent}
+          />
         </div>
       </div>
     </>

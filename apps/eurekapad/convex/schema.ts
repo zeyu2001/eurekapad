@@ -23,5 +23,11 @@ export default defineSchema({
   })
     .index('by_user', ['userId'])
     .index('by_document', ['documentId']),
+  documentInviteTokens: defineTable({
+    documentId: v.id('documents'),
+    token: v.string(),
+    email: v.string(),
+    isEditor: v.boolean(),
+  }).index('by_token', ['token']),
   migrations: migrationsTable,
 })

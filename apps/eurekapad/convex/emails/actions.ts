@@ -6,9 +6,10 @@ import { Resend } from 'resend'
 import { internalAction } from '../_generated/server'
 import ShareWithUserEmail from './share'
 
-export const sendShareEmails = internalAction({
+export const sendShareEmail = internalAction({
   args: {
-    shares: v.array(v.object({ email: v.string(), isEditor: v.boolean() })),
+    email: v.string(),
+    isEditor: v.boolean(),
     invitedByName: v.string(),
     invitedByEmail: v.string(),
     documentTitle: v.string(),
@@ -24,24 +25,22 @@ export const sendShareEmails = internalAction({
 
     const resend = new Resend(RESEND_API_KEY)
 
-    for (const shareTo of args.shares) {
-      const email = shareTo.email
-      const isEditor = shareTo.isEditor
+    const email = args.email
+    const isEditor = args.isEditor
 
-      await resend.emails.send({
-        from: 'EurekaPad <contact@eurekapad.app>',
-        to: email,
-        subject: `You have been invited to collaborate on ${args.documentTitle}`,
-        react: ShareWithUserEmail({
-          email: email,
-          invitedByName: args.invitedByName,
-          invitedByEmail: args.invitedByEmail,
-          isEditor,
-          documentName: args.documentTitle,
-          inviteLink: args.inviteLink,
-          invitedByImage: args.invitedByImage,
-        }),
-      })
-    }
+    await resend.emails.send({
+      from: 'EurekaPad <contact@eurekapad.app>',
+      to: email,
+      subject: `You have been invited to collaborate on ${args.documentTitle}`,
+      react: ShareWithUserEmail({
+        email: email,
+        invitedByName: args.invitedByName,
+        invitedByEmail: args.invitedByEmail,
+        isEditor,
+        documentName: args.documentTitle,
+        inviteLink: args.inviteLink,
+        invitedByImage: args.invitedByImage,
+      }),
+    })
   },
 })
