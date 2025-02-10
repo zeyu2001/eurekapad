@@ -1,14 +1,10 @@
-// import { Demo } from './_components/demo'
-// import { Footer } from './_components/footer'
 import CTA from './_components/cta'
 import DemoSection from './_components/demo-section'
 import FAQ from './_components/faq'
 import Features from './_components/features'
 import Footer from './_components/footer'
-import HeaderHero from './_components/HeaderHero'
+import HeaderHero from './_components/header-hero'
 import Testimonials from './_components/testimonials'
-// import { Heading } from './_components/heading'
-// import { Testimonials } from './_components/testimonials'
 import TrustedBy from './_components/trusted-by'
 
 const MarketingPage = () => {
