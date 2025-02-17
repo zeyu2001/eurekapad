@@ -49,7 +49,9 @@ export default function HeaderHero() {
                 <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                   Login
                 </Link>
-                <Button variant="secondary">Try EurekaPad Now</Button>
+                <Button variant="secondary" className="bg-blue-600">
+                  Try EurekaPad Now
+                </Button>
               </div>
             )}
           </div>
@@ -72,7 +74,7 @@ export default function HeaderHero() {
             </p>
 
             {/* CTA Button */}
-            <Button size="lg" className="mb-4" variant="secondary">
+            <Button size="lg" className="mb-4 bg-blue-600" variant="secondary">
               Try EurekaPad for free
             </Button>
 

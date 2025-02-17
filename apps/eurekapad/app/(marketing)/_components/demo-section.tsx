@@ -1,18 +1,40 @@
 'use client'
 
-import { Pause, Play } from 'lucide-react'
-import { useState } from 'react'
+import dynamic from 'next/dynamic'
 
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+import codeBlockDemo from './codeBlockDemo.json'
+import graphBlockDemo from './graphBlockDemo.json'
+import mathBlockDemo from './mathBlockDemo.json'
+
+const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
+
+const features = [
+  {
+    title: 'Math',
+    description: 'Write complex mathematical equations with LaTeX support and real-time rendering.',
+    initialContent: JSON.stringify(mathBlockDemo),
+  },
+  {
+    title: 'Code',
+    description: 'Write and format code with syntax highlighting for multiple programming languages.',
+    initialContent: JSON.stringify(codeBlockDemo),
+  },
+  {
+    title: 'Graph',
+    description: 'Create beautiful graphs and diagrams directly in your notes.',
+    initialContent: JSON.stringify(graphBlockDemo),
+  },
+  {
+    title: 'Real-time Collaboration',
+    description: 'Work together with your peers in real-time, perfect for group projects and research teams.',
+    initialContent: JSON.stringify(mathBlockDemo), // Using math demo as placeholder for collaboration
+  },
+]
+
 export default function DemoSection() {
-  const [isPlaying, setIsPlaying] = useState(false)
-
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying)
-  }
-
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="container mx-auto max-w-6xl">
@@ -24,50 +46,26 @@ export default function DemoSection() {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <Tabs defaultValue="math" className="w-full">
+          <Tabs defaultValue="Math" className="w-full">
             <div className="px-4 py-3 bg-gray-100 border-b">
               <TabsList>
-                <TabsTrigger value="math">Math</TabsTrigger>
-                <TabsTrigger value="code">Code</TabsTrigger>
-                <TabsTrigger value="graph">Graph</TabsTrigger>
-                <TabsTrigger value="collaboration">Real-time Collaboration</TabsTrigger>
+                {features.map(feature => (
+                  <TabsTrigger key={feature.title} value={feature.title}>
+                    {feature.title}
+                  </TabsTrigger>
+                ))}
               </TabsList>
             </div>
 
             <div className="p-6">
-              <TabsContent value="math" className="mt-0">
-                <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
-                  <Button variant="outline" size="icon" onClick={togglePlay} className="w-16 h-16 rounded-full">
-                    {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-                  </Button>
-                </div>
-                <p className="mt-4 text-sm text-gray-600">
-                  Write complex mathematical equations with LaTeX support and real-time rendering.
-                </p>
-              </TabsContent>
-
-              <TabsContent value="code" className="mt-0">
-                <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">Code Demo</div>
-                <p className="mt-4 text-sm text-gray-600">
-                  Write and format code with syntax highlighting for multiple programming languages.
-                </p>
-              </TabsContent>
-
-              <TabsContent value="graph" className="mt-0">
-                <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">Graph Demo</div>
-                <p className="mt-4 text-sm text-gray-600">
-                  Create beautiful graphs and diagrams directly in your notes.
-                </p>
-              </TabsContent>
-
-              <TabsContent value="collaboration" className="mt-0">
-                <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
-                  Real-time Collaboration Demo
-                </div>
-                <p className="mt-4 text-sm text-gray-600">
-                  Work together with your peers in real-time, perfect for group projects and research teams.
-                </p>
-              </TabsContent>
+              {features.map(feature => (
+                <TabsContent key={feature.title} value={feature.title} className="mt-0 overflow-y-auto">
+                  <div className="aspect-video bg-white dark:bg-[#1F1F1F] rounded-lg">
+                    <Editor initialContent={feature.initialContent} onChange={() => {}} editable={true} />
+                  </div>
+                  <p className="mt-4 text-sm text-gray-600">{feature.description}</p>
+                </TabsContent>
+              ))}
             </div>
           </Tabs>
         </div>
