@@ -28,7 +28,7 @@ const InvalidToken = ({ message }: { message: string }) => {
 export default function InvitationAcceptPage() {
   const documentId = useDocumentId()
   const searchParams = useSearchParams()
-  const token = searchParams.get('token')
+  const token = searchParams?.get('token')
   const router = useRouter()
 
   const acceptInvite = useMutation(api.documentPermissions.acceptInvite)

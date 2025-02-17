@@ -8,31 +8,41 @@ import { locales, StyledText, StyleSchema } from '@blocknote/core'
 import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
+import { useUser } from '@clerk/nextjs'
 import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
 import { memo, useEffect } from 'react'
 import { toast } from 'sonner'
+import YPartyKitProvider from 'y-partykit/provider'
+import * as Y from 'yjs'
 
 import { customSchema } from '@/components/editor/schema'
 import { CustomSlashMenu } from '@/components/editor/slash-menu'
 import { api } from '@/convex/_generated/api'
+import { useDocumentId } from '@/hooks/use-documentId'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
 
 interface EditorProps {
   onChange: (_value: string) => void
+  ydoc?: Uint8Array
   initialContent?: string
   editable?: boolean
   savable?: boolean
+  collab?: boolean
 }
 
 type CustomBlock = typeof customSchema.Block
 
-const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
+const doc = new Y.Doc()
+
+const Editor = ({ onChange, ydoc, editable, savable, collab, initialContent }: EditorProps) => {
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
+  const user = useUser()
+  const documentId = useDocumentId()
 
   const editorContext = useEditorContext()
   useEffect(() => {
@@ -69,6 +79,17 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     return url.href ?? ''
   }
 
+  const provider = new YPartyKitProvider(
+    process.env.NEXT_PUBLIC_YPARTYKIT_HOST ?? 'localhost:1999',
+    documentId || 'default',
+    doc,
+  )
+
+  // Apply the initial content
+  if (ydoc) {
+    Y.applyUpdate(doc, ydoc)
+  }
+
   const editor = useCreateBlockNote({
     schema: customSchema,
     dropCursor: multiColumnDropCursor,
@@ -76,11 +97,23 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
       ...locales.en,
       multi_column: multiColumnLocales.en,
     },
-    initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
+    // initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     uploadFile: handleUpload,
     _tiptapOptions: {
       extensions: [InlineMathExtension, ArrowConversionExtension],
     },
+    initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
+    collaboration: collab
+      ? {
+          provider,
+          fragment: doc.getXmlFragment('document-store'),
+          user: {
+            name: user?.user?.fullName ?? 'Anonymous',
+            color: '#ff0000',
+          },
+          showCursorLabels: 'always',
+        }
+      : undefined,
   })
 
   const replaceWithCodeBlock = (block: CustomBlock) => {

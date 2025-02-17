@@ -1,0 +1,16 @@
+{
+  "name": "yjs-provider",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "partykit dev --live",
+    "build:deploy": "partykit deploy"
+  },
+  "dependencies": {
+    "y-partykit": "^0.0.32"
+  },
+  "devDependencies": {
+    "partykit": "^0.0.110",
+    "typescript": "^5.5.4"
+  }
+}

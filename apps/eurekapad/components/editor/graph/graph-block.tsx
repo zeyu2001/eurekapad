@@ -4,7 +4,7 @@ import { InlineContentSchema, StyleSchema } from '@blocknote/core'
 import { ReactCustomBlockRenderProps } from '@blocknote/react'
 import { FC, useEffect, useRef, useState } from 'react'
 
-import { GraphBlockConfig } from '.'
+import { GraphBlockConfig } from './config'
 import { graphStateJSONSchema } from './schemas'
 import { GraphState } from './types'
 

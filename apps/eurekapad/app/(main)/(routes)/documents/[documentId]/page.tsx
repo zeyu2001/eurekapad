@@ -3,7 +3,7 @@
 import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
@@ -14,6 +14,7 @@ import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { useSaveContentCallback } from '@/hooks/use-save-content-callback'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
+import { trpc } from '@/utils/trpc'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -26,6 +27,21 @@ export default function DocumentIdPage() {
 
   const [content, setContent] = useState(initialContent)
   const debouncedSetContent = useDebounceCallback(setContent)
+
+  const isFirstLoad = useRef(true)
+  const {
+    data: ydoc,
+    isLoading: isLoading,
+    error: _error,
+  } = trpc.blocksToYDoc.useQuery(initialContent ? JSON.parse(initialContent) : [], {
+    enabled: isFirstLoad.current, // only get the YDoc from blocks on first load, after that the YJS provider will handle it
+  })
+
+  useEffect(() => {
+    if (isFirstLoad.current && ydoc !== undefined) {
+      isFirstLoad.current = false
+    }
+  }, [ydoc])
 
   const onChange = async (content: string) => {
     debouncedSetContent(content)
@@ -40,13 +56,11 @@ export default function DocumentIdPage() {
     saveContent(content, documentId)
   }, [content, isLoaded])
 
-  console.log(document, documentPermissions, isLoaded)
-
   if (documentPermissions && !documentPermissions.isViewer) {
     return notFound()
   }
 
-  if (document === undefined || documentPermissions === undefined || !isLoaded) {
+  if (document === undefined || documentPermissions === undefined || !isLoaded || (isLoading && isFirstLoad.current)) {
     return (
       <div>
         <Cover.Skeleton />
@@ -81,7 +95,8 @@ export default function DocumentIdPage() {
             onChange={onChange}
             savable={documentPermissions.isEditor}
             editable={documentPermissions.isEditor}
-            initialContent={initialContent}
+            ydoc={ydoc}
+            collab
           />
         </div>
       </div>

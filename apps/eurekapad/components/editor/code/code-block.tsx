@@ -13,7 +13,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useDebounceValue } from 'usehooks-ts'
 
-import { CodeBlockConfig } from '@/components/editor/code'
+import { CodeBlockConfig } from '@/components/editor/code/config'
 import { RUNNABLE_LANGUAGES } from '@/components/editor/code/constants'
 import { Images, imagesJSONSchema } from '@/components/editor/code/schemas'
 import { Spinner } from '@/components/spinner'

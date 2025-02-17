@@ -1,6 +1,6 @@
 import '@blocknote/mantine/style.css'
 
-import { defaultProps, InlineContentSchema, StyleSchema } from '@blocknote/core'
+import { InlineContentSchema, StyleSchema } from '@blocknote/core'
 import { createReactBlockSpec, ReactCustomBlockImplementation } from '@blocknote/react'
 import { ChartLine } from 'lucide-react'
 
@@ -8,28 +8,7 @@ import { GraphBlock } from '@/components/editor/graph/graph-block'
 import { CustomEditor } from '@/components/editor/schema'
 import { insertBlockAndFocus } from '@/lib/insert-block'
 
-export interface GraphBlockConfig {
-  type: 'graph'
-  isFileBlock: false
-  readonly propSchema: typeof defaultProps & {
-    state: {
-      default: string
-    }
-  }
-  content: 'none'
-}
-
-const graphBlockConfig: GraphBlockConfig = {
-  type: 'graph',
-  isFileBlock: false,
-  propSchema: {
-    ...defaultProps,
-    state: {
-      default: JSON.stringify({}),
-    },
-  },
-  content: 'none',
-}
+import { GraphBlockConfig, graphBlockConfig } from './config'
 
 const graphBlockImpl: ReactCustomBlockImplementation<GraphBlockConfig, InlineContentSchema, StyleSchema> = {
   render: GraphBlock,
