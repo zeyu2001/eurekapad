@@ -6,7 +6,7 @@ settings:
 
 overrides:
   prosemirror-view: 1.37.1
-  '@blocknote/core': 0.23.6
+  '@blocknote/core': 0.24.1
 
 importers:
 
@@ -34,20 +34,20 @@ importers:
         specifier: ^12.26.0
         version: 12.26.0
       '@blocknote/core':
-        specifier: 0.23.6
-        version: 0.23.6(@types/hast@3.0.4)
+        specifier: 0.24.1
+        version: 0.24.1(@types/hast@3.0.4)
       '@blocknote/mantine':
-        specifier: ^0.23.0
-        version: 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.24.1
+        version: 0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@blocknote/react':
-        specifier: ^0.23.0
-        version: 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.24.1
+        version: 0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@blocknote/server-util':
-        specifier: ^0.23.6
-        version: 0.23.6(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.24.1
+        version: 0.24.1(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@blocknote/xl-multi-column':
-        specifier: ^0.23.0
-        version: 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^0.24.1
+        version: 0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@clerk/backend':
         specifier: ^1.21.4
         version: 1.21.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -325,9 +325,21 @@ importers:
 
   apps/yjs-provider:
     dependencies:
+      '@eurekapad/app':
+        specifier: workspace:*
+        version: link:../eurekapad
+      '@trpc/client':
+        specifier: ^10.45.2
+        version: 10.45.2(@trpc/server@10.45.2)
+      '@trpc/react-query':
+        specifier: ^10.45.2
+        version: 10.45.2(@tanstack/react-query@4.36.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      superjson:
+        specifier: ^2.2.2
+        version: 2.2.2
       y-partykit:
         specifier: ^0.0.32
-        version: 0.0.32(react@18.3.1)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)
+        version: 0.0.32(react@19.0.0)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)
     devDependencies:
       partykit:
         specifier: ^0.0.110
@@ -627,35 +639,29 @@ packages:
     resolution: {integrity: sha512-vN5p+1kl59GVKMvTHt55NzzmYVxprfJD+ql7U9NFIfKCBkYE55LYtS+WtPlaYOyzydrKI8Nezd+aZextrd+FMA==}
     engines: {node: '>=6.9.0'}
 
-  '@blocknote/core@0.23.6':
-    resolution: {integrity: sha512-X5bxzFCgAG42lT2NhKJQdEQp0DEWaY4DJdGo76d2o3xef+bNGCLRe4i2XkGty2B9B3uYElgHqz6GYGeF0Hfn5g==}
+  '@blocknote/core@0.24.1':
+    resolution: {integrity: sha512-X6eIbIVNP+3mEyDHRhOzbB7RaEkXmqzS5jtkC1P2PXn158ZbyPhvMkpNuTDXvPKkKu1ymDvF2wJZyMUonYK+Jg==}
 
-  '@blocknote/mantine@0.23.0':
-    resolution: {integrity: sha512-nnWGm2eTN+13iDRUAlTwfVQjjwb1m1DRNHrSpoDnHB4moECaehYxwxuDgdK/CtfG01tVcc/OcGUCQB1WwetQ6g==}
+  '@blocknote/mantine@0.24.1':
+    resolution: {integrity: sha512-USp/w3oYX1rxK9PI9hXdAGr6dMXWhiTWUNvQQHeqjOGrapF5r5046Rt/r6kBoaLrCYJzfOJ+MPiW9ZDoFuA11A==}
     peerDependencies:
       react: ^18.0 || ^19.0 || >= 19.0.0-rc
       react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
 
-  '@blocknote/react@0.23.0':
-    resolution: {integrity: sha512-FkHDVgM87aIbI1OW3XGpKrA0q7SfN433jj9UsLc79iAvSHxMRCtq+ZYW+JS9ycayutFHKVtG1sRWB99+I916Sw==}
+  '@blocknote/react@0.24.1':
+    resolution: {integrity: sha512-Bt3NtMQ6dZ/uaNjTj93NgNnQm+aOscFppUjPDX6QyIjETJrdeWRYbcwJMOSjy7m5VmkUVKo9uyoejeXhVGdmqA==}
     peerDependencies:
       react: ^18.0 || ^19.0 || >= 19.0.0-rc
       react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
 
-  '@blocknote/react@0.23.6':
-    resolution: {integrity: sha512-HHlutNtgDNuSLYPyDjbyAGSimSY+CTG3Uvga5J8E4aky2XvxDQhrp1w2iPdOX5IAcLbpuqTOpDbdRj5pfTvveA==}
+  '@blocknote/server-util@0.24.1':
+    resolution: {integrity: sha512-tqKOVy8pza9qf8Cqxc5QVETNIeETeh8JiHrCP+uSY3Z5Sz4opoi10zYlKkCZ59+0Nd6B413Pw6zUauzd2OwP+w==}
     peerDependencies:
       react: ^18.0 || ^19.0 || >= 19.0.0-rc
       react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
 
-  '@blocknote/server-util@0.23.6':
-    resolution: {integrity: sha512-47xwtznmv4oF2iTiOx8zxFWj4583DyIT0vDIPwbXFUnlLlkxfYMU/+zmGi9sI10cx+xFa7O/fz6zZMz/yXdLgA==}
-    peerDependencies:
-      react: ^18.0 || ^19.0 || >= 19.0.0-rc
-      react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-
-  '@blocknote/xl-multi-column@0.23.0':
-    resolution: {integrity: sha512-wpnu4yRmYr1BK23xyAcHItSD8kfMba2RVa9wWghBJkoesZJRKzvEid+hzU6eICeWXDDCMX0v7GJrmEZJ2V7zXg==}
+  '@blocknote/xl-multi-column@0.24.1':
+    resolution: {integrity: sha512-IQhNdRZPmsnEwNOAldiNXIGpwIK3JcOok/+HWvQohFDLjtU5HzCLkGFn00i4k2F82+XhQz9W3clbx6102DHY3A==}
     peerDependencies:
       react: ^18.0 || ^19.0 || >= 19.0.0-rc
       react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
@@ -5658,10 +5664,6 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  react@18.3.1:
-    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
-    engines: {node: '>=0.10.0'}
-
   react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
@@ -7015,7 +7017,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@blocknote/core@0.23.6(@types/hast@3.0.4)':
+  '@blocknote/core@0.24.1(@types/hast@3.0.4)':
     dependencies:
       '@emoji-mart/data': 1.2.1
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
@@ -7068,10 +7070,10 @@ snapshots:
       - sugar-high
       - supports-color
 
-  '@blocknote/mantine@0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/mantine@0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.23.6(@types/hast@3.0.4)
-      '@blocknote/react': 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@blocknote/core': 0.24.1(@types/hast@3.0.4)
+      '@blocknote/react': 0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@mantine/core': 7.15.2(@mantine/hooks@7.15.2(react@19.0.0))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@mantine/hooks': 7.15.2(react@19.0.0)
       '@mantine/utils': 6.0.22(react@19.0.0)
@@ -7088,9 +7090,9 @@ snapshots:
       - sugar-high
       - supports-color
 
-  '@blocknote/react@0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/react@0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.23.6(@types/hast@3.0.4)
+      '@blocknote/core': 0.24.1(@types/hast@3.0.4)
       '@floating-ui/react': 0.26.28(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
       '@tiptap/react': 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -7107,29 +7109,10 @@ snapshots:
       - sugar-high
       - supports-color
 
-  '@blocknote/react@0.23.6(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/server-util@0.24.1(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.23.6(@types/hast@3.0.4)
-      '@floating-ui/react': 0.26.28(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
-      '@tiptap/react': 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      lodash.merge: 4.6.2
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-      react-icons: 5.4.0(react@19.0.0)
-    transitivePeerDependencies:
-      - '@tiptap/pm'
-      - '@types/hast'
-      - highlight.js
-      - lowlight
-      - refractor
-      - sugar-high
-      - supports-color
-
-  '@blocknote/server-util@0.23.6(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
-    dependencies:
-      '@blocknote/core': 0.23.6(@types/hast@3.0.4)
-      '@blocknote/react': 0.23.6(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@blocknote/core': 0.24.1(@types/hast@3.0.4)
+      '@blocknote/react': 0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
       '@tiptap/pm': 2.11.0
       jsdom: 25.0.1
@@ -7152,10 +7135,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@blocknote/xl-multi-column@0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@blocknote/xl-multi-column@0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@blocknote/core': 0.23.6(@types/hast@3.0.4)
-      '@blocknote/react': 0.23.0(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@blocknote/core': 0.24.1(@types/hast@3.0.4)
+      '@blocknote/react': 0.24.1(@tiptap/pm@2.11.0)(@types/hast@3.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
       prosemirror-model: 1.24.1
       prosemirror-state: 1.4.3
@@ -13049,11 +13032,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  react@18.3.1:
-    dependencies:
-      loose-envify: 1.4.0
-    optional: true
-
   react@19.0.0: {}
 
   read-cache@1.0.0:
@@ -14352,15 +14330,6 @@ snapshots:
   xml-name-validator@5.0.0: {}
 
   xmlchars@2.2.0: {}
-
-  y-partykit@0.0.32(react@18.3.1)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23):
-    dependencies:
-      lib0: 0.2.99
-      lodash.debounce: 4.0.8
-      y-protocols: 1.0.6(yjs@13.6.23)
-      yjs: 13.6.23
-    optionalDependencies:
-      react: 18.3.1
 
   y-partykit@0.0.32(react@19.0.0)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23):
     dependencies:

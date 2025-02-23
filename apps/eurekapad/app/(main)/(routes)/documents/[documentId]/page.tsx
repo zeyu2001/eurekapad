@@ -1,9 +1,10 @@
 'use client'
 
+import { useAuth } from '@clerk/nextjs'
 import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
@@ -14,7 +15,6 @@ import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { useSaveContentCallback } from '@/hooks/use-save-content-callback'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
-import { trpc } from '@/utils/trpc'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -24,26 +24,40 @@ export default function DocumentIdPage() {
   const documentPermissions = useQuery(api.documentPermissions.getUserPermissions, { documentId })
 
   const [isLoaded, initialContent] = useContent(document)
+  const [authToken, setAuthToken] = useState<string | null>(null)
 
   const [content, setContent] = useState(initialContent)
   const debouncedSetContent = useDebounceCallback(setContent)
 
-  const isFirstLoad = useRef(true)
-  const {
-    data: ydoc,
-    isLoading: isLoading,
-    error: _error,
-  } = trpc.blocksToYDoc.useQuery(initialContent ? JSON.parse(initialContent) : [], {
-    enabled: isFirstLoad.current, // only get the YDoc from blocks on first load, after that the YJS provider will handle it
-  })
+  const auth = useAuth()
 
   useEffect(() => {
-    if (isFirstLoad.current && ydoc !== undefined) {
-      isFirstLoad.current = false
+    const fetchAuthData = async () => {
+      setAuthToken(
+        await auth.getToken({
+          template: 'convex',
+        }),
+      )
     }
-  }, [ydoc])
+    fetchAuthData()
+  }, [auth])
 
-  const onChange = async (content: string) => {
+  // const isFirstLoad = useRef(true)
+  // const {
+  //   data: ydoc,
+  //   isLoading: isLoading,
+  //   error: _error,
+  // } = trpc.blocksToYDoc.useQuery(initialContent ? JSON.parse(initialContent) : [], {
+  //   enabled: isFirstLoad.current, // only get the YDoc from blocks on first load, after that the YJS provider will handle it
+  // })
+
+  // useEffect(() => {
+  //   if (isFirstLoad.current && ydoc !== undefined) {
+  //     isFirstLoad.current = false
+  //   }
+  // }, [ydoc])
+
+  const _onChange = async (content: string) => {
     debouncedSetContent(content)
   }
 
@@ -60,7 +74,7 @@ export default function DocumentIdPage() {
     return notFound()
   }
 
-  if (document === undefined || documentPermissions === undefined || !isLoaded || (isLoading && isFirstLoad.current)) {
+  if (document === undefined || documentPermissions === undefined || !isLoaded || authToken === null) {
     return (
       <div>
         <Cover.Skeleton />
@@ -92,11 +106,12 @@ export default function DocumentIdPage() {
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
           <Editor
-            onChange={onChange}
+            onChange={() => {}}
+            initialContent={initialContent}
             savable={documentPermissions.isEditor}
             editable={documentPermissions.isEditor}
-            ydoc={ydoc}
             collab
+            authToken={authToken}
           />
         </div>
       </div>

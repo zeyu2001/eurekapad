@@ -11,7 +11,7 @@ import { withMultiColumn } from '@blocknote/xl-multi-column'
 import { CodeBlockConfig, codeBlockConfig } from './code/config'
 import { GraphBlockConfig, graphBlockConfig } from './graph/config'
 import { MathBlockConfig, mathBlockConfig, MathInlineConfig, mathInlineConfig } from './math/config'
-import { transcriptionBlockSpec } from './transcription'
+import { TranscriptionBlockConfig, transcriptionBlockConfig } from './transcription/config'
 
 const { codeBlock: _, ...restDefaultBlockSpecs } = defaultBlockSpecs
 
@@ -31,7 +31,12 @@ export const serverCustomSchema = withMultiColumn(
       codeblock: createReactBlockSpec<CodeBlockConfig, InlineContentSchema, StyleSchema>(codeBlockConfig, {
         render: () => null,
       }),
-      transcription: transcriptionBlockSpec,
+      transcription: createReactBlockSpec<TranscriptionBlockConfig, InlineContentSchema, StyleSchema>(
+        transcriptionBlockConfig,
+        {
+          render: () => null,
+        },
+      ),
       graph: createReactBlockSpec<GraphBlockConfig, InlineContentSchema, StyleSchema>(graphBlockConfig, {
         render: () => null,
       }),

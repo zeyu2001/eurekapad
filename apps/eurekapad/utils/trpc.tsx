@@ -5,7 +5,7 @@ import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
 import { useState } from 'react'
 
-import type { AppRouter } from '@/pages/api/trpc/[trpc]'
+import type { AppRouter } from '@/server/trpc'
 
 import { transformer } from './transformer'
 

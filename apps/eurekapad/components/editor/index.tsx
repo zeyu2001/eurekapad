@@ -25,20 +25,54 @@ import { useDocumentId } from '@/hooks/use-documentId'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
 
+const cursorColors = [
+  '#FF6B6B',
+  '#6BCB77',
+  '#4D96FF',
+  '#FFD93D',
+  '#FF6EC7',
+  '#6B8EFF',
+  '#FFB347',
+  '#8AFF80',
+  '#B388FF',
+  '#FF8A65',
+  '#64FFDA',
+  '#F06292',
+  '#7C4DFF',
+  '#A1887F',
+  '#00E676',
+]
+
+const animalNames = [
+  'Panda',
+  'Koala',
+  'Bunny',
+  'Otter',
+  'Fox',
+  'Hedgehog',
+  'Penguin',
+  'Kitten',
+  'Puppy',
+  'Lamb',
+  'Squirrel',
+  'Raccoon',
+  'Alpaca',
+  'Sloth',
+  'Chinchilla',
+]
+
 interface EditorProps {
   onChange: (_value: string) => void
-  ydoc?: Uint8Array
-  initialContent?: string
+  initialContent?: string // this is used if collab is false
   editable?: boolean
   savable?: boolean
-  collab?: boolean
+  collab?: boolean // if true, use Yjs for collaboration. initial content is loaded from Yjs provider.
+  authToken?: string // if collab is true, this is required
 }
 
 type CustomBlock = typeof customSchema.Block
 
-const doc = new Y.Doc()
-
-const Editor = ({ onChange, ydoc, editable, savable, collab, initialContent }: EditorProps) => {
+const Editor = ({ onChange, editable, savable, collab, initialContent, authToken }: EditorProps) => {
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
   const user = useUser()
@@ -79,16 +113,19 @@ const Editor = ({ onChange, ydoc, editable, savable, collab, initialContent }: E
     return url.href ?? ''
   }
 
+  const doc = new Y.Doc()
+
   const provider = new YPartyKitProvider(
     process.env.NEXT_PUBLIC_YPARTYKIT_HOST ?? 'localhost:1999',
     documentId || 'default',
     doc,
+    {
+      params: {
+        token: authToken,
+        documentId,
+      },
+    },
   )
-
-  // Apply the initial content
-  if (ydoc) {
-    Y.applyUpdate(doc, ydoc)
-  }
 
   const editor = useCreateBlockNote({
     schema: customSchema,
@@ -102,14 +139,14 @@ const Editor = ({ onChange, ydoc, editable, savable, collab, initialContent }: E
     _tiptapOptions: {
       extensions: [InlineMathExtension, ArrowConversionExtension],
     },
-    initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
+    initialContent: initialContent && !collab ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     collaboration: collab
       ? {
           provider,
-          fragment: doc.getXmlFragment('document-store'),
+          fragment: doc.getXmlFragment('prosemirror'),
           user: {
-            name: user?.user?.fullName ?? 'Anonymous',
-            color: '#ff0000',
+            name: user?.user?.fullName ?? 'Anonymous ' + animalNames[Math.floor(Math.random() * animalNames.length)],
+            color: cursorColors[Math.floor(Math.random() * cursorColors.length)],
           },
           showCursorLabels: 'always',
         }

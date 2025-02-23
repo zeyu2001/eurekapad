@@ -20,7 +20,7 @@
   },
   "resolutions": {
     "prosemirror-view": "1.37.1",
-    "@blocknote/core": "0.23.6"
+    "@blocknote/core": "0.24.1"
   },
   "packageManager": "pnpm@9.10.0"
 }

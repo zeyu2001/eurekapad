@@ -2,11 +2,18 @@
   "name": "@eurekapad/app",
   "version": "0.1.0",
   "private": true,
+  "exports": {
+    "./trpc": {
+      "import": "./dist/trpc/server/trpc.d.ts"
+    }
+  },
   "scripts": {
     "dev": "npm-run-all --parallel dev:backend dev:frontend",
     "dev:backend": "convex dev",
     "dev:frontend": "next dev",
-    "build": "next build",
+    "build": "npm-run-all build:next build:trpc",
+    "build:next": "next build",
+    "build:trpc": "npx tsc --project tsconfig.trpc.json",
     "build:deploy": "convex deploy --cmd 'npm run build'",
     "start": "next start",
     "lint": "next lint",
@@ -17,11 +24,11 @@
   "dependencies": {
     "@azure-rest/ai-document-intelligence": "1.0.0",
     "@azure/storage-blob": "^12.26.0",
-    "@blocknote/core": "^0.23.0",
-    "@blocknote/mantine": "^0.23.0",
-    "@blocknote/react": "^0.23.0",
-    "@blocknote/server-util": "^0.23.6",
-    "@blocknote/xl-multi-column": "^0.23.0",
+    "@blocknote/core": "^0.24.1",
+    "@blocknote/mantine": "^0.24.1",
+    "@blocknote/react": "^0.24.1",
+    "@blocknote/server-util": "^0.24.1",
+    "@blocknote/xl-multi-column": "^0.24.1",
     "@clerk/backend": "^1.21.4",
     "@clerk/nextjs": "^6.9.6",
     "@clerk/themes": "^2.2.3",

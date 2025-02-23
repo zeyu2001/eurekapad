@@ -7,6 +7,10 @@
     "build:deploy": "partykit deploy"
   },
   "dependencies": {
+    "@eurekapad/app": "workspace:*",
+    "@trpc/client": "^10.45.2",
+    "@trpc/react-query": "^10.45.2",
+    "superjson": "^2.2.2",
     "y-partykit": "^0.0.32"
   },
   "devDependencies": {

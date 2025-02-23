@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "isolatedModules": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist/trpc",
+    "moduleResolution": "node"
+  },
+  "include": ["pages/api/trpc/[trpc].ts"]
+}
