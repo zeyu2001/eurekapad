@@ -29,6 +29,8 @@ jobs:
 
       - name: Lint 🛀
         run: pnpm run lint
+        env:
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
 
       - name: Check for formatting 🧹
         run: pnpm run format:check
