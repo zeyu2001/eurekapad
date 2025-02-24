@@ -48,8 +48,6 @@ export default class YjsServer implements Party.Server {
         const token = request.headers.get("X-Auth-Token")!;
         const trpcApiUrl = request.headers.get("X-Trpc-Api-Url")!;
 
-        console.log("tRPC API URL: ", trpcApiUrl);
-
         const state = await trpcClientFactory(
           trpcApiUrl,
         ).getYDocByDocumentId.query({
