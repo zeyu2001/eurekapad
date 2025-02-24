@@ -49,7 +49,7 @@ jobs:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
       - name: Deploy 🚀
-        working-directory: apps/yjs-provider
+        # working-directory: apps/yjs-provider
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             pnpm run build:preview
