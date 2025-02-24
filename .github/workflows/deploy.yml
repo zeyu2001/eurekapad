@@ -28,7 +28,7 @@ jobs:
         run: pnpm install
 
       - name: Deploy 🚀
-        working-directory: packages/yjs-provider
+        working-directory: apps/yjs-provider
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             npx partykit deploy --preview preview \
