@@ -37,7 +37,7 @@ jobs:
           # Replace slashes with dashes
           NORMALIZED_BRANCH=$(echo "$BRANCH" | tr '/' '-')
           # Construct the URL using the normalized branch name
-          VERCEL_URL="eurekapad-git-${NORMALIZED_BRANCH}-eurekapad.vercel.app"
+          VERCEL_URL="https://eurekapad-git-${NORMALIZED_BRANCH}-eurekapad.vercel.app"
           echo "VERCEL_URL=${VERCEL_URL}" >> $GITHUB_ENV
           echo "::set-output name=url::${VERCEL_URL}"
           echo "Constructed Vercel URL: ${VERCEL_URL}"
