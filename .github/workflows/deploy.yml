@@ -27,9 +27,6 @@ jobs:
       - name: Installing dependencies 📦️
         run: pnpm install
 
-      - name: Installing dependencies 📦️
-        run: pnpm install
-
       - name: Deploy 🚀
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
