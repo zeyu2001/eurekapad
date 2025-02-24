@@ -44,7 +44,6 @@ export const Share = ({ document: document }: ShareProps) => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
     await share({
       id: document._id,
       shares: values.shares.map(share => ({ email: share.email, isEditor: share.role === 'editor' })),

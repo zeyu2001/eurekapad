@@ -148,7 +148,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
             name: user?.user?.fullName ?? 'Anonymous ' + animalNames[Math.floor(Math.random() * animalNames.length)],
             color: cursorColors[Math.floor(Math.random() * cursorColors.length)],
           },
-          showCursorLabels: 'always',
+          // showCursorLabels: 'always',
         }
       : undefined,
   })
