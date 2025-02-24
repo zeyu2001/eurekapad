@@ -42,7 +42,11 @@ jobs:
           echo "::set-output name=url::${VERCEL_URL}"
           echo "Constructed Vercel URL: ${VERCEL_URL}"
 
+      - name: Build 🏗
+        run: pnpm run build    ️
+
       - name: Deploy 🚀
+        working-directory: apps/yjs-provider
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             pnpm run build:preview
