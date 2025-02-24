@@ -1,32 +1,46 @@
-import { Extension } from '@tiptap/core'
+import { InputRule, Mark } from '@tiptap/core'
 
-const INPUT_REGEX = /\$\$(.*?[^\\])\$\$/gi // matches for text inside $$
+// Matches math text via $$ as input
+const mathInputRegex = /(?:^|\s)(\$\$(?!\s+\$\$)((?:[^$]+))\$\$(?!\s+\$\$))$/
 
-export const InlineMathExtension = Extension.create({
+// Matches math text via $$ while pasting
+const mathPasteRegex = /(?:^|\s)(\$\$(?!\s+\$\$)((?:[^$]+))\$\$(?!\s+\$\$))/g
+
+const mathInlineHandler: InputRule['handler'] = ({ range, match, chain, state }) => {
+  const { from: start, to: end } = range
+  if (match[1]) {
+    const textNode = state.schema.text(match[1])
+
+    // this should have been loaded through the blocknote schema
+    const mathInlineType = state.schema.nodes.mathInline
+    if (!mathInlineType) return
+
+    chain()
+      .command(({ tr }) => {
+        tr.replaceRangeWith(start, end, mathInlineType.create(null, textNode))
+        return true
+      })
+      .run()
+  }
+}
+
+export const InlineMathExtension = Mark.create({
   name: 'inlineMathInput',
 
   addInputRules() {
     return [
       {
-        find: INPUT_REGEX,
-        handler({ range, match, chain, state }) {
-          const start = range.from
-          const end = range.to
-          if (match[1]) {
-            const textNode = state.schema.text(match[1])
+        find: mathInputRegex,
+        handler: mathInlineHandler,
+      },
+    ]
+  },
 
-            // this should have been loaded through the blocknote schema
-            const mathInlineType = state.schema.nodes.mathInline
-            if (!mathInlineType) return
-
-            chain()
-              .command(({ tr }) => {
-                tr.replaceRangeWith(start, end, mathInlineType.create(null, textNode))
-                return true
-              })
-              .run()
-          }
-        },
+  addPasteRules() {
+    return [
+      {
+        find: mathPasteRegex,
+        handler: mathInlineHandler,
       },
     ]
   },
