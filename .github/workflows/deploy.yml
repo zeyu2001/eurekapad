@@ -30,9 +30,17 @@ jobs:
       - name: Deploy 🚀
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            npx partykit deploy --preview preview --var CLERK_ENDPOINT=$CLERK_ENDPOINT --var CLERK_JWT_KEY=$CLERK_JWT_KEY --var YJS_API_TOKEN=$YJS_API_TOKEN --var TRPC_API_URL=$TRPC_API_URL
+            npx partykit deploy --preview preview \
+              --var CLERK_ENDPOINT="$CLERK_ENDPOINT" \
+              --var CLERK_JWT_KEY="$CLERK_JWT_KEY" \
+              --var YJS_API_TOKEN="$YJS_API_TOKEN" \
+              --var TRPC_API_URL="$TRPC_API_URL"
           else
-            npx partykit deploy --var CLERK_ENDPOINT=$CLERK_ENDPOINT --var CLERK_JWT_KEY=$CLERK_JWT_KEY --var YJS_API_TOKEN=$YJS_API_TOKEN --var TRPC_API_URL=$TRPC_API_URL
+            npx partykit deploy \
+              --var CLERK_ENDPOINT="$CLERK_ENDPOINT" \
+              --var CLERK_JWT_KEY="$CLERK_JWT_KEY" \
+              --var YJS_API_TOKEN="$YJS_API_TOKEN" \
+              --var TRPC_API_URL="$TRPC_API_URL"
           fi
         env:
           PARTYKIT_TOKEN: ${{ secrets.PARTYKIT_TOKEN }}
