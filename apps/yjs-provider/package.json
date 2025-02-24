@@ -17,7 +17,8 @@
     "@trpc/client": "^10.45.2",
     "@trpc/react-query": "^10.45.2",
     "superjson": "^2.2.2",
-    "y-partykit": "^0.0.32"
+    "y-partykit": "^0.0.32",
+    "yjs": "^13.6.23"
   },
   "devDependencies": {
     "partykit": "^0.0.110",

@@ -48,10 +48,8 @@ jobs:
           NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
-      - name: Installing dependencies 📦️
-        working-directory: apps/yjs-provider
-        run: pnpm install
-
+      # For some reason, running build:preview from the root directory doesn't work
+      # Turborepo hangs in CI: https://github.com/vercel/turborepo/issues/8281
       - name: Deploy 🚀
         working-directory: apps/yjs-provider
         run: |
