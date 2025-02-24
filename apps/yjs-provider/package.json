@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "partykit dev --live",
-    "build:preview": "npx partykit deploy --preview preview --var CLERK_ENDPOINT=\"$CLERK_ENDPOINT\" --var CLERK_JWT_KEY=\"$CLERK_JWT_KEY\" --var YJS_API_TOKEN=\"$YJS_API_TOKEN\" --var TRPC_API_URL=\"$TRPC_API_URL\" --var VERCEL_PROTECTION_BYPASS=\"VERCEL_PROTECTION_BYPASS\"",
-    "build:deploy": "npx partykit deploy --var CLERK_ENDPOINT=\"$CLERK_ENDPOINT\" --var CLERK_JWT_KEY=\"$CLERK_JWT_KEY\" --var YJS_API_TOKEN=\"$YJS_API_TOKEN\" --var TRPC_API_URL=\"$TRPC_API_URL\" --var VERCEL_PROTECTION_BYPASS=\"VERCEL_PROTECTION_BYPASS\"",
+    "build:preview": "npx partykit deploy --preview preview --var CLERK_ENDPOINT=\"$CLERK_ENDPOINT\" --var CLERK_JWT_KEY=\"$CLERK_JWT_KEY\" --var YJS_API_TOKEN=\"$YJS_API_TOKEN\" --var TRPC_API_URL=\"$TRPC_API_URL\" --var VERCEL_PROTECTION_BYPASS=\"$VERCEL_PROTECTION_BYPASS\"",
+    "build:deploy": "npx partykit deploy --var CLERK_ENDPOINT=\"$CLERK_ENDPOINT\" --var CLERK_JWT_KEY=\"$CLERK_JWT_KEY\" --var YJS_API_TOKEN=\"$YJS_API_TOKEN\" --var TRPC_API_URL=\"$TRPC_API_URL\" --var VERCEL_PROTECTION_BYPASS=\"$VERCEL_PROTECTION_BYPASS\"",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write .",
