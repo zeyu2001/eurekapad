@@ -13,7 +13,7 @@
     "dev:frontend": "next dev",
     "build": "npm-run-all build:next build:trpc",
     "build:next": "next build",
-    "build:trpc": "npx tsc --project tsconfig.trpc.json",
+    "build:trpc": "npx tsc --project tsconfig.trpc.json --listFiles",
     "build:deploy": "convex deploy --cmd 'npm run build'",
     "start": "next start",
     "lint": "next lint",
