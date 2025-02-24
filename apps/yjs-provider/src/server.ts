@@ -1,18 +1,38 @@
+import { verifyToken } from "@clerk/backend";
+import { Buffer } from "buffer";
 import type * as Party from "partykit/server";
 import { onConnect } from "y-partykit";
-import { trpc } from "./trpc";
 import * as Y from "yjs";
+
+import { trpc } from "./trpc";
 
 export default class YjsServer implements Party.Server {
   constructor(public party: Party.Room) {}
-  static async onBeforeConnect(request: Party.Request) {
+  static async onBeforeConnect(request: Party.Request, lobby: Party.Lobby) {
     const token = new URL(request.url).searchParams.get("token") ?? "";
     const documentId =
       new URL(request.url).searchParams.get("documentId") ?? "";
-    request.headers.set("X-Document-ID", documentId);
-    request.headers.set("X-Auth-Token", token);
-    console.log("Document ID", documentId);
-    return request;
+
+    if (!token || !documentId) {
+      return new Response("Bad Request", { status: 400 });
+    }
+
+    try {
+      const issuer = lobby.env.CLERK_ENDPOINT!;
+      const session = await verifyToken(token, {
+        issuer,
+        jwtKey: lobby.env.CLERK_JWT_KEY!,
+      });
+
+      request.headers.set("X-Document-ID", documentId);
+      request.headers.set("X-Auth-Token", token);
+      request.headers.set("X-Auth-User-ID", session.sub);
+      request.headers.set("X-Yjs-Api-Token", lobby.env.YJS_API_TOKEN!);
+      return request;
+    } catch {
+      // auth failed
+      return new Response("Unauthorized", { status: 401 });
+    }
   }
 
   onConnect(conn: Party.Connection, { request }: Party.ConnectionContext) {
@@ -22,20 +42,38 @@ export default class YjsServer implements Party.Server {
         const documentId = request.headers.get("X-Document-ID")!;
         const token = request.headers.get("X-Auth-Token")!;
 
-        // Public demo, etc.
-        if (!documentId || !token) {
-          return new Y.Doc();
-        }
-
-        const state = await trpc.getYDocByDocumentId.fetch({
+        const state = await trpc.getYDocByDocumentId.query({
           documentId: documentId,
           token: token,
         });
 
         const ydoc = new Y.Doc();
         Y.applyUpdate(ydoc, state);
-        console.log(ydoc.getXmlFragment("prosemirror").toJSON());
         return ydoc;
+      },
+
+      callback: {
+        async handler(yDoc) {
+          const documentId = request.headers.get("X-Document-ID")!;
+          const yjsApiToken = request.headers.get("X-Yjs-Api-Token")!;
+
+          const update = Y.encodeStateAsUpdate(yDoc);
+          const base64YDoc = Buffer.from(update).toString("base64");
+
+          console.log("Saving document", documentId);
+
+          await trpc.saveYDoc.mutate({
+            documentId,
+            base64YDoc,
+            yjsToken: yjsApiToken,
+          });
+
+          console.log("Saved document", documentId);
+        },
+        // only save after every 2 seconds
+        debounceWait: 2000,
+        // if updates keep coming, save at least once every 10 seconds
+        debounceMaxWait: 10000,
       },
     });
   }

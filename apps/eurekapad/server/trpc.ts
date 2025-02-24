@@ -1,7 +1,7 @@
 import { ServerBlockNoteEditor } from '@blocknote/server-util'
 import { initTRPC } from '@trpc/server'
 import axios from 'axios'
-import { fetchQuery } from 'convex/nextjs'
+import { fetchMutation, fetchQuery } from 'convex/nextjs'
 import * as Y from 'yjs'
 import { z } from 'zod'
 
@@ -18,6 +18,10 @@ const t = initTRPC.create({
 const publicProcedure = t.procedure
 
 const router = t.router
+
+const editor = ServerBlockNoteEditor.create({
+  schema: serverCustomSchema,
+})
 
 export const appRouter = router({
   blocksToYDoc: publicProcedure.input(z.array(z.custom<CustomBlock>())).query(async ({ input }) => {
@@ -41,8 +45,6 @@ export const appRouter = router({
         throw new Error('Document not found')
       }
 
-      console.log('document', document)
-
       const contentUrl = await fetchQuery(
         api.documents.getContentUrl,
         {
@@ -57,13 +59,35 @@ export const appRouter = router({
       const { data } = await axios.get(contentUrl, { responseType: 'json' })
       const blocks = data as CustomBlock[]
 
-      console.log('blocks', blocks)
-
-      const editor = ServerBlockNoteEditor.create({
-        schema: serverCustomSchema,
-      })
-
       return Y.encodeStateAsUpdate(editor.blocksToYDoc(blocks))
+    }),
+
+  saveYDoc: publicProcedure
+    .input(
+      z.object({
+        documentId: z.string().pipe(z.custom<Id<'documents'>>()),
+        base64YDoc: z.string(),
+        yjsToken: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const uploadUrl = await fetchMutation(api.documents.generateContentUploadUrl, { yjsToken: input.yjsToken })
+
+      const state = new Uint8Array(Buffer.from(input.base64YDoc, 'base64'))
+      const doc = new Y.Doc()
+      Y.applyUpdate(doc, state)
+      const blocks = editor.yDocToBlocks(doc)
+
+      const { data } = await axios.post<{ storageId: Id<'_storage'> }>(uploadUrl, blocks, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const { storageId } = data
+
+      return await fetchMutation(api.documents.updateDocumentFromYjs, {
+        documentId: input.documentId,
+        contentId: storageId,
+        yjsToken: input.yjsToken,
+      })
     }),
 })
 

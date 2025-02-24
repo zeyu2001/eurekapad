@@ -4,9 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "partykit dev --live",
-    "build:deploy": "partykit deploy"
+    "build:deploy": "partykit deploy",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@clerk/backend": "^1.21.4",
     "@eurekapad/app": "workspace:*",
     "@trpc/client": "^10.45.2",
     "@trpc/react-query": "^10.45.2",

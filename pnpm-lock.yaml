@@ -325,6 +325,9 @@ importers:
 
   apps/yjs-provider:
     dependencies:
+      '@clerk/backend':
+        specifier: ^1.21.4
+        version: 1.21.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@eurekapad/app':
         specifier: workspace:*
         version: link:../eurekapad

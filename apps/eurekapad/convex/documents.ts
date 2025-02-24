@@ -314,10 +314,13 @@ export const update = mutation({
 })
 
 export const generateContentUploadUrl = mutation({
-  handler: async (ctx, _args) => {
+  args: {
+    yjsToken: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
 
-    if (!identity) {
+    if (!identity && args.yjsToken !== process.env.YJS_API_TOKEN) {
       throw new Error('Unauthenticated')
     }
 
@@ -334,6 +337,36 @@ export const getContentUrl = query({
       return null
     }
     return await ctx.storage.getUrl(args.contentId)
+  },
+})
+
+export const updateDocumentFromYjs = mutation({
+  args: {
+    documentId: v.id('documents'),
+    contentId: v.id('_storage'),
+    yjsToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existingDocument = await ctx.db.get(args.documentId)
+
+    if (!existingDocument) {
+      throw new Error('Not found')
+    }
+
+    if (args.yjsToken !== process.env.YJS_API_TOKEN) {
+      throw new Error('Unauthorized')
+    }
+
+    const currentContentId = existingDocument.contentId
+    if (currentContentId) {
+      await ctx.storage.delete(currentContentId)
+    }
+
+    const document = await ctx.db.patch(args.documentId, {
+      contentId: args.contentId,
+    })
+
+    return document
   },
 })
 
