@@ -11,6 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event_name == 'push' && 'Production' || 'Preview' }}
     steps:
+      - name: Wait for Vercel Preview URL
+        uses: aaimio/vercel-preview-url-action@v2.2.0
+        if: ${{ github.event_name == 'pull_request' }}
+        id: vercel_preview_url
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          echo "Vercel Preview URL: ${{ steps.vercel_preview_url.outputs.vercel_preview_url }}"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -40,6 +50,6 @@ jobs:
           CLERK_ENDPOINT: ${{ vars.CLERK_ENDPOINT }}
           CLERK_JWT_KEY: ${{ vars.CLERK_JWT_KEY }}
           YJS_API_TOKEN: ${{ vars.YJS_API_TOKEN }}
-          TRPC_API_URL: ${{ vars.TRPC_API_URL }}
+          TRPC_API_URL: ${{ github.event_name == 'pull_request' && steps.vercel_preview_url.outputs.vercel_preview_url || vars.TRPC_API_URL }}
           NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
