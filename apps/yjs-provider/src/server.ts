@@ -28,6 +28,10 @@ export default class YjsServer implements Party.Server {
       request.headers.set("X-Auth-Token", token);
       request.headers.set("X-Auth-User-ID", session.sub);
       request.headers.set("X-Yjs-Api-Token", lobby.env.YJS_API_TOKEN!);
+      request.headers.set(
+        "X-Trpc-Api-Url",
+        lobby.env.TRPC_API_URL ?? "http://localhost:3000",
+      );
       return request;
     } catch {
       // auth failed
@@ -41,9 +45,10 @@ export default class YjsServer implements Party.Server {
       load: async () => {
         const documentId = request.headers.get("X-Document-ID")!;
         const token = request.headers.get("X-Auth-Token")!;
+        const trpcApiUrl = request.headers.get("X-Trpc-Api-Url")!;
 
         const state = await trpcClientFactory(
-          this.party.env.TRPC_API_URL ?? "http://localhost:3000",
+          trpcApiUrl,
         ).getYDocByDocumentId.query({
           documentId: documentId,
           token: token,
@@ -58,15 +63,14 @@ export default class YjsServer implements Party.Server {
         async handler(yDoc) {
           const documentId = request.headers.get("X-Document-ID")!;
           const yjsApiToken = request.headers.get("X-Yjs-Api-Token")!;
+          const trpcApiUrl = request.headers.get("X-Trpc-Api-Url")!;
 
           const update = Y.encodeStateAsUpdate(yDoc);
           const base64YDoc = Buffer.from(update).toString("base64");
 
           console.log("Saving document", documentId);
 
-          await trpcClientFactory(
-            this.party.env.TRPC_API_URL ?? "http://localhost:3000",
-          ).saveYDoc.mutate({
+          await trpcClientFactory(trpcApiUrl).saveYDoc.mutate({
             documentId,
             base64YDoc,
             yjsToken: yjsApiToken,
