@@ -32,6 +32,9 @@ export default class YjsServer implements Party.Server {
         "X-Trpc-Api-Url",
         lobby.env.TRPC_API_URL ?? "http://localhost:3000",
       );
+
+      console.log("Token: ", token);
+
       return request;
     } catch {
       // auth failed
