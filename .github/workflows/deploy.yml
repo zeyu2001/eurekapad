@@ -44,3 +44,5 @@ jobs:
           CLERK_JWT_KEY: ${{ vars.CLERK_JWT_KEY }}
           YJS_API_TOKEN: ${{ vars.YJS_API_TOKEN }}
           TRPC_API_URL: ${{ vars.TRPC_API_URL }}
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
