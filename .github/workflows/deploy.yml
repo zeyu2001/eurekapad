@@ -49,6 +49,7 @@ jobs:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
       - name: Installing dependencies 📦️
+        working-directory: apps/yjs-provider
         run: pnpm install
 
       - name: Deploy 🚀
