@@ -32,6 +32,10 @@ export default class YjsServer implements Party.Server {
         "X-Trpc-Api-Url",
         lobby.env.TRPC_API_URL ?? "http://localhost:3000",
       );
+      request.headers.set(
+        "X-Vercel-Protection-Bypass",
+        lobby.env.VERCEL_PROTECTION_BYPASS!,
+      );
 
       return request;
     } catch {
@@ -47,9 +51,11 @@ export default class YjsServer implements Party.Server {
         const documentId = request.headers.get("X-Document-ID")!;
         const token = request.headers.get("X-Auth-Token")!;
         const trpcApiUrl = request.headers.get("X-Trpc-Api-Url")!;
+        const vercelToken = request.headers.get("X-Vercel-Protection-Bypass")!;
 
         const state = await trpcClientFactory(
           trpcApiUrl,
+          vercelToken,
         ).getYDocByDocumentId.query({
           documentId: documentId,
           token: token,
@@ -65,13 +71,16 @@ export default class YjsServer implements Party.Server {
           const documentId = request.headers.get("X-Document-ID")!;
           const yjsApiToken = request.headers.get("X-Yjs-Api-Token")!;
           const trpcApiUrl = request.headers.get("X-Trpc-Api-Url")!;
+          const vercelToken = request.headers.get(
+            "X-Vercel-Protection-Bypass",
+          )!;
 
           const update = Y.encodeStateAsUpdate(yDoc);
           const base64YDoc = Buffer.from(update).toString("base64");
 
           console.log("Saving document", documentId);
 
-          await trpcClientFactory(trpcApiUrl).saveYDoc.mutate({
+          await trpcClientFactory(trpcApiUrl, vercelToken).saveYDoc.mutate({
             documentId,
             base64YDoc,
             yjsToken: yjsApiToken,
