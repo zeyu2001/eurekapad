@@ -27,21 +27,15 @@ jobs:
       - name: Installing dependencies 📦️
         run: pnpm install
 
+      - name: Installing dependencies 📦️
+        run: pnpm install
+
       - name: Deploy 🚀
-        working-directory: apps/yjs-provider
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            npx partykit deploy --preview preview \
-              --var CLERK_ENDPOINT="$CLERK_ENDPOINT" \
-              --var CLERK_JWT_KEY="$CLERK_JWT_KEY" \
-              --var YJS_API_TOKEN="$YJS_API_TOKEN" \
-              --var TRPC_API_URL="$TRPC_API_URL"
+            pnpm run build:preview
           else
-            npx partykit deploy \
-              --var CLERK_ENDPOINT="$CLERK_ENDPOINT" \
-              --var CLERK_JWT_KEY="$CLERK_JWT_KEY" \
-              --var YJS_API_TOKEN="$YJS_API_TOKEN" \
-              --var TRPC_API_URL="$TRPC_API_URL"
+            pnpm run build:deploy
           fi
         env:
           PARTYKIT_TOKEN: ${{ secrets.PARTYKIT_TOKEN }}
