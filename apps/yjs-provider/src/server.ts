@@ -33,8 +33,6 @@ export default class YjsServer implements Party.Server {
         lobby.env.TRPC_API_URL ?? "http://localhost:3000",
       );
 
-      console.log("Token: ", token);
-
       return request;
     } catch {
       // auth failed
@@ -49,6 +47,8 @@ export default class YjsServer implements Party.Server {
         const documentId = request.headers.get("X-Document-ID")!;
         const token = request.headers.get("X-Auth-Token")!;
         const trpcApiUrl = request.headers.get("X-Trpc-Api-Url")!;
+
+        console.log("tRPC API URL: ", trpcApiUrl);
 
         const state = await trpcClientFactory(
           trpcApiUrl,
