@@ -19,8 +19,9 @@
     "turbo": "^2.3.3"
   },
   "resolutions": {
-    "prosemirror-view": "1.37.1",
-    "@blocknote/core": "0.24.1"
+    "prosemirror-view": "1.38.0",
+    "@blocknote/core": "0.24.1",
+    "@tiptap/react": "2.11.1"
   },
   "packageManager": "pnpm@9.10.0"
 }
