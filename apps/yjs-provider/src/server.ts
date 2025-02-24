@@ -4,7 +4,7 @@ import type * as Party from "partykit/server";
 import { onConnect } from "y-partykit";
 import * as Y from "yjs";
 
-import { trpc } from "./trpc";
+import { trpcClientFactory } from "./trpc";
 
 export default class YjsServer implements Party.Server {
   constructor(public party: Party.Room) {}
@@ -42,7 +42,9 @@ export default class YjsServer implements Party.Server {
         const documentId = request.headers.get("X-Document-ID")!;
         const token = request.headers.get("X-Auth-Token")!;
 
-        const state = await trpc.getYDocByDocumentId.query({
+        const state = await trpcClientFactory(
+          this.party.env.TRPC_API_URL ?? "http://localhost:3000",
+        ).getYDocByDocumentId.query({
           documentId: documentId,
           token: token,
         });
@@ -62,7 +64,9 @@ export default class YjsServer implements Party.Server {
 
           console.log("Saving document", documentId);
 
-          await trpc.saveYDoc.mutate({
+          await trpcClientFactory(
+            this.party.env.TRPC_API_URL ?? "http://localhost:3000",
+          ).saveYDoc.mutate({
             documentId,
             base64YDoc,
             yjsToken: yjsApiToken,

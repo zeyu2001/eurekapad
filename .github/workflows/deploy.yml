@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && 'Production' || 'Preview' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node LTS ✨
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: lts/*
+
+      - name: Installing dependencies 📦️
+        run: pnpm install
+
+      - name: Deploy 🚀
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            npx partykit deploy --preview preview --var CLERK_ENDPOINT=$CLERK_ENDPOINT --var CLERK_JWT_KEY=$CLERK_JWT_KEY --var YJS_API_TOKEN=$YJS_API_TOKEN --var TRPC_API_URL=$TRPC_API_URL
+          else
+            npx partykit deploy --var CLERK_ENDPOINT=$CLERK_ENDPOINT --var CLERK_JWT_KEY=$CLERK_JWT_KEY --var YJS_API_TOKEN=$YJS_API_TOKEN --var TRPC_API_URL=$TRPC_API_URL
+          fi
+        env:
+          PARTYKIT_TOKEN: ${{ secrets.PARTYKIT_TOKEN }}
+          PARTYKIT_LOGIN: ${{ secrets.PARTYKIT_LOGIN }}
+          CLERK_ENDPOINT: ${{ vars.CLERK_ENDPOINT }}
+          CLERK_JWT_KEY: ${{ vars.CLERK_JWT_KEY }}
+          YJS_API_TOKEN: ${{ vars.YJS_API_TOKEN }}
+          TRPC_API_URL: ${{ vars.TRPC_API_URL }}
