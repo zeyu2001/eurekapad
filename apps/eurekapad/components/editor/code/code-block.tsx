@@ -82,7 +82,7 @@ const LanguageDropdown = ({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command className="max-h-64">
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Search language..." />
           <CommandEmpty>No language found.</CommandEmpty>
           <ScrollArea className="overflow-auto">
             <CommandGroup>
@@ -214,6 +214,8 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler])
 
   useEffect(() => {
+    // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
+    // Causes error: flushSync was called from inside a lifecycle method
     editor.updateBlock(block.id, {
       props: {
         ...block.props,
