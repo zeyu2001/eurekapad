@@ -102,8 +102,6 @@ math-field::part(menu-toggle) {
   @apply bg-zinc-700 px-1 py-0.5 rounded-sm text-sm;
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
