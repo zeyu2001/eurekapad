@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react'
 
 import { SingletonJSRunner } from '@/lib/singleton-js-runner'
 
-export const useJSRunner = (language: string) => {
+export const useJSRunner = () => {
   const [runner, setRunner] = useState<SingletonJSRunner | null>(null)
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (language !== 'javascript' && language !== 'typescript') return
     const runner = SingletonJSRunner.getInstance()
 
     setRunner(runner)
@@ -16,7 +15,7 @@ export const useJSRunner = (language: string) => {
       setLoaded(true)
       return
     }
-
+    console.log('initJS')
     runner.initJS().then(() => {
       setLoaded(true)
     })

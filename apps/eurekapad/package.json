@@ -66,7 +66,7 @@
     "babel-plugin-react-compiler": "19.0.0-beta-55955c9-20241229",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1.0.4",
+    "cmdk": "^1.0.0",
     "convex": "^1.17.4",
     "copy-webpack-plugin": "^12.0.2",
     "dayjs": "^1.11.13",

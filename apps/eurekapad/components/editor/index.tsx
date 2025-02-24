@@ -115,18 +115,6 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
 
   const doc = new Y.Doc()
 
-  const provider = new YPartyKitProvider(
-    process.env.NEXT_PUBLIC_YPARTYKIT_HOST ?? 'localhost:1999',
-    documentId || 'default',
-    doc,
-    {
-      params: {
-        token: authToken,
-        documentId,
-      },
-    },
-  )
-
   const editor = useCreateBlockNote({
     schema: customSchema,
     dropCursor: multiColumnDropCursor,
@@ -142,7 +130,17 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     initialContent: initialContent && !collab ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     collaboration: collab
       ? {
-          provider,
+          provider: new YPartyKitProvider(
+            process.env.NEXT_PUBLIC_YPARTYKIT_HOST ?? 'localhost:1999',
+            documentId || 'default',
+            doc,
+            {
+              params: {
+                token: authToken,
+                documentId,
+              },
+            },
+          ),
           fragment: doc.getXmlFragment('prosemirror'),
           user: {
             name: user?.user?.fullName ?? 'Anonymous ' + animalNames[Math.floor(Math.random() * animalNames.length)],
