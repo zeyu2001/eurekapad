@@ -11,7 +11,7 @@ export const trpcClientFactory = (baseUrl: string, vercelToken: string) => {
     transformer: superjson,
     links: [
       httpBatchLink({
-        url: `https://eurekapad-git-feat-sharing-eurekapad.vercel.app/api/trpc`,
+        url: `${baseUrl}/api/trpc`,
         headers: () => ({
           "x-vercel-protection-bypass": vercelToken,
         }),
