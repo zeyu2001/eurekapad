@@ -44,6 +44,9 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
       - name: Deploy 🚀
         working-directory: apps/yjs-provider
