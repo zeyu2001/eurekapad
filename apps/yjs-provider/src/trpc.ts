@@ -6,15 +6,16 @@ import superjson from "superjson";
 // https://trpc.io/docs/v10/client/vanilla
 export const trpcClientFactory = (baseUrl: string, vercelToken: string) => {
   console.log("tRPC API URL: ", baseUrl);
+  console.log("Vercel token: ", vercelToken);
 
   return createTRPCProxyClient<AppRouter>({
     transformer: superjson,
     links: [
       httpBatchLink({
         url: `${baseUrl}/api/trpc`,
-        headers: () => ({
+        headers: {
           "x-vercel-protection-bypass": vercelToken,
-        }),
+        },
       }),
     ],
   });
