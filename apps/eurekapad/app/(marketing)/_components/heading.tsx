@@ -1,7 +1,7 @@
 'use client'
 
 import { SignInButton } from '@clerk/nextjs'
-import { useConvexAuth } from 'convex/react'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -16,7 +16,6 @@ import imperialImage from '@/images/imperial.png'
 import nusImage from '@/images/nus.png'
 
 export const Heading = () => {
-  const { isAuthenticated, isLoading } = useConvexAuth()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -53,27 +52,27 @@ export const Heading = () => {
               people deserve smart tools.
             </p>
             <div className="mt-10 flex justify-center gap-x-6">
-              {isLoading && (
+              <AuthLoading>
                 <div className="w-full flex items-center justify-center">
                   <Spinner size="lg" />
                 </div>
-              )}
-              {isAuthenticated && !isLoading && (
+              </AuthLoading>
+              <Authenticated>
                 <Button asChild className="rounded-full">
                   <Link href="/documents">
                     Enter EurekaPad
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>
-              )}
-              {!isAuthenticated && !isLoading && (
+              </Authenticated>
+              <Unauthenticated>
                 <SignInButton mode="modal">
                   <Button className="rounded-full">
                     Get EurekaPad free
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </SignInButton>
-              )}
+              </Unauthenticated>
             </div>
           </div>
           <div className="hidden lg:block col-span-2">
