@@ -14,7 +14,7 @@
     "build": "npm-run-all build:next build:trpc",
     "build:next": "next build",
     "build:trpc": "npx tsc --project tsconfig.trpc.json",
-    "build:deploy": "convex deploy --cmd 'npm run build'",
+    "build:deploy": "convex deploy --cmd 'npm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
