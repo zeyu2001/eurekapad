@@ -11,13 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event_name == 'push' && 'Production' || 'Preview' }}
     steps:
-      - name: "Wait for Vercel Preview URL"
-        uses: aaimio/vercel-preview-url-action@v2.2.0
-        if: ${{ github.event_name == 'pull_request' }}
-        id: vercel_preview_url
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
