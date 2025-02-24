@@ -216,6 +216,8 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler])
 
   useEffect(() => {
+    // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
+    // Causes error: flushSync was called from inside a lifecycle method
     editor.updateBlock(block.id, {
       props: {
         ...block.props,

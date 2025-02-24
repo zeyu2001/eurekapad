@@ -27,6 +27,7 @@ export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
           socialButtonsVariant: 'blockButton',
         },
       }}
+      afterSignOutUrl="/"
     >
       <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
         {children}

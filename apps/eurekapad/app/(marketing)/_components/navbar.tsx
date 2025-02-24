@@ -1,7 +1,7 @@
 'use client'
 
 import { SignInButton, UserButton } from '@clerk/nextjs'
-import { useConvexAuth } from 'convex/react'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import Link from 'next/link'
 
 import { ModeToggle } from '@/components/mode-toggle'
@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 import { Logo } from './logo'
 
 export const Navbar = () => {
-  const { isAuthenticated, isLoading } = useConvexAuth()
   const scrolled = useScrollTop()
 
   return (
@@ -25,29 +24,27 @@ export const Navbar = () => {
     >
       <Logo />
       <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
-        {isLoading && <Spinner />}
-        {!isAuthenticated && !isLoading && (
-          <>
-            <SignInButton mode="modal">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </SignInButton>
-            <SignInButton mode="modal">
-              <Button className="rounded-full" size="sm">
-                Get EurekaPad free
-              </Button>
-            </SignInButton>
-          </>
-        )}
-        {isAuthenticated && !isLoading && (
-          <>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/documents">Enter EurekaPad</Link>
+        <AuthLoading>
+          <Spinner />
+        </AuthLoading>
+        <Authenticated>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/documents">Enter EurekaPad</Link>
+          </Button>
+          <UserButton />
+        </Authenticated>
+        <Unauthenticated>
+          <SignInButton mode="modal">
+            <Button variant="ghost" size="sm">
+              Log in
             </Button>
-            <UserButton afterSignOutUrl="/" />
-          </>
-        )}
+          </SignInButton>
+          <SignInButton mode="modal">
+            <Button className="rounded-full" size="sm">
+              Get EurekaPad free
+            </Button>
+          </SignInButton>
+        </Unauthenticated>
         <ModeToggle />
       </div>
     </div>

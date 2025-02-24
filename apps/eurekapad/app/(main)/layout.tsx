@@ -1,7 +1,7 @@
 'use client'
 
-import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/nextjs'
-import { useConvexAuth } from 'convex/react'
+import { RedirectToSignIn } from '@clerk/nextjs'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 
 import { SearchCommand } from '@/components/search-command'
 import { Spinner } from '@/components/spinner'
@@ -9,19 +9,14 @@ import { Spinner } from '@/components/spinner'
 import { Navigation } from './_components/navigation'
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useConvexAuth()
-
-  if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    )
-  }
-
   return (
     <>
-      <SignedIn>
+      <AuthLoading>
+        <div className="h-full flex items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      </AuthLoading>
+      <Authenticated>
         <div className="h-full flex dark:bg-[#1F1F1F]">
           <Navigation />
           <main className="flex-1 h-full overflow-y-auto">
@@ -29,11 +24,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             {children}
           </main>
         </div>
-      </SignedIn>
-      <SignedOut>
+      </Authenticated>
+      <Unauthenticated>
         <RedirectToSignIn />
-      </SignedOut>
-      {!isAuthenticated && <RedirectToSignIn />}
+      </Unauthenticated>
     </>
   )
 }

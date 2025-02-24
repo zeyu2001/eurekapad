@@ -1,12 +1,28 @@
-import { Extension } from '@tiptap/core'
+import { InputRule, Mark } from '@tiptap/core'
 
-export const ArrowConversionExtension = Extension.create({
+const arrowHandler: InputRule['handler'] = ({ state, range: { from, to } }) =>
+  state.tr.replaceWith(from, to, state.schema.text('→'))
+
+export const ArrowConversionExtension = Mark.create({
   name: 'arrowConversion',
 
-  addInputRules: () => [
-    {
-      find: /->/g,
-      handler: ({ state, range: { from, to } }) => state.tr.replaceWith(from, to, state.schema.text('→')),
-    },
-  ],
+  addInputRules() {
+    return [
+      {
+        find: /->/g,
+        handler: arrowHandler,
+        type: this.type,
+      },
+    ]
+  },
+
+  addPasteRules() {
+    return [
+      {
+        find: /->/g,
+        handler: arrowHandler,
+        type: this.type,
+      },
+    ]
+  },
 })
