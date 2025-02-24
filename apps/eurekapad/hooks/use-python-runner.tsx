@@ -7,7 +7,6 @@ export const usePythonRunner = () => {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (language !== 'python') return
     const runner = SingletonPythonRunner.getInstance()
 
     setRunner(runner)
