@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 
 import { api, internal } from './_generated/api'
 import { action, internalMutation, mutation, query } from './_generated/server'
+import { authAndGetDocument } from './utils/documents'
 
 export const getUserPermissions = query({
   args: { documentId: v.id('documents') },
@@ -41,6 +42,55 @@ export const getUserPermissions = query({
   },
 })
 
+export const getDocumentPermissions = query({
+  args: { documentId: v.id('documents') },
+  handler: async (ctx, args) => {
+    const document = await authAndGetDocument(ctx, args.documentId, true)
+
+    const permissions = await ctx.db
+      .query('documentPermisisons')
+      .withIndex('by_document', q => q.eq('documentId', document._id))
+      .collect()
+
+    return permissions
+  },
+})
+
+export const getPendingInvites = query({
+  args: { documentId: v.id('documents') },
+  handler: async (ctx, args) => {
+    const document = await authAndGetDocument(ctx, args.documentId, true)
+
+    const invites = await ctx.db
+      .query('documentInviteTokens')
+      .withIndex('by_document', q => q.eq('documentId', document._id))
+      .collect()
+
+    return invites
+  },
+})
+
+export const removePendingInvite = mutation({
+  args: { id: v.id('documentInviteTokens') },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const invite = await ctx.db.get(args.id)
+    if (!invite) {
+      throw new Error('Invite not found')
+    }
+
+    // check if user owns the document
+    await authAndGetDocument(ctx, invite.documentId, true)
+
+    await ctx.db.delete(args.id)
+  },
+})
+
 export const share = action({
   args: { id: v.id('documents'), shares: v.array(v.object({ email: v.string(), isEditor: v.boolean() })) },
   handler: async (ctx, args) => {
@@ -71,7 +121,7 @@ export const share = action({
       const shareToUserId = await ctx.runAction(internal.utils.users.getUserFromEmail, { email: share.email })
 
       if (shareToUserId) {
-        await ctx.runMutation(internal.documentPermissions.addPermissions, {
+        await ctx.runMutation(internal.documentPermissions.upsertPermissions, {
           documentId: args.id,
           userId: shareToUserId,
           isEditor: share.isEditor,
@@ -131,7 +181,7 @@ export const acceptInvite = mutation({
       throw new Error('Unauthorized')
     }
 
-    await ctx.runMutation(internal.documentPermissions.addPermissions, {
+    await ctx.runMutation(internal.documentPermissions.upsertPermissions, {
       documentId: invite.documentId,
       userId: identity.subject,
       isEditor: invite.isEditor,
@@ -141,7 +191,7 @@ export const acceptInvite = mutation({
   },
 })
 
-export const addPermissions = internalMutation({
+export const upsertPermissions = internalMutation({
   args: {
     documentId: v.id('documents'),
     userId: v.string(),
@@ -153,8 +203,62 @@ export const addPermissions = internalMutation({
       throw new Error('Document not found')
     }
 
+    const existingPermissions = await ctx.db
+      .query('documentPermisisons')
+      .withIndex('by_document', q => q.eq('documentId', args.documentId))
+      .filter(q => q.eq(q.field('userId'), args.userId))
+      .first()
+
+    // Already either viewer or editor
+    if (existingPermissions) {
+      await ctx.db.patch(existingPermissions._id, {
+        isEditor: args.isEditor,
+      })
+      return
+    }
+
+    // New permission
     await ctx.db.insert('documentPermisisons', {
       documentId: args.documentId,
+      userId: args.userId,
+      isEditor: args.isEditor,
+    })
+  },
+})
+
+export const removePermissions = mutation({
+  args: {
+    documentId: v.id('documents'),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existingDocument = await authAndGetDocument(ctx, args.documentId, true)
+
+    const existingPermissions = await ctx.db
+      .query('documentPermisisons')
+      .withIndex('by_document', q => q.eq('documentId', existingDocument._id))
+      .filter(q => q.eq(q.field('userId'), args.userId))
+      .first()
+
+    if (!existingPermissions) {
+      return
+    }
+
+    await ctx.db.delete(existingPermissions._id)
+  },
+})
+
+export const updateRole = mutation({
+  args: { documentId: v.id('documents'), userId: v.string(), isEditor: v.boolean() },
+  handler: async (ctx, args) => {
+    const existingDocument = await authAndGetDocument(ctx, args.documentId, true)
+
+    if (existingDocument.userId === args.userId) {
+      throw new Error('Cannot change owner role')
+    }
+
+    ctx.runMutation(internal.documentPermissions.upsertPermissions, {
+      documentId: existingDocument._id,
       userId: args.userId,
       isEditor: args.isEditor,
     })

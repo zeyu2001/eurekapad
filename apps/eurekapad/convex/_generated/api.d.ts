@@ -23,6 +23,7 @@ import type * as http from "../http.js";
 import type * as migrations from "../migrations.js";
 import type * as speech from "../speech.js";
 import type * as uploads from "../uploads.js";
+import type * as utils_documents from "../utils/documents.js";
 import type * as utils_users from "../utils/users.js";
 
 /**
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   speech: typeof speech;
   uploads: typeof uploads;
+  "utils/documents": typeof utils_documents;
   "utils/users": typeof utils_users;
 }>;
 export declare const api: FilterApi<

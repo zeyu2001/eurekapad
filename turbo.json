@@ -28,7 +28,6 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "start": {
-      "dependsOn": ["^start"],
       "env": ["NEXT_PUBLIC_*"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"]
     },

@@ -36,18 +36,21 @@ export default function InvitationAcceptPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!token) {
-      return
+    const accept = async () => {
+      if (!token) {
+        return
+      }
+      try {
+        await acceptInvite({ token })
+        toast.success('You have successfully joined the document!')
+        router.push(`/documents/${documentId}`)
+      } catch {
+        setError(
+          "Sorry, the invitation link is invalid or has expired. Please make sure you're logged in using the same email address the invitation was sent to.",
+        )
+      }
     }
-    try {
-      acceptInvite({ token })
-      toast.success('You have successfully joined the document!')
-      router.push(`/documents/${documentId}`)
-    } catch {
-      setError(
-        "Sorry, the invitation link is invalid or has expired. Please make sure you're logged in using the same email address the invitation was sent to.",
-      )
-    }
+    accept()
   }, [token])
 
   if (!token) {

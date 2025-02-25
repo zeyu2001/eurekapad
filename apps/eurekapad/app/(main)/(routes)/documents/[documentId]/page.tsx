@@ -5,7 +5,6 @@ import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useDebounceCallback } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
@@ -13,7 +12,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
-import { useSaveContentCallback } from '@/hooks/use-save-content-callback'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
@@ -25,9 +23,6 @@ export default function DocumentIdPage() {
 
   const [isLoaded, initialContent] = useContent(document)
   const [authToken, setAuthToken] = useState<string | null>(null)
-
-  const [content, setContent] = useState(initialContent)
-  const debouncedSetContent = useDebounceCallback(setContent)
 
   const auth = useAuth()
 
@@ -41,34 +36,6 @@ export default function DocumentIdPage() {
     }
     fetchAuthData()
   }, [auth])
-
-  // const isFirstLoad = useRef(true)
-  // const {
-  //   data: ydoc,
-  //   isLoading: isLoading,
-  //   error: _error,
-  // } = trpc.blocksToYDoc.useQuery(initialContent ? JSON.parse(initialContent) : [], {
-  //   enabled: isFirstLoad.current, // only get the YDoc from blocks on first load, after that the YJS provider will handle it
-  // })
-
-  // useEffect(() => {
-  //   if (isFirstLoad.current && ydoc !== undefined) {
-  //     isFirstLoad.current = false
-  //   }
-  // }, [ydoc])
-
-  const _onChange = async (content: string) => {
-    debouncedSetContent(content)
-  }
-
-  const saveContent = useSaveContentCallback()
-
-  useEffect(() => {
-    if (!isLoaded || content === undefined) {
-      return
-    }
-    saveContent(content, documentId)
-  }, [content, isLoaded])
 
   if (documentPermissions && !documentPermissions.isViewer) {
     return notFound()

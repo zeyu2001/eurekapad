@@ -28,6 +28,8 @@ export default defineSchema({
     token: v.string(),
     email: v.string(),
     isEditor: v.boolean(),
-  }).index('by_token', ['token']),
+  })
+    .index('by_token', ['token'])
+    .index('by_document', ['documentId']),
   migrations: migrationsTable,
 })
