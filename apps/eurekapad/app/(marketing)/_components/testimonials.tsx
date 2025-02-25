@@ -1,8 +1,4 @@
-// import Image from 'next/image'
-
-// import allthenticateImage from '@/images/allthenticate.png'
-// import cambridgeImage from '@/images/cambridge_square.png'
-// import nusImage from '@/images/nus_crest.png'
+'use client'
 
 // const testimonials = [
 //   [
@@ -39,7 +35,6 @@
 //     },
 //   ],
 // ]
-
 // function QuoteIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 //   return (
 //     <svg aria-hidden="true" width={105} height={78} {...props}>
@@ -47,7 +42,6 @@
 //     </svg>
 //   )
 // }
-
 // export function Testimonials() {
 //   return (
 //     <section id="testimonials" aria-label="What our customers are saying" className="py-20 sm:py-32">
@@ -106,9 +100,11 @@
 //     </section>
 //   )
 // }
-'use client'
-
 import Image from 'next/image'
+
+import allthenticateImage from '@/images/allthenticate.png'
+import cambridgeImage from '@/images/cambridge_square.png'
+import nusImage from '@/images/nus_crest.png'
 
 import { useScrollAnimation } from '../utils/useScrollAnimation'
 
@@ -117,22 +113,22 @@ const testimonials = [
     quote:
       'EurekaPad is the perfect middle ground between Google Docs and LaTeX. I never knew how much I needed this until I started using it.',
     author: 'Kai Xuan Lee',
-    role: 'Computer Science at NUS',
-    logo: '/placeholder.svg?height=64&width=64',
+    role: 'Computer Science @ NUS',
+    logo: nusImage,
   },
   {
     quote:
       "The UI is so amazing, I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
     author: 'Gracie Zhou',
-    role: 'Computer Science at Cambridge',
-    logo: '/placeholder.svg?height=64&width=64',
+    role: 'Computer Science @ Cambridge',
+    logo: cambridgeImage,
   },
   {
     quote:
       'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
     author: 'Chad Spensky',
     role: 'CEO @ Allthenticate',
-    logo: '/placeholder.svg?height=64&width=64',
+    logo: allthenticateImage,
   },
 ]
 

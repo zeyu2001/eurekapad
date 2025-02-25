@@ -6,7 +6,7 @@ import { useState } from 'react'
 const faqs = [
   {
     question: 'Is there a mobile version?',
-    answer: 'Currently, EurekaLabs is optimized for desktop use, with mobile support coming soon.',
+    answer: 'Currently, EurekaPad is optimized for desktop use, with mobile support coming soon.',
   },
   {
     question: 'Is it free to use?',

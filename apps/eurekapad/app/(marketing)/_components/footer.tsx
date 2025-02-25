@@ -57,7 +57,7 @@ import { Logo } from './logo'
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-black/95 py-12 px-4 sm:px-6 lg:px-8">
       <div className="container">
         <div className="flex flex-col gap-8">
           {/* Top section with logo and links */}
