@@ -159,8 +159,8 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     [getUploadUrl, editorContext],
   )
 
-  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner()
-  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner()
+  const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner(language)
+  const { runner: jsRunner, loaded: jsLoaded } = useJSRunner(language)
 
   const handleInputChange = useCallback(
     ({ code, language, height }: { code?: string; language?: string; height?: number }) => {

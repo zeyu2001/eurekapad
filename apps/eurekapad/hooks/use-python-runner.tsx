@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 
 import { SingletonPythonRunner } from '@/lib/singleton-python-runner'
 
-export const usePythonRunner = () => {
+export const usePythonRunner = (language: string) => {
   const [runner, setRunner] = useState<SingletonPythonRunner | null>(null)
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
+    if (language !== 'python') return
     const runner = SingletonPythonRunner.getInstance()
 
     setRunner(runner)
@@ -19,7 +20,7 @@ export const usePythonRunner = () => {
     runner.initPyodide().then(() => {
       setLoaded(true)
     })
-  }, [])
+  }, [language])
 
   return { runner, loaded }
 }
