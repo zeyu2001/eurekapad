@@ -61,14 +61,23 @@ const animalNames = [
   'Chinchilla',
 ]
 
-interface EditorProps {
-  onChange: (_value: string) => void
-  initialContent?: string // this is used if collab is false
-  editable?: boolean
-  savable?: boolean
-  collab?: boolean // if true, use Yjs for collaboration. initial content is loaded from Yjs provider.
-  authToken?: string // if collab is true, this is required
-}
+type EditorProps =
+  | {
+      onChange: (_value: string) => void
+      initialContent?: string // without collab, initial content must be provided, otherwise assumed to be empty
+      editable?: boolean
+      savable?: boolean
+      collab?: false
+      authToken?: never
+    }
+  | {
+      onChange: (_value: string) => void
+      initialContent?: never // content will be fetched from Yjs provider
+      editable?: boolean
+      savable?: boolean
+      collab: true
+      authToken: string // Clerk JWT for authenticating the websocket connection with Yjs provider
+    }
 
 type CustomBlock = typeof customSchema.Block
 

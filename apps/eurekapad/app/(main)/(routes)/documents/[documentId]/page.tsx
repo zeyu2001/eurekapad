@@ -10,7 +10,6 @@ import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
 
@@ -21,7 +20,6 @@ export default function DocumentIdPage() {
   const document = useQuery(api.documents.getById, { documentId })
   const documentPermissions = useQuery(api.documentPermissions.getUserPermissions, { documentId })
 
-  const [isLoaded, initialContent] = useContent(document)
   const [authToken, setAuthToken] = useState<string | null>(null)
 
   const auth = useAuth()
@@ -41,7 +39,7 @@ export default function DocumentIdPage() {
     return notFound()
   }
 
-  if (document === undefined || documentPermissions === undefined || !isLoaded || authToken === null) {
+  if (document === undefined || documentPermissions === undefined || authToken === null) {
     return (
       <div>
         <Cover.Skeleton />
@@ -74,7 +72,6 @@ export default function DocumentIdPage() {
           <Toolbar initialData={document} />
           <Editor
             onChange={() => {}}
-            initialContent={initialContent}
             savable={documentPermissions.isEditor}
             editable={documentPermissions.isEditor}
             collab
