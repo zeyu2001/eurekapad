@@ -32,7 +32,9 @@ const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSc
   block,
   editor,
 }) => {
-  const pathname = usePathname() || ''
+  // Will never be null since we aren't using pages router
+  // https://nextjs.org/docs/app/api-reference/functions/use-pathname
+  const pathname = usePathname() as string
   const content = block.content[0] as StyledText<StyleSchema>
   const [latex, setLatex] = useState(content?.text || '')
   const mathFieldRef = useRef<MathfieldElement>(null)
