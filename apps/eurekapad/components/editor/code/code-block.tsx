@@ -218,14 +218,16 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   useEffect(() => {
     // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
     // Causes error: flushSync was called from inside a lifecycle method
-    editor.updateBlock(block.id, {
-      props: {
-        ...block.props,
-        stdout: stdout,
-        stderr: stderr,
-        images: JSON.stringify(images),
-      },
-    })
+    setTimeout(() => {
+      editor.updateBlock(block.id, {
+        props: {
+          ...block.props,
+          stdout: stdout,
+          stderr: stderr,
+          images: JSON.stringify(images),
+        },
+      })
+    }, 0)
   }, [stdout, stderr, images, editor, block.id, block.props])
 
   const { theme } = useTheme()

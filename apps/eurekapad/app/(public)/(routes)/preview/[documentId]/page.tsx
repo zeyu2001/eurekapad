@@ -2,6 +2,7 @@
 
 import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
+import { notFound } from 'next/navigation'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
@@ -38,7 +39,7 @@ export default function DocumentIdPage() {
   }
 
   if (document === null) {
-    return <div>Not found</div>
+    return notFound()
   }
 
   // Update url without reloading
