@@ -79,6 +79,8 @@ export class SingletonPythonRunner {
           const content = msg.content as StreamContent
           if (content.name === 'stdout') {
             this.stdout(content.text)
+          } else if (content.name === 'stderr') {
+            this.stderr(content.text)
           }
           break
         }
