@@ -21,7 +21,7 @@ export const useResizable = (initialHeight: number, minHeight: number, maxHeight
       const deltaY = e.clientY - startY.current
       const newHeight = Math.min(maxHeight, Math.max(minHeight, height + deltaY))
       if (newHeight !== height) {
-        setHeight(newHeight)
+        setHeight(height => height + deltaY)
         startY.current = e.clientY
       }
     },
