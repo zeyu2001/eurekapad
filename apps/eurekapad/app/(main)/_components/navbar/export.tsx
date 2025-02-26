@@ -127,7 +127,7 @@ export const Export = ({ document }: ExportProps) => {
   const { engine, loaded } = useSwiftLatexEngine()
   const [open, setOpen] = useState(false)
   const [contentLoaded, content] = useContent(document)
-  const [latex, setLatex] = useDebounceValue<string>(blocksToLaTeX(JSON.parse(content || '[]')), 1000)
+  const [latex, setLatex] = useDebounceValue<string>(blocksToLaTeX(JSON.parse(content || '[]')), 500)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [numPages, setNumPages] = useState(0)
   const { theme } = useTheme()
@@ -156,7 +156,7 @@ export const Export = ({ document }: ExportProps) => {
       })
     }
     compileLatex()
-  }, [loaded, engine, contentLoaded, latex, open])
+  }, [loaded, engine, contentLoaded, latex, open, content])
 
   const editorTheme =
     theme === 'light'
@@ -214,7 +214,7 @@ export const Export = ({ document }: ExportProps) => {
               </div>
             ) : pdfUrl ? (
               <>
-                <div className="absolute top-0 right-4 z-10 space-x-2">
+                <div className="absolute top-2 right-1 z-10 space-x-2">
                   <DownloadButton pdfUrl={pdfUrl} />
                   <PreviewButton pdfUrl={pdfUrl} />
                 </div>
