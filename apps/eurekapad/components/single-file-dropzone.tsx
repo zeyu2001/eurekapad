@@ -1,6 +1,6 @@
 'use client'
 
-import { File, UploadCloudIcon, X } from 'lucide-react'
+import { UploadCloudIcon, X } from 'lucide-react'
 import * as React from 'react'
 import { type DropzoneOptions, useDropzone } from 'react-dropzone'
 import { twMerge } from 'tailwind-merge'
@@ -88,7 +88,7 @@ const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           isDragAccept && variants.accept,
           className,
         ).trim(),
-      [isFocused, fileUrl, fileRejections, isDragAccept, isDragReject, disabled, className],
+      [isFocused, fileUrl, fileRejections, isDragAccept, isDragReject, disabled, className, fileType],
     )
 
     // error validation messages

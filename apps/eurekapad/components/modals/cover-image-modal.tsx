@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { SingleFileDropzone } from '@/components/single-file-dropzone'
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { api } from '@/convex/_generated/api'
 import { useCoverImage } from '@/hooks/use-cover-image'
 import { useDocumentId } from '@/hooks/use-documentId'
@@ -18,23 +18,16 @@ export const CoverImageModal = () => {
   const coverImage = useCoverImage()
 
   const [file, setFile] = useState<File>()
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
-  const onClose = () => {
-    setFile(undefined)
-    setIsSubmitting(false)
-    coverImage.onClose()
-  }
-
   const onChange = async (file?: File) => {
     if (file) {
-      setIsSubmitting(true)
       setFile(file)
 
       if (file.size > 10 * 1024 * 1024) {
         toast.error('File size must be less than 10MB. Support for larger files coming soon!')
+        setFile(undefined)
         return
       }
 
@@ -43,6 +36,7 @@ export const CoverImageModal = () => {
 
       if (!url) {
         toast.error('Failed to upload media.')
+        setFile(undefined)
         return
       }
 
@@ -51,7 +45,7 @@ export const CoverImageModal = () => {
         coverImage: url.href,
       })
 
-      onClose()
+      coverImage.onClose()
     }
   }
 
@@ -61,13 +55,15 @@ export const CoverImageModal = () => {
         <DialogHeader>
           <h2 className="text-center text-lg font-semibold">Cover Image</h2>
         </DialogHeader>
-        <SingleFileDropzone
-          fileType="image"
-          className="w-full outline-none"
-          disabled={isSubmitting}
-          value={file}
-          onChange={onChange}
-        />
+        <DialogTitle>
+          <SingleFileDropzone
+            fileType="image"
+            className="w-full outline-none"
+            disabled={file !== undefined}
+            value={file}
+            onChange={onChange}
+          />
+        </DialogTitle>
       </DialogContent>
     </Dialog>
   )
