@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 import { action } from './_generated/server'
 
 export const getToken = action({
@@ -13,19 +11,18 @@ export const getToken = action({
     const speechKey = process.env.AZURE_SPEECH_KEY
     const speechRegion = process.env.AZURE_SPEECH_REGION
 
-    const headers = {
+    if (!speechKey || !speechRegion) {
+      throw new Error('AI Speech is not configured')
+    }
+
+    const tokenResponse = await fetch(`https://${speechRegion}.api.cognitive.microsoft.com/sts/v1.0/issueToken`, {
+      method: 'POST',
       headers: {
         'Ocp-Apim-Subscription-Key': speechKey,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-    }
+    })
 
-    const tokenResponse = await axios.post(
-      `https://${speechRegion}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
-      null,
-      headers,
-    )
-
-    return { token: tokenResponse.data, region: speechRegion }
+    return { token: await tokenResponse.text(), region: speechRegion }
   },
 })
