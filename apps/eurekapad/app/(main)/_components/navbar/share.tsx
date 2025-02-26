@@ -68,7 +68,7 @@ export const Share = ({ document }: ShareProps) => {
         }),
       ).then(setSharedWith)
     }
-  }, [currentShares])
+  }, [currentShares, getUserFromId])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

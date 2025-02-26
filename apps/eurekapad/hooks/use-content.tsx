@@ -10,7 +10,6 @@ import { Doc } from '@/convex/_generated/dataModel'
  */
 export const useContent = (document: Doc<'documents'> | undefined | null): [boolean, string | undefined] => {
   const [content, setContent] = useState<string | undefined>(undefined)
-  const [isLoaded, setIsLoaded] = useState(false)
 
   // document might not be loaded yet, in that case contentUrl is undefined
   const contentUrl = useQuery(api.documents.getContentUrl, document ? { contentId: document.contentId } : 'skip')
@@ -25,11 +24,5 @@ export const useContent = (document: Doc<'documents'> | undefined | null): [bool
     }
   }, [contentUrl])
 
-  useEffect(() => {
-    if (content !== undefined) {
-      setIsLoaded(true)
-    }
-  }, [content])
-
-  return [isLoaded, content]
+  return [content !== undefined, content]
 }

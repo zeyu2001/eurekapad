@@ -44,10 +44,6 @@ const TranscriptionComponent = ({
 
   const audioConfig = AudioConfig.fromDefaultMicrophoneInput()
 
-  const handleRecognizing = useCallback((e: SpeechRecognitionEventArgs) => {
-    console.log('Recognizing:', e.result.text)
-  }, [])
-
   const handleRecognized = useCallback(
     (e: SpeechRecognitionEventArgs) => {
       console.log('Recognized:', e.result.text)
@@ -77,10 +73,6 @@ const TranscriptionComponent = ({
     if (isListening) {
       recognizer.startListening()
 
-      recognizer.setRecognizingHandler((s, e) => {
-        handleRecognizing(e)
-      })
-
       recognizer.setRecognizedHandler(async (s, e) => {
         if (e.result.reason == ResultReason.RecognizedSpeech) {
           handleRecognized(e)
@@ -101,14 +93,10 @@ const TranscriptionComponent = ({
         recognizer.stopListening()
         setIsListening(false)
       })
-
-      recognizer.setSessionStoppedHandler(() => {
-        console.log('\n    Session stopped event.')
-      })
     } else {
       recognizer.stopListening()
     }
-  }, [isListening, speechConfig, audioConfig, handleRecognized, handleRecognizing])
+  }, [isListening, speechConfig, audioConfig, handleRecognized])
 
   useEffect(() => {
     handleListen()

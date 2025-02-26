@@ -51,7 +51,7 @@ export default function InvitationAcceptPage() {
       }
     }
     accept()
-  }, [token])
+  }, [acceptInvite, documentId, router, token])
 
   if (!token) {
     return <InvalidToken message="Sorry, the invitation link is invalid or has expired." />

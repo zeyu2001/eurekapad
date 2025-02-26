@@ -17,9 +17,7 @@ export const usePythonRunner = (language: string) => {
       return
     }
 
-    runner.initPyodide().then(() => {
-      setLoaded(true)
-    })
+    runner.initPyodide().then(() => setLoaded(true))
   }, [language])
 
   return { runner, loaded }

@@ -16,9 +16,9 @@ import { getTitle } from '@/lib/utils'
  * We automatically generate static paths for all the files in the directory.
  **/
 
-async function getContent(params: { slug: string }) {
+async function getContent(slug: string) {
   try {
-    const data = await import(`@/content/help/${params.slug}.mdx`)
+    const data = await import(`@/content/help/${slug}.mdx`)
 
     return {
       mdx: data.default,
@@ -43,8 +43,8 @@ export function generateStaticParams() {
 }
 
 export default async function Content(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params
-  const content = await getContent(params)
+  const { slug } = await props.params
+  const content = await getContent(slug)
 
   return (
     <>
