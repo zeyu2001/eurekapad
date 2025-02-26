@@ -2,11 +2,11 @@
 
 import { SignInButton } from '@clerk/nextjs'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 
+import { ScrolledChevron } from '@/components/scrolled-chevron'
 import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
 import cambridgeImage from '@/images/cambridge.png'
@@ -16,17 +16,6 @@ import imperialImage from '@/images/imperial.png'
 import nusImage from '@/images/nus.png'
 
 export const Heading = () => {
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  })
-
   return (
     <div className="text-center lg:text-left">
       <div className="h-screen container flex justify-center items-center mx-auto max-w-7xl py-16">
@@ -81,16 +70,14 @@ export const Heading = () => {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-4 flex justify-center w-full">
-        {!scrolled && <ChevronDown className="h-8 w-8 transform animate-bounce" />}
-      </div>
+      <ScrolledChevron />
       <div className="pb-16 container text-center">
         <p className="font-display text-base text-slate-900 dark:text-slate-100">
           Built by students from Cambridge and NUS. Trusted by students from
         </p>
         <ul
           role="list"
-          className="mt-8 flex items-center justify-center gap-x-8 flex-col gap-x-0 gap-y-10 md:flex-row md:gap-x-12 md:gap-y-0"
+          className="mt-8 flex items-center justify-center gap-x-8 flex-col gap-y-10 md:flex-row md:gap-x-12 md:gap-y-0"
         >
           {[
             { name: 'University of Cambridge', logo: cambridgeImage },
