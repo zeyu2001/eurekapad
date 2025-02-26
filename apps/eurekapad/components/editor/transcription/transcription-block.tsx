@@ -11,7 +11,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { AiOutlineAudio } from 'react-icons/ai'
 import { FaMagic, FaRegStopCircle } from 'react-icons/fa'
 
-import { type TranscriptionBlockConfig } from '@/components/editor/transcription'
+import { type TranscriptionBlockConfig } from '@/components/editor/transcription/config'
 import { Spinner } from '@/components/spinner'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'

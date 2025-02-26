@@ -1,7 +1,9 @@
 import { v } from 'convex/values'
 
+import { api } from './_generated/api'
 import { Doc, Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
+import { authAndGetDocument } from './utils/documents'
 
 export const archive = mutation({
   args: { id: v.id('documents') },
@@ -14,15 +16,7 @@ export const archive = mutation({
 
     const userId = identity.subject
 
-    const existingDocument = await ctx.db.get(args.id)
-
-    if (!existingDocument) {
-      throw new Error('Not found')
-    }
-
-    if (existingDocument.userId !== userId) {
-      throw new Error('Unauthorized')
-    }
+    const existingDocument = await authAndGetDocument(ctx, args.id, true)
 
     const recursiveArchive = async (documentId: Id<'documents'>) => {
       const children = await ctx.db
@@ -39,11 +33,11 @@ export const archive = mutation({
       }
     }
 
-    const document = await ctx.db.patch(args.id, {
+    const document = await ctx.db.patch(existingDocument._id, {
       isArchived: true,
     })
 
-    recursiveArchive(args.id)
+    recursiveArchive(existingDocument._id)
 
     return document
   },
@@ -131,15 +125,7 @@ export const restore = mutation({
 
     const userId = identity.subject
 
-    const existingDocument = await ctx.db.get(args.id)
-
-    if (!existingDocument) {
-      throw new Error('Not found')
-    }
-
-    if (existingDocument.userId !== userId) {
-      throw new Error('Unauthorized')
-    }
+    const existingDocument = await authAndGetDocument(ctx, args.id, true)
 
     const recursiveRestore = async (documentId: Id<'documents'>) => {
       const children = await ctx.db
@@ -184,17 +170,7 @@ export const remove = mutation({
       throw new Error('Not authenticated')
     }
 
-    const userId = identity.subject
-
-    const existingDocument = await ctx.db.get(args.id)
-
-    if (!existingDocument) {
-      throw new Error('Not found')
-    }
-
-    if (existingDocument.userId !== userId) {
-      throw new Error('Unauthorized')
-    }
+    const existingDocument = await authAndGetDocument(ctx, args.id, true)
 
     // delete the stored content
     if (existingDocument.contentId) {
@@ -239,7 +215,7 @@ export const getById = query({
     const document = await ctx.db.get(args.documentId)
 
     if (!document) {
-      throw new Error('Not found')
+      return null
     }
 
     if (document.isPublished && !document.isArchived) {
@@ -253,7 +229,13 @@ export const getById = query({
     const userId = identity.subject
 
     if (document.userId !== userId) {
-      throw new Error('Unauthorized')
+      const permissions = await ctx.runQuery(api.documentPermissions.getUserPermissions, {
+        documentId: args.documentId,
+      })
+
+      if (!permissions.isViewer) {
+        return null
+      }
     }
 
     return document
@@ -270,25 +252,9 @@ export const update = mutation({
     isPublished: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
-
-    if (!identity) {
-      throw new Error('Unauthenticated')
-    }
-
-    const userId = identity.subject
-
     const { id, ...rest } = args
 
-    const existingDocument = await ctx.db.get(id)
-
-    if (!existingDocument) {
-      throw new Error('Not found')
-    }
-
-    if (existingDocument.userId !== userId) {
-      throw new Error('Unauthorized')
-    }
+    const existingDocument = await authAndGetDocument(ctx, id, true)
 
     // replace old content and delete it
     if (args.contentId && existingDocument.contentId) {
@@ -307,10 +273,13 @@ export const update = mutation({
 })
 
 export const generateContentUploadUrl = mutation({
-  handler: async (ctx, _args) => {
+  args: {
+    yjsToken: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
 
-    if (!identity) {
+    if (!identity && args.yjsToken !== process.env.YJS_API_TOKEN) {
       throw new Error('Unauthenticated')
     }
 
@@ -330,6 +299,36 @@ export const getContentUrl = query({
   },
 })
 
+export const updateDocumentFromYjs = mutation({
+  args: {
+    documentId: v.id('documents'),
+    contentId: v.id('_storage'),
+    yjsToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existingDocument = await ctx.db.get(args.documentId)
+
+    if (!existingDocument) {
+      throw new Error('Not found')
+    }
+
+    if (args.yjsToken !== process.env.YJS_API_TOKEN) {
+      throw new Error('Unauthorized')
+    }
+
+    const currentContentId = existingDocument.contentId
+    if (currentContentId) {
+      await ctx.storage.delete(currentContentId)
+    }
+
+    const document = await ctx.db.patch(args.documentId, {
+      contentId: args.contentId,
+    })
+
+    return document
+  },
+})
+
 export const removeIcon = mutation({
   args: { id: v.id('documents') },
   handler: async (ctx, args) => {
@@ -339,19 +338,9 @@ export const removeIcon = mutation({
       throw new Error('Unauthenticated')
     }
 
-    const userId = identity.subject
+    const existingDocument = await authAndGetDocument(ctx, args.id, true)
 
-    const existingDocument = await ctx.db.get(args.id)
-
-    if (!existingDocument) {
-      throw new Error('Not found')
-    }
-
-    if (existingDocument.userId !== userId) {
-      throw new Error('Unauthorized')
-    }
-
-    const document = await ctx.db.patch(args.id, {
+    const document = await ctx.db.patch(existingDocument._id, {
       icon: undefined,
     })
 
@@ -368,19 +357,9 @@ export const removeCoverImage = mutation({
       throw new Error('Unauthenticated')
     }
 
-    const userId = identity.subject
+    const existingDocument = await authAndGetDocument(ctx, args.id, true)
 
-    const existingDocument = await ctx.db.get(args.id)
-
-    if (!existingDocument) {
-      throw new Error('Not found')
-    }
-
-    if (existingDocument.userId !== userId) {
-      throw new Error('Unauthorized')
-    }
-
-    const document = await ctx.db.patch(args.id, {
+    const document = await ctx.db.patch(existingDocument._id, {
       coverImage: undefined,
     })
 

@@ -1,0 +1,28 @@
+{
+  "name": "@eurekapad/yjs-provider",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "partykit dev --live",
+    "build:preview": "npx partykit deploy --preview preview --var CLERK_ENDPOINT=\"$CLERK_ENDPOINT\" --var CLERK_JWT_KEY=\"$CLERK_JWT_KEY\" --var YJS_API_TOKEN=\"$YJS_API_TOKEN\" --var TRPC_API_URL=\"$TRPC_API_URL\" --var VERCEL_PROTECTION_BYPASS=\"$VERCEL_PROTECTION_BYPASS\"",
+    "build:deploy": "npx partykit deploy --var CLERK_ENDPOINT=\"$CLERK_ENDPOINT\" --var CLERK_JWT_KEY=\"$CLERK_JWT_KEY\" --var YJS_API_TOKEN=\"$YJS_API_TOKEN\" --var TRPC_API_URL=\"$TRPC_API_URL\" --var VERCEL_PROTECTION_BYPASS=\"$VERCEL_PROTECTION_BYPASS\"",
+    "start": "partykit dev",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@clerk/backend": "^1.21.4",
+    "@eurekapad/app": "workspace:*",
+    "@trpc/client": "^10.45.2",
+    "@trpc/react-query": "^10.45.2",
+    "superjson": "^2.2.2",
+    "y-partykit": "^0.0.32",
+    "yjs": "^13.6.23"
+  },
+  "devDependencies": {
+    "partykit": "^0.0.110",
+    "typescript": "^5.5.4"
+  }
+}

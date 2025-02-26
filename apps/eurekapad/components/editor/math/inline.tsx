@@ -10,26 +10,14 @@ declare module 'react' {
 import '@blocknote/mantine/style.css'
 import 'mathlive'
 
-import { defaultProps, InlineContentFromConfig, StyledText, StyleSchema } from '@blocknote/core'
+import { InlineContentFromConfig, StyledText, StyleSchema } from '@blocknote/core'
 import { createReactInlineContentSpec, ReactInlineContentImplementation } from '@blocknote/react'
 import { MathfieldElement } from 'mathlive'
 import { type JSX, useEffect, useRef, useState } from 'react'
 
 import { useCustomizeMathlive } from '@/hooks/use-customize-mathlive'
 
-interface MathInlineConfig {
-  type: string
-  readonly propSchema: typeof defaultProps
-  content: 'styled'
-}
-
-const mathInlineConfig: MathInlineConfig = {
-  type: 'mathInline',
-  propSchema: {
-    ...defaultProps,
-  },
-  content: 'styled',
-}
+import { MathInlineConfig, mathInlineConfig } from './config'
 
 MathfieldElement.fontsDirectory = `${window.location.origin}/_next/static/fonts`
 // Setting `soundsDirectory` to null to prevent loading of custom sounds

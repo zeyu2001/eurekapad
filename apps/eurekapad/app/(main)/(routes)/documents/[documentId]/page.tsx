@@ -1,17 +1,16 @@
 'use client'
 
+import { useAuth } from '@clerk/nextjs'
 import { useQuery } from 'convex/react'
 import dynamic from 'next/dynamic'
+import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useDebounceCallback } from 'usehooks-ts'
 
 import { Cover } from '@/components/cover'
 import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import { useContent } from '@/hooks/use-content'
 import { useDocumentId } from '@/hooks/use-documentId'
-import { useSaveContentCallback } from '@/hooks/use-save-content-callback'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
@@ -19,26 +18,28 @@ const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 export default function DocumentIdPage() {
   const documentId = useDocumentId()
   const document = useQuery(api.documents.getById, { documentId })
+  const documentPermissions = useQuery(api.documentPermissions.getUserPermissions, { documentId })
 
-  const [isLoaded, initialContent] = useContent(document)
+  const [authToken, setAuthToken] = useState<string | null>(null)
 
-  const [content, setContent] = useState(initialContent)
-  const debouncedSetContent = useDebounceCallback(setContent)
-
-  const onChange = async (content: string) => {
-    debouncedSetContent(content)
-  }
-
-  const saveContent = useSaveContentCallback()
+  const auth = useAuth()
 
   useEffect(() => {
-    if (!isLoaded || content === undefined) {
-      return
+    const fetchAuthData = async () => {
+      setAuthToken(
+        await auth.getToken({
+          template: 'convex',
+        }),
+      )
     }
-    saveContent(content, documentId)
-  }, [content, isLoaded])
+    fetchAuthData()
+  }, [auth])
 
-  if (document === undefined || !isLoaded) {
+  if (documentPermissions && !documentPermissions.isViewer) {
+    return notFound()
+  }
+
+  if (document === undefined || documentPermissions === undefined || authToken === null) {
     return (
       <div>
         <Cover.Skeleton />
@@ -55,7 +56,7 @@ export default function DocumentIdPage() {
   }
 
   if (document === null) {
-    return <div>Not found</div>
+    return notFound()
   }
 
   // Update url without reloading
@@ -69,7 +70,13 @@ export default function DocumentIdPage() {
         <Cover url={document.coverImage} />
         <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
           <Toolbar initialData={document} />
-          <Editor onChange={onChange} savable initialContent={initialContent} />
+          <Editor
+            onChange={() => {}}
+            savable={documentPermissions.isEditor}
+            editable={documentPermissions.isEditor}
+            collab
+            authToken={authToken}
+          />
         </div>
       </div>
     </>

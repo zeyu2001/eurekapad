@@ -10,7 +10,7 @@ declare module 'react' {
 import '@blocknote/mantine/style.css'
 import 'mathlive'
 
-import { defaultProps, InlineContentSchema, StyledText, StyleSchema } from '@blocknote/core'
+import { InlineContentSchema, StyledText, StyleSchema } from '@blocknote/core'
 import { createReactBlockSpec, ReactCustomBlockImplementation, ReactCustomBlockRenderProps } from '@blocknote/react'
 import { Radical } from 'lucide-react'
 import { MathfieldElement } from 'mathlive'
@@ -22,20 +22,7 @@ import { useCustomizeMathlive } from '@/hooks/use-customize-mathlive'
 import { insertBlockAndFocus } from '@/lib/insert-block'
 
 import { CustomEditor } from '../schema'
-
-interface MathBlockConfig {
-  type: 'math'
-  readonly propSchema: typeof defaultProps
-  content: 'inline'
-}
-
-const mathBlockConfig: MathBlockConfig = {
-  type: 'math',
-  propSchema: {
-    ...defaultProps,
-  },
-  content: 'inline',
-}
+import { MathBlockConfig, mathBlockConfig } from './config'
 
 MathfieldElement.fontsDirectory = `${window.location.origin}/_next/static/fonts`
 // Setting `soundsDirectory` to null to prevent loading of custom sounds
@@ -45,7 +32,9 @@ const MathBlock: FC<ReactCustomBlockRenderProps<MathBlockConfig, InlineContentSc
   block,
   editor,
 }) => {
-  const pathname = usePathname()
+  // Will never be null since we aren't using pages router
+  // https://nextjs.org/docs/app/api-reference/functions/use-pathname
+  const pathname = usePathname() as string
   const content = block.content[0] as StyledText<StyleSchema>
   const [latex, setLatex] = useState(content?.text || '')
   const mathFieldRef = useRef<MathfieldElement>(null)

@@ -16,5 +16,20 @@ export default defineSchema({
   })
     .index('by_user', ['userId'])
     .index('by_user_parent', ['userId', 'parentDocument']),
+  documentPermisisons: defineTable({
+    documentId: v.id('documents'),
+    userId: v.string(),
+    isEditor: v.boolean(),
+  })
+    .index('by_user', ['userId'])
+    .index('by_document', ['documentId']),
+  documentInviteTokens: defineTable({
+    documentId: v.id('documents'),
+    token: v.string(),
+    email: v.string(),
+    isEditor: v.boolean(),
+  })
+    .index('by_token', ['token'])
+    .index('by_document', ['documentId']),
   migrations: migrationsTable,
 })

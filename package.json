@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:preview": "turbo run build:preview",
     "build:deploy": "turbo run build:deploy",
     "start": "turbo run start",
     "dev": "turbo run dev",
@@ -17,6 +18,11 @@
     "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3"
+  },
+  "resolutions": {
+    "prosemirror-view": "1.38.0",
+    "@blocknote/core": "0.24.1",
+    "@tiptap/react": "2.11.1"
   },
   "packageManager": "pnpm@9.10.0"
 }

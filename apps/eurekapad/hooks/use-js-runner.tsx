@@ -16,11 +16,11 @@ export const useJSRunner = (language: string) => {
       setLoaded(true)
       return
     }
-
+    console.log('initJS')
     runner.initJS().then(() => {
       setLoaded(true)
     })
-  }, [])
+  }, [language])
 
   return { runner, loaded }
 }

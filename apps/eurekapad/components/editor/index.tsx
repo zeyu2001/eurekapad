@@ -8,31 +8,84 @@ import { locales, StyledText, StyleSchema } from '@blocknote/core'
 import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
+import { useUser } from '@clerk/nextjs'
 import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
 import { memo, useEffect } from 'react'
 import { toast } from 'sonner'
+import YPartyKitProvider from 'y-partykit/provider'
+import * as Y from 'yjs'
 
 import { customSchema } from '@/components/editor/schema'
 import { CustomSlashMenu } from '@/components/editor/slash-menu'
 import { api } from '@/convex/_generated/api'
+import { useDocumentId } from '@/hooks/use-documentId'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
 
-interface EditorProps {
-  onChange: (_value: string) => void
-  initialContent?: string
-  editable?: boolean
-  savable?: boolean
-}
+const cursorColors = [
+  '#FF6B6B',
+  '#6BCB77',
+  '#4D96FF',
+  '#FFD93D',
+  '#FF6EC7',
+  '#6B8EFF',
+  '#FFB347',
+  '#8AFF80',
+  '#B388FF',
+  '#FF8A65',
+  '#64FFDA',
+  '#F06292',
+  '#7C4DFF',
+  '#A1887F',
+  '#00E676',
+]
+
+const animalNames = [
+  'Panda',
+  'Koala',
+  'Bunny',
+  'Otter',
+  'Fox',
+  'Hedgehog',
+  'Penguin',
+  'Kitten',
+  'Puppy',
+  'Lamb',
+  'Squirrel',
+  'Raccoon',
+  'Alpaca',
+  'Sloth',
+  'Chinchilla',
+]
+
+type EditorProps =
+  | {
+      onChange: (_value: string) => void
+      initialContent?: string // without collab, initial content must be provided, otherwise assumed to be empty
+      editable?: boolean
+      savable?: boolean
+      collab?: false
+      authToken?: never
+    }
+  | {
+      onChange: (_value: string) => void
+      initialContent?: never // content will be fetched from Yjs provider
+      editable?: boolean
+      savable?: boolean
+      collab: true
+      authToken: string // Clerk JWT for authenticating the websocket connection with Yjs provider
+    }
 
 type CustomBlock = typeof customSchema.Block
 
-const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) => {
+const Editor = ({ onChange, editable, savable, collab, initialContent, authToken }: EditorProps) => {
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
+  const user = useUser()
+  const documentId = useDocumentId()
 
   const editorContext = useEditorContext()
   useEffect(() => {
@@ -69,6 +122,8 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
     return url.href ?? ''
   }
 
+  const doc = new Y.Doc()
+
   const editor = useCreateBlockNote({
     schema: customSchema,
     dropCursor: multiColumnDropCursor,
@@ -76,11 +131,33 @@ const Editor = ({ onChange, initialContent, editable, savable }: EditorProps) =>
       ...locales.en,
       multi_column: multiColumnLocales.en,
     },
-    initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
+    // initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     uploadFile: handleUpload,
     _tiptapOptions: {
       extensions: [InlineMathExtension, ArrowConversionExtension],
     },
+    initialContent: initialContent && !collab ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
+    collaboration: collab
+      ? {
+          provider: new YPartyKitProvider(
+            process.env.NEXT_PUBLIC_YPARTYKIT_HOST ?? 'localhost:1999',
+            documentId || 'default',
+            doc,
+            {
+              params: {
+                token: authToken,
+                documentId,
+              },
+            },
+          ),
+          fragment: doc.getXmlFragment('prosemirror'),
+          user: {
+            name: user?.user?.fullName ?? 'Anonymous ' + animalNames[Math.floor(Math.random() * animalNames.length)],
+            color: cursorColors[Math.floor(Math.random() * cursorColors.length)],
+          },
+          // showCursorLabels: 'always',
+        }
+      : undefined,
   })
 
   const replaceWithCodeBlock = (block: CustomBlock) => {

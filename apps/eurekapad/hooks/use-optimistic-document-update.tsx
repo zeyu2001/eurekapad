@@ -9,7 +9,7 @@ export const useOptimisticDocumentUpdate = () => {
       documentId: id,
     })
 
-    if (currentDocument !== undefined) {
+    if (currentDocument !== undefined && currentDocument !== null) {
       localStore.setQuery(
         api.documents.getById,
         { documentId: id },

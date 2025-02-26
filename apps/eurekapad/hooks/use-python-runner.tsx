@@ -20,7 +20,7 @@ export const usePythonRunner = (language: string) => {
     runner.initPyodide().then(() => {
       setLoaded(true)
     })
-  }, [])
+  }, [language])
 
   return { runner, loaded }
 }

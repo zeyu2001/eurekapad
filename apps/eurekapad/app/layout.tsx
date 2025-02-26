@@ -13,6 +13,7 @@ import { ConvexClientProvider } from '@/components/providers/convex-provider'
 import { ModalProvider } from '@/components/providers/modal-provider'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import Scroll from '@/components/scroll'
+import { ClientProvider } from '@/utils/trpc'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,31 +34,33 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <Scroll />
-      <Analytics />
-      <SpeedInsights />
-      <body className={clsx(inter.className, lexend.variable)}>
-        <Script
-          src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
-          strategy="beforeInteractive"
-        />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-          storageKey="eurekapad-theme-2"
-        >
-          <ConvexClientProvider>
-            <TooltipProvider>
-              <Toaster position="bottom-center" />
-              <ModalProvider />
-              {children}
-            </TooltipProvider>
-          </ConvexClientProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClientProvider>
+      <html lang="en" suppressHydrationWarning>
+        <Scroll />
+        <Analytics />
+        <SpeedInsights />
+        <body className={clsx(inter.className, lexend.variable)}>
+          <Script
+            src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
+            strategy="beforeInteractive"
+          />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="eurekapad-theme-2"
+          >
+            <ConvexClientProvider>
+              <TooltipProvider>
+                <Toaster position="bottom-center" />
+                <ModalProvider />
+                {children}
+              </TooltipProvider>
+            </ConvexClientProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClientProvider>
   )
 }

@@ -4,7 +4,7 @@ import { Id } from '@/convex/_generated/dataModel'
 
 export function useDocumentId() {
   const params = useParams()
-  if (typeof params.documentId !== 'string') {
+  if (!params || typeof params.documentId !== 'string') {
     return undefined as unknown as Id<'documents'>
   }
   const actualDocumentId = params.documentId.split('-').pop()

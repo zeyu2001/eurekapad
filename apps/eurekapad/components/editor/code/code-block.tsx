@@ -13,12 +13,12 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useDebounceValue } from 'usehooks-ts'
 
-import { CodeBlockConfig } from '@/components/editor/code'
+import { CodeBlockConfig } from '@/components/editor/code/config'
 import { RUNNABLE_LANGUAGES } from '@/components/editor/code/constants'
 import { Images, imagesJSONSchema } from '@/components/editor/code/schemas'
 import { Spinner } from '@/components/spinner'
 import { Button } from '@/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -83,19 +83,21 @@ const LanguageDropdown = ({
       <PopoverContent className="w-[200px] p-0">
         <Command className="max-h-64">
           <CommandInput placeholder="Search language..." />
-          <CommandEmpty>No language found.</CommandEmpty>
-          <ScrollArea className="overflow-auto">
-            <CommandGroup>
-              <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
-              {runnableLanguages.map(lang => (
-                <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
-              ))}
-              <p className="text-xs text-gray-500 px-4 py-2">Other</p>
-              {otherLanguages.map(lang => (
-                <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
-              ))}
-            </CommandGroup>
-          </ScrollArea>
+          <CommandList>
+            <CommandEmpty>No language found.</CommandEmpty>
+            <ScrollArea className="overflow-auto">
+              <CommandGroup>
+                <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
+                {runnableLanguages.map(lang => (
+                  <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
+                ))}
+                <p className="text-xs text-gray-500 px-4 py-2">Other</p>
+                {otherLanguages.map(lang => (
+                  <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
+                ))}
+              </CommandGroup>
+            </ScrollArea>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
@@ -189,7 +191,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     }
 
     if (!config.runner || !config.loaded) {
-      toast.error(`Hang tight, ${language} runner is still getting ready...`)
+      toast.error(`Hang tight, ${capitalizeFirstLetter(language)} runner is still getting ready...`)
       return
     }
 
@@ -216,14 +218,16 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   useEffect(() => {
     // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
     // Causes error: flushSync was called from inside a lifecycle method
-    editor.updateBlock(block.id, {
-      props: {
-        ...block.props,
-        stdout: stdout,
-        stderr: stderr,
-        images: JSON.stringify(images),
-      },
-    })
+    setTimeout(() => {
+      editor.updateBlock(block.id, {
+        props: {
+          ...block.props,
+          stdout: stdout,
+          stderr: stderr,
+          images: JSON.stringify(images),
+        },
+      })
+    }, 0)
   }, [stdout, stderr, images, editor, block.id, block.props])
 
   const { theme } = useTheme()

@@ -1,0 +1,70 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && 'Production' || 'Preview' }}
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node LTS ✨
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: lts/*
+
+      - name: Installing dependencies 📦️
+        run: pnpm install
+
+      - name: Construct Vercel URL
+        id: construct_vercel_url
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          # Get branch name: For PRs, use GITHUB_HEAD_REF; otherwise use GITHUB_REF
+          BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          # Replace slashes with dashes
+          NORMALIZED_BRANCH=$(echo "$BRANCH" | tr '/' '-')
+          # Construct the URL using the normalized branch name
+          VERCEL_URL="https://eurekapad-git-${NORMALIZED_BRANCH}-eurekapad.vercel.app"
+          echo "VERCEL_URL=${VERCEL_URL}" >> $GITHUB_ENV
+          echo "::set-output name=url::${VERCEL_URL}"
+          echo "Constructed Vercel URL: ${VERCEL_URL}"
+
+      - name: Build
+        run: pnpm run build
+        env:
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+
+      # For some reason, running build:preview from the root directory doesn't work
+      # Turborepo hangs in CI: https://github.com/vercel/turborepo/issues/8281
+      - name: Deploy 🚀
+        working-directory: apps/yjs-provider
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            pnpm run build:preview
+          else
+            pnpm run build:deploy
+          fi
+        env:
+          PARTYKIT_TOKEN: ${{ secrets.PARTYKIT_TOKEN }}
+          PARTYKIT_LOGIN: ${{ secrets.PARTYKIT_LOGIN }}
+          CLERK_ENDPOINT: ${{ vars.CLERK_ENDPOINT }}
+          CLERK_JWT_KEY: ${{ vars.CLERK_JWT_KEY }}
+          YJS_API_TOKEN: ${{ vars.YJS_API_TOKEN }}
+          TRPC_API_URL: ${{ github.event_name == 'pull_request' && steps.construct_vercel_url.outputs.url || vars.TRPC_API_URL }}
+          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
