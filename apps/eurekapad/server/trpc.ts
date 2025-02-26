@@ -1,6 +1,5 @@
 import { ServerBlockNoteEditor } from '@blocknote/server-util'
 import { initTRPC } from '@trpc/server'
-import axios from 'axios'
 import { fetchMutation, fetchQuery } from 'convex/nextjs'
 import * as Y from 'yjs'
 import { z } from 'zod'
@@ -56,8 +55,8 @@ export const appRouter = router({
         return Y.encodeStateAsUpdate(new Y.Doc())
       }
 
-      const { data } = await axios.get(contentUrl, { responseType: 'json' })
-      const blocks = data as CustomBlock[]
+      const response = await fetch(contentUrl)
+      const blocks = (await response.json()) as CustomBlock[]
 
       return Y.encodeStateAsUpdate(editor.blocksToYDoc(blocks))
     }),
@@ -78,10 +77,13 @@ export const appRouter = router({
       Y.applyUpdate(doc, state)
       const blocks = editor.yDocToBlocks(doc)
 
-      const { data } = await axios.post<{ storageId: Id<'_storage'> }>(uploadUrl, blocks, {
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        body: JSON.stringify(blocks),
         headers: { 'Content-Type': 'application/json' },
       })
-      const { storageId } = data
+
+      const { storageId } = await response.json()
 
       return await fetchMutation(api.documents.updateDocumentFromYjs, {
         documentId: input.documentId,
