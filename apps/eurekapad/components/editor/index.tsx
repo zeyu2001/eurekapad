@@ -13,7 +13,7 @@ import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
-import { memo, useEffect } from 'react'
+import { useEffect } from 'react'
 import { toast } from 'sonner'
 import YPartyKitProvider from 'y-partykit/provider'
 import * as Y from 'yjs'
@@ -63,7 +63,7 @@ const animalNames = [
 
 type EditorProps =
   | {
-      onChange: (_value: string) => void
+      onChange?: (_value: string) => void
       initialContent?: string // without collab, initial content must be provided, otherwise assumed to be empty
       editable?: boolean
       savable?: boolean
@@ -71,7 +71,7 @@ type EditorProps =
       authToken?: never
     }
   | {
-      onChange: (_value: string) => void
+      onChange?: (_value: string) => void
       initialContent?: never // content will be fetched from Yjs provider
       editable?: boolean
       savable?: boolean
@@ -87,11 +87,11 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
   const user = useUser()
   const documentId = useDocumentId()
 
-  const editorContext = useEditorContext()
+  const { setAuthenticated, setSavable } = useEditorContext()
   useEffect(() => {
-    editorContext.setAuthenticated(isAuthenticated && !isLoading)
-    editorContext.setSavable(savable ?? false)
-  }, [isAuthenticated, isLoading, savable])
+    setAuthenticated(isAuthenticated && !isLoading)
+    setSavable(savable ?? false)
+  }, [isAuthenticated, isLoading, savable, setAuthenticated, setSavable])
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
@@ -185,7 +185,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         editable={editable}
         theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
         slashMenu={false}
-        onChange={() => onChange(JSON.stringify(editor.document, null, 2))}
+        onChange={() => onChange?.(JSON.stringify(editor.document, null, 2))}
         onKeyDownCapture={event => {
           if (event.key === 'Enter') {
             // Check if user is enterring a code block
@@ -208,4 +208,4 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
   )
 }
 
-export default memo(Editor)
+export default Editor

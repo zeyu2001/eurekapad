@@ -135,7 +135,7 @@ export function Demo() {
                       )}
                     >
                       <div>
-                        {isLg && <Editor initialContent={feature.initialContent} onChange={() => {}} editable={true} />}
+                        {isLg && <Editor initialContent={feature.initialContent} editable={true} />}
                         {!isLg && feature.image && (
                           <Image
                             className="w-full relative z-10"

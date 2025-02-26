@@ -20,7 +20,9 @@ export default function DocumentIdPage() {
   const document = useQuery(api.documents.getById, { documentId })
   const [isLoaded, content] = useContent(document)
 
-  const onChange = (_content: string) => {}
+  if (document === null) {
+    return notFound()
+  }
 
   if (document === undefined || !isLoaded) {
     return (
@@ -38,10 +40,6 @@ export default function DocumentIdPage() {
     )
   }
 
-  if (document === null) {
-    return notFound()
-  }
-
   // Update url without reloading
   const url = getUrlFriendlyTitle(document.title, document._id)
   window.history.replaceState({ ...window.history.state, as: url, url }, '', url)
@@ -51,7 +49,7 @@ export default function DocumentIdPage() {
       <Cover preview url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar preview initialData={document} />
-        <Editor editable={false} onChange={onChange} initialContent={content} />
+        <Editor editable={false} initialContent={content} />
       </div>
     </div>
   )
