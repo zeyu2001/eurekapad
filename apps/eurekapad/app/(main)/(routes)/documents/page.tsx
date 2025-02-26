@@ -20,7 +20,7 @@ const DocumentsPage = () => {
   const pdfDialog = usePdfDialog()
 
   const onCreate = () => {
-    const promise = create({ title: 'Untitled' }).then(documentId => router.push(`/documents/${documentId}`))
+    const promise = create({}).then(documentId => router.push(`/documents/${documentId}`))
 
     toast.promise(promise, {
       loading: 'Creating a new note...',

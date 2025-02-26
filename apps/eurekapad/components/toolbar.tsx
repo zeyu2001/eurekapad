@@ -2,7 +2,7 @@
 
 import { useMutation } from 'convex/react'
 import { ImageIcon, Smile, X } from 'lucide-react'
-import { ElementRef, useRef, useState } from 'react'
+import { ChangeEventHandler, ComponentRef, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import { Button } from '@/components/ui/button'
@@ -19,39 +19,27 @@ interface ToolbarProps {
 }
 
 export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
-  const inputRef = useRef<ElementRef<'textarea'>>(null)
-  const [isEditing, setIsEditing] = useState(false)
-  const [value, setValue] = useState(initialData.title)
+  const inputRef = useRef<ComponentRef<'textarea'>>(null)
+  const [title, setTitle] = useState(initialData.title)
+
+  useEffect(() => {
+    setTitle(initialData.title)
+  }, [initialData.title])
 
   const update = useOptimisticDocumentUpdate()
   const removeIcon = useMutation(api.documents.removeIcon)
 
   const coverImage = useCoverImage()
 
-  const enableInput = () => {
-    if (preview) return
-
-    setIsEditing(true)
-    setTimeout(() => {
-      setValue(initialData.title)
-      inputRef.current?.focus()
-    }, 0)
+  const onTitleChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
+    const title = e.target.value
+    setTitle(title)
+    update({ id: initialData._id, title: title })
   }
 
-  const disableInput = () => setIsEditing(false)
-
-  const onInput = (value: string) => {
-    setValue(value)
-    update({
-      id: initialData._id,
-      title: value || 'Untitled',
-    })
-  }
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const disableNewLine: KeyboardEventHandler<HTMLTextAreaElement> = event => {
     if (event.key === 'Enter') {
-      event.preventDefault()
-      disableInput()
+      inputRef.current?.blur()
     }
   }
 
@@ -102,23 +90,14 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
           </Button>
         )}
       </div>
-      {isEditing && !preview ? (
-        <TextareaAutosize
-          ref={inputRef}
-          onBlur={disableInput}
-          onKeyDown={onKeyDown}
-          value={value}
-          onChange={e => onInput(e.target.value)}
-          className="text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none"
-        />
-      ) : (
-        <div
-          onClick={enableInput}
-          className="pb-[11.5px] text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF]"
-        >
-          {initialData.title}
-        </div>
-      )}
+      <TextareaAutosize
+        ref={inputRef}
+        onKeyDown={disableNewLine}
+        value={title}
+        onChange={onTitleChange}
+        className="text-5xl bg-transparent font-bold break-words outline-none resize-none text-[#3F3F3F] dark:text-[#CFCFCF] placeholder:text-muted-foreground"
+        placeholder="Untitled"
+      />
     </div>
   )
 }

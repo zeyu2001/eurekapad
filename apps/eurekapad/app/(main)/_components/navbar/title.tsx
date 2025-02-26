@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Doc } from '@/convex/_generated/dataModel'
@@ -16,54 +15,35 @@ export const Title = ({ initialData }: TitleProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const update = useOptimisticDocumentUpdate()
 
-  const [title, setTitle] = useState(initialData.title || 'Untitled')
-  const [isEditing, setIsEditing] = useState(false)
+  const [title, setTitle] = useState(initialData.title)
 
-  const enableInput = () => {
+  useEffect(() => {
     setTitle(initialData.title)
-    setIsEditing(true)
-    setTimeout(() => {
-      inputRef.current?.focus()
-      inputRef.current?.setSelectionRange(0, inputRef.current.value.length)
-    }, 0)
-  }
-
-  const disableInput = () => {
-    setIsEditing(false)
-  }
+  }, [initialData.title])
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value)
-    update({
-      id: initialData._id,
-      title: event.target.value || 'Untitled',
-    })
+    const title = event.target.value
+    setTitle(title)
+    update({ id: initialData._id, title })
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      disableInput()
+      inputRef.current?.blur()
     }
   }
 
   return (
-    <div className="flex items-center gap-x-1">
+    <div className="flex items-center gap-x-1 flex-grow">
       {!!initialData.icon && <p>{initialData.icon}</p>}
-      {isEditing ? (
-        <Input
-          ref={inputRef}
-          onClick={enableInput}
-          onBlur={disableInput}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
-          value={title}
-          className="h-7 px-2 focus-visible:ring-transparent"
-        />
-      ) : (
-        <Button onClick={enableInput} variant="ghost" size="sm" className="font-normal h-auto p-1">
-          <span className="truncate">{initialData?.title}</span>
-        </Button>
-      )}
+      <Input
+        ref={inputRef}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        value={title}
+        className="h-7 px-2 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 truncate"
+        placeholder="Untitled"
+      />
     </div>
   )
 }

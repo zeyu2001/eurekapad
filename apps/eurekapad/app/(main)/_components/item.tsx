@@ -68,7 +68,7 @@ export const Item = ({
   const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation()
     if (!id) return
-    const promise = create({ title: 'Untitled', parentDocument: id }).then(documentId => {
+    const promise = create({ parentDocument: id }).then(documentId => {
       if (!expanded) {
         onExpand?.()
       }
