@@ -10,7 +10,7 @@ export default [
       'next.config.mjs',
       'postcss.config.js',
       'tailwind.config.ts',
-      'eslint.config.js',
+      'eslint.config.mjs',
       'convex/_generated/',
     ],
   },

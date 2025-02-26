@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 
-/** @type {import("eslint").Linter.Config}*/
+/** @type {import("eslint").Linter.Config[]}*/
 export const config = [
   js.configs.recommended,
   eslintConfigPrettier,
