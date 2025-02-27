@@ -69,16 +69,16 @@ export default async function Content(props: { params: Promise<{ slug: string }>
           <p className="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400">
             Last updated {content.meta.lastUpdated}
           </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-gray-100">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
             {content.meta.title}
           </h1>
           <div
             className="mt-10 space-y-4 prose-headings:mt-8 
-                  prose-headings:font-bold prose-headings:text-black prose-headings:tracking-tight
+                  prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-black
                   prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg 
-                  dark:prose-headings:text-white
-                  prose-ul:list-disc prose-ul:ml-8 prose-ol:list-decimal prose-ol:ml-8
-                  prose-a:text-blue-600 dark:prose-a:text-blue-400"
+                  prose-a:text-blue-600
+                  prose-ol:ml-8 prose-ol:list-decimal prose-ul:ml-8 prose-ul:list-disc
+                  dark:prose-headings:text-white dark:prose-a:text-blue-400"
           >
             {content.mdx()}
           </div>

@@ -49,7 +49,7 @@ export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, Inline
       // update when Desmos input loses focus,
       // otherwise interactive element will lose focus while user is still typing
       onBlur={updateEditor}
-      className="w-full h-96 flex items-center justify-center"
+      className="flex h-96 w-full items-center justify-center"
     ></div>
   )
 }

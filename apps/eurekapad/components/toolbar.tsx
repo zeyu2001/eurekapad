@@ -57,35 +57,35 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   }
 
   return (
-    <div className="pl-[54px] group relative">
+    <div className="group relative pl-[54px]">
       {!!initialData.icon && !preview && (
-        <div className="flex items-center gap-x-2 group/icon pt-6">
+        <div className="group/icon flex items-center gap-x-2 pt-6">
           <IconPicker onChange={onIconSelect}>
-            <p className="text-6xl hover:opacity-75 transition">{initialData.icon}</p>
+            <p className="text-6xl transition hover:opacity-75">{initialData.icon}</p>
           </IconPicker>
           <Button
             onClick={onRemoveIcon}
-            className="rounded-full opacity-0 group-hover/icon:opacity-100 transition text-muted-foreground text-xs"
+            className="rounded-full text-xs text-muted-foreground opacity-0 transition group-hover/icon:opacity-100"
             variant="outline"
             size="icon"
           >
-            <X className="h-4 w-4" />
+            <X className="size-4" />
           </Button>
         </div>
       )}
-      {!!initialData.icon && preview && <p className="text-6xl pt-6">{initialData.icon}</p>}
-      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4">
+      {!!initialData.icon && preview && <p className="pt-6 text-6xl">{initialData.icon}</p>}
+      <div className="flex items-center gap-x-1 py-4 opacity-0 group-hover:opacity-100">
         {!initialData.icon && !preview && (
           <IconPicker asChild onChange={onIconSelect}>
-            <Button className="text-muted-foreground text-xs" variant="outline" size="sm">
-              <Smile className="h-4 w-4 mr-2" />
+            <Button className="text-xs text-muted-foreground" variant="outline" size="sm">
+              <Smile className="mr-2 size-4" />
               Add icon
             </Button>
           </IconPicker>
         )}
         {!initialData.coverImage && !preview && (
-          <Button onClick={coverImage.onOpen} className="text-muted-foreground text-xs" variant="outline" size="sm">
-            <ImageIcon className="h-4 w-4 mr-2" />
+          <Button onClick={coverImage.onOpen} className="text-xs text-muted-foreground" variant="outline" size="sm">
+            <ImageIcon className="mr-2 size-4" />
             Add cover
           </Button>
         )}
@@ -95,7 +95,7 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
         onKeyDown={disableNewLine}
         value={title}
         onChange={onTitleChange}
-        className="text-5xl bg-transparent font-bold break-words outline-none resize-none text-[#3F3F3F] dark:text-[#CFCFCF] placeholder:text-muted-foreground"
+        className="resize-none break-words bg-transparent text-5xl font-bold text-[#3F3F3F] outline-none placeholder:text-muted-foreground dark:text-[#CFCFCF]"
         placeholder="Untitled"
       />
     </div>

@@ -18,10 +18,10 @@ import nusImage from '@/images/nus.png'
 export const Heading = () => {
   return (
     <div className="text-center lg:text-left">
-      <div className="h-screen container flex justify-center items-center mx-auto max-w-7xl py-16">
-        <div className="grid gap-8 md:gap-16 lg:grid-cols-4 justify-center items-center">
+      <div className="container mx-auto flex h-screen max-w-7xl items-center justify-center py-16">
+        <div className="grid items-center justify-center gap-8 md:gap-16 lg:grid-cols-4">
           <div className="col-span-2">
-            <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight text-slate-900 sm:text-7xl dark:text-slate-100">
+            <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight text-slate-900 dark:text-slate-100 sm:text-7xl">
               Where{' '}
               <span className="relative whitespace-nowrap text-blue-600 dark:text-blue-400">
                 <svg
@@ -42,7 +42,7 @@ export const Heading = () => {
             </p>
             <div className="mt-10 flex justify-center gap-x-6">
               <AuthLoading>
-                <div className="w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center">
                   <Spinner size="lg" />
                 </div>
               </AuthLoading>
@@ -50,7 +50,7 @@ export const Heading = () => {
                 <Button asChild className="rounded-full">
                   <Link href="/documents">
                     Enter EurekaPad
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ArrowRight className="ml-2 size-4" />
                   </Link>
                 </Button>
               </Authenticated>
@@ -58,38 +58,38 @@ export const Heading = () => {
                 <SignInButton mode="modal">
                   <Button className="rounded-full">
                     Get EurekaPad free
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ArrowRight className="ml-2 size-4" />
                   </Button>
                 </SignInButton>
               </Unauthenticated>
             </div>
           </div>
-          <div className="hidden lg:block col-span-2">
+          <div className="col-span-2 hidden lg:block">
             <Image src={heroImage} alt="Two humans working together" className="dark:hidden" />
             <Image src={heroImageDark} alt="Two humans working together" className="hidden dark:block" />
           </div>
         </div>
       </div>
       <ScrolledChevron />
-      <div className="pb-16 container text-center">
+      <div className="container pb-16 text-center">
         <p className="font-display text-base text-slate-900 dark:text-slate-100">
           Built by students from Cambridge and NUS. Trusted by students from
         </p>
         <ul
           role="list"
-          className="mt-8 flex items-center justify-center gap-x-8 flex-col gap-y-10 md:flex-row md:gap-x-12 md:gap-y-0"
+          className="mt-8 flex flex-col items-center justify-center gap-x-8 gap-y-10 md:flex-row md:gap-x-12 md:gap-y-0"
         >
           {[
             { name: 'University of Cambridge', logo: cambridgeImage },
             { name: 'Imperial College London', logo: imperialImage },
             { name: 'National University of Singapore', logo: nusImage },
           ].map(school => (
-            <li key={school.name} className="dark:bg-white p-4 rounded-lg shadow-lg dark:shadow-blue-500/50">
+            <li key={school.name} className="rounded-lg p-4 shadow-lg dark:bg-white dark:shadow-blue-500/50">
               <Image src={school.logo} alt={school.name} width={200} height={200} />
             </li>
           ))}
         </ul>
-        <div className="lg:hidden w-[90%] mx-auto my-8">
+        <div className="mx-auto my-8 w-[90%] lg:hidden">
           <Image src={heroImage} alt="Two humans working together" className="dark:hidden" />
           <Image src={heroImageDark} alt="Two humans working together" className="hidden dark:block" />
         </div>

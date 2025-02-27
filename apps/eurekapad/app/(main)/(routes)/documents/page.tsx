@@ -30,17 +30,17 @@ const DocumentsPage = () => {
   }
 
   return (
-    <div className="h-full flex flex-col items-center justify-center space-y-6">
+    <div className="flex h-full flex-col items-center justify-center space-y-6">
       <Image src={homeImage} width="350" alt="Empty" className="dark:hidden" />
       <Image src={homeImageDark} width="350" alt="Empty" className="hidden dark:block" />
       <h2 className="text-lg font-medium">Welcome to {user?.firstName}&apos;s EurekaPad</h2>
       <div className="flex space-x-4">
         <Button onClick={onCreate}>
-          <PlusCircle className="h-4 w-4 mr-2" />
+          <PlusCircle className="mr-2 size-4" />
           Create a note
         </Button>
         <Button onClick={pdfDialog.onOpen}>
-          <Upload className="h-4 w-4 mr-2" />
+          <Upload className="mr-2 size-4" />
           Create from PDF
         </Button>
       </div>

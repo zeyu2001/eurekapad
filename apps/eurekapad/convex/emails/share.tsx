@@ -45,12 +45,12 @@ export const ShareWithUserEmail = ({
       <Head />
       <Preview>{previewText}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans px-2">
-          <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
+        <Body className="m-auto bg-white px-2 font-sans">
+          <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
-              <Img src={`${baseUrl}/favicon.ico`} width="40" height="40" alt="Logo" className="my-0 mx-auto" />
+              <Img src={`${baseUrl}/favicon.ico`} width="40" height="40" alt="Logo" className="mx-auto my-0" />
             </Section>
-            <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
+            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
               Join <strong>{invitedByName}</strong> on <strong>EurekaPad</strong>
             </Heading>
             <Section>
@@ -59,7 +59,7 @@ export const ShareWithUserEmail = ({
                   <Img className="rounded-full" src={invitedByImage} width="40" height="40" alt={invitedByName} />
                 </Column>
                 <Column className="flex-1 pl-[16px]">
-                  <Text className="text-black text-[14px] leading-[24px]">
+                  <Text className="text-[14px] leading-[24px] text-black">
                     <strong>{invitedByName}</strong> (
                     <Link href={`mailto:${invitedByEmail}`} className="text-blue-600 no-underline">
                       {invitedByEmail}
@@ -70,7 +70,7 @@ export const ShareWithUserEmail = ({
                 </Column>
               </Row>
             </Section>
-            <Section className="text-center mt-[32px] mb-[32px]">
+            <Section className="my-[32px] text-center">
               <table
                 align="center"
                 border={0}
@@ -103,14 +103,14 @@ export const ShareWithUserEmail = ({
                 </tbody>
               </table>
             </Section>
-            <Text className="text-black text-[14px] leading-[24px]">
+            <Text className="text-[14px] leading-[24px] text-black">
               or copy and paste this URL into your browser:{' '}
               <Link href={inviteLink} className="text-blue-600 no-underline">
                 {inviteLink}
               </Link>
             </Text>
-            <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
-            <Text className="text-[#666666] text-[12px] leading-[24px]">
+            <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
               This invitation was intended for <span className="text-black">{email}</span>. If you were not expecting
               this invitation, you can ignore this email. If you are concerned about your account&apos;s safety, please
               reply to this email to get in touch with us.

@@ -53,7 +53,7 @@ export function Testimonials() {
     <section id="testimonials" aria-label="What our customers are saying" className="py-20 sm:py-32">
       <div className="container">
         <div className="mx-auto max-w-2xl md:text-center">
-          <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl dark:text-slate-100">
+          <h2 className="font-display text-3xl tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
             Why students love EurekaPad
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700 dark:text-slate-300">

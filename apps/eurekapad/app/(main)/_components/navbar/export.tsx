@@ -27,9 +27,9 @@ import { blocksToLaTeX, getAllImages } from '@/lib/latex'
 pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
 
 const Loading = () => (
-  <div className="flex items-center justify-center w-full h-full">
+  <div className="flex size-full items-center justify-center">
     <Spinner />
-    <p className="text-sm text-gray-500 ml-2">Exporting PDF...</p>
+    <p className="ml-2 text-sm text-gray-500">Exporting PDF...</p>
   </div>
 )
 
@@ -188,9 +188,9 @@ export const Export = ({ document }: ExportProps) => {
         <DialogHeader className="flex items-center justify-between">
           <DialogTitle>Export LaTeX and PDF</DialogTitle>
         </DialogHeader>
-        <div className="grid md:grid-cols-2 gap-4 h-[70vh]">
-          <div ref={editorContainerRef} className="h-full overflow-auto relative">
-            <div className="absolute top-0 right-4 z-10">
+        <div className="grid h-[70vh] gap-4 md:grid-cols-2">
+          <div ref={editorContainerRef} className="relative h-full overflow-auto">
+            <div className="absolute right-4 top-0 z-10">
               <CopyButton text={latex} />
             </div>
             <div className="h-full overflow-auto">
@@ -203,18 +203,18 @@ export const Export = ({ document }: ExportProps) => {
               />
             </div>
           </div>
-          <div ref={pdfContainerRef} className="h-full overflow-auto relative">
+          <div ref={pdfContainerRef} className="relative h-full overflow-auto">
             {error ? (
-              <div className="w-full h-full overflow-auto p-4 bg-red-50">
+              <div className="size-full overflow-auto bg-red-50 p-4">
                 {error.split('\n').map((line, index) => (
-                  <p key={index} className="text-sm text-red-500 font-mono">
+                  <p key={index} className="font-mono text-sm text-red-500">
                     {line}
                   </p>
                 ))}
               </div>
             ) : pdfUrl ? (
               <>
-                <div className="absolute top-2 right-1 z-10 space-x-2">
+                <div className="absolute right-1 top-2 z-10 space-x-2">
                   <DownloadButton pdfUrl={pdfUrl} />
                   <PreviewButton pdfUrl={pdfUrl} />
                 </div>
