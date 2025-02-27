@@ -14,7 +14,7 @@ import { useDocumentId } from '@/hooks/use-documentId'
 
 const InvalidToken = ({ message }: { message: string }) => {
   return (
-    <div className="h-full flex flex-col items-center justify-center space-y-4">
+    <div className="flex h-full flex-col items-center justify-center space-y-4">
       <Image src="/error.png" height="300" width="300" alt="Error" className="dark:hidden" />
       <Image src="/error-dark.png" height="300" width="300" alt="Error" className="hidden dark:block" />
       <h2 className="text-xl font-medium">{message}</h2>
@@ -61,7 +61,7 @@ export default function InvitationAcceptPage() {
     return <InvalidToken message={error} />
   } else {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <Spinner size="lg" />
       </div>
     )

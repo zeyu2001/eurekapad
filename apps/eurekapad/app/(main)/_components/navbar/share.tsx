@@ -108,11 +108,11 @@ export const Share = ({ document }: ShareProps) => {
         {sharedWith.length > 0 && (
           <div className="mb-4">
             <h3 className="text-sm font-medium">Shared with</h3>
-            <div className="space-y-3 mt-4">
+            <div className="mt-4 space-y-3">
               {sharedWith.map(user => (
                 <div key={user.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="size-8">
                       <AvatarImage src={user.image} alt={user.name} />
                     </Avatar>
                     <div className="flex flex-col">
@@ -124,8 +124,8 @@ export const Share = ({ document }: ShareProps) => {
                   </div>
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" className="size-8">
+                        <MoreVertical className="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -161,13 +161,13 @@ export const Share = ({ document }: ShareProps) => {
         {pendingInvites && pendingInvites.length > 0 && (
           <div className="mb-4">
             <h3 className="text-sm font-medium">Pending Invites</h3>
-            <div className="space-y-3 mt-2">
+            <div className="mt-2 space-y-3">
               {pendingInvites.map(invite => (
                 <div key={invite._id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="size-8">
                       <AvatarFallback>
-                        <Mail className="h-4 w-4" />
+                        <Mail className="size-4" />
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
@@ -237,18 +237,18 @@ export const Share = ({ document }: ShareProps) => {
                     onClick={() => remove(index)}
                     className={cn(index === 0 && 'invisible')}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                   </Button>
                 )}
               </div>
             ))}
-            <div className="flow-root mt-4">
+            <div className="mt-4 flow-root">
               <Button
                 variant="outline"
                 onClick={() => append({ email: '', role: 'editor' })}
-                className="w-fit float-left"
+                className="float-left w-fit"
               >
-                <PlusCircle className="h-4 w-4 mr-2" />
+                <PlusCircle className="mr-2 size-4" />
                 Add more
               </Button>
               <Button className="float-right" type="submit">

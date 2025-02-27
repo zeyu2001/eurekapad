@@ -14,8 +14,8 @@ export function ScrolledChevron() {
   }, [])
 
   return (
-    <div className="absolute bottom-4 flex justify-center w-full">
-      {!scrolled && <ChevronDown className="h-8 w-8 transform animate-bounce" />}
+    <div className="absolute bottom-4 flex w-full justify-center">
+      {!scrolled && <ChevronDown className="size-8 animate-bounce" />}
     </div>
   )
 }

@@ -133,7 +133,7 @@ export const Navigation = () => {
             isMobile && 'opacity-100',
           )}
         >
-          <ChevronsLeft className="h-6 w-6" />
+          <ChevronsLeft className="size-6" />
         </div>
         <div>
           <UserItem />
@@ -145,10 +145,10 @@ export const Navigation = () => {
           <Item onClick={pdfDialog.onOpen} icon={Upload} label="Upload from PDF" />
           <DocumentList />
           <Popover>
-            <PopoverTrigger className="w-full mt-4">
+            <PopoverTrigger className="mt-4 w-full">
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
-            <PopoverContent className="p-0 w-72" side={isMobile ? 'bottom' : 'right'}>
+            <PopoverContent className="w-72 p-0" side={isMobile ? 'bottom' : 'right'}>
               <TrashBox />
             </PopoverContent>
           </Popover>
@@ -156,7 +156,7 @@ export const Navigation = () => {
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}
-          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
+          className="absolute right-0 top-0 h-full w-1 cursor-ew-resize bg-primary/10 opacity-0 transition group-hover/sidebar:opacity-100"
         />
       </aside>
       <div
@@ -170,8 +170,8 @@ export const Navigation = () => {
         {documentId ? (
           <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
         ) : (
-          <nav className="bg-transparent px-3 py-2 w-full">
-            {isCollapsed && <MenuIcon onClick={resetWidth} role="button" className="h-6 w-6 text-muted-foreground" />}
+          <nav className="w-full bg-transparent px-3 py-2">
+            {isCollapsed && <MenuIcon onClick={resetWidth} role="button" className="size-6 text-muted-foreground" />}
           </nav>
         )}
       </div>

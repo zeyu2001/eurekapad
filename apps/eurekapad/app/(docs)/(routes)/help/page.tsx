@@ -32,7 +32,7 @@ export default async function Help() {
   ).sort((a, b) => dayjs(b.dateTime).unix() - dayjs(a.dateTime).unix())
 
   return (
-    <div className="px-6 py-32 lg:px-8 mx-auto max-w-3xl text-base leading-7 text-gray-700 dark:text-gray-300">
+    <div className="mx-auto max-w-3xl px-6 py-32 text-base leading-7 text-gray-700 dark:text-gray-300 lg:px-8">
       <div className="mb-8">
         <Breadcrumb>
           <BreadcrumbList>

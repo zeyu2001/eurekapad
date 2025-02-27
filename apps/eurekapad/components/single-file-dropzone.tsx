@@ -111,7 +111,7 @@ const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {disabled && (
-          <div className="flex items-center justify-center absolute inset-y-0 h-full w-full bg-background/80 z-50">
+          <div className="absolute inset-y-0 z-50 flex size-full items-center justify-center bg-background/80">
             <Spinner size="lg" />
           </div>
         )}
@@ -130,12 +130,12 @@ const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {fileUrl ? (
             fileType === 'image' && (
               // Image Preview
-              <img className="h-full w-full rounded-md object-cover" src={fileUrl} alt={acceptedFiles[0]?.name} />
+              <img className="size-full rounded-md object-cover" src={fileUrl} alt={acceptedFiles[0]?.name} />
             )
           ) : (
             // Upload Icon
             <div className="flex flex-col items-center justify-center text-xs text-gray-400">
-              <UploadCloudIcon className="mb-2 h-7 w-7" />
+              <UploadCloudIcon className="mb-2 size-7" />
               <div className="text-gray-400">Click or drag file to this area to upload</div>
             </div>
           )}
@@ -143,13 +143,13 @@ const SingleFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {/* Remove Image Icon */}
           {fileUrl && !disabled && (
             <div
-              className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
+              className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4"
               onClick={e => {
                 e.stopPropagation()
                 void onChange?.(undefined)
               }}
             >
-              <div className="flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+              <div className="flex size-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:size-6 dark:border-gray-400 dark:bg-black">
                 <X className="text-gray-500 dark:text-gray-400" width={16} height={16} />
               </div>
             </div>
