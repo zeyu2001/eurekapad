@@ -178,6 +178,11 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   )
 
   const runCode = useCallback(async () => {
+    if (isRunning) {
+      toast.error(`Hang tight, ${capitalizeFirstLetter(language)} runner is still running...`)
+      return
+    }
+
     const runnerConfig = {
       python: { runner: pythonRunner, loaded: pythonLoaded },
       javascript: { runner: jsRunner, loaded: jsLoaded },
@@ -214,21 +219,31 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     } finally {
       setIsRunning(false)
     }
-  }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler])
+  }, [
+    isRunning,
+    pythonRunner,
+    pythonLoaded,
+    jsRunner,
+    jsLoaded,
+    language,
+    code,
+    stdoutHandler,
+    stderrHandler,
+    imageHandler,
+  ])
 
   useEffect(() => {
     // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
     // Causes error: flushSync was called from inside a lifecycle method
-    setTimeout(() => {
+    queueMicrotask(() => {
       editor.updateBlock(block.id, {
         props: {
-          ...block.props,
           stdout: stdout,
           stderr: stderr,
           images: JSON.stringify(images),
         },
       })
-    }, 0)
+    })
   }, [stdout, stderr, images, editor, block.id, block.props])
 
   const customKeymap = Prec.highest(
@@ -236,8 +251,8 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
       {
         key: 'Mod-Enter',
         run: () => {
-          runCode()
-          return true
+          if (runnable) runCode()
+          return runnable
         },
       },
     ]),
@@ -276,7 +291,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
           <div>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost" onClick={runCode}>
+                <Button size="icon" variant="ghost" onClick={runCode} disabled={isRunning}>
                   {isRunning ? <Spinner /> : <Play size={16} />}
                 </Button>
               </TooltipTrigger>
