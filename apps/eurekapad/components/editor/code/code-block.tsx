@@ -173,16 +173,18 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
           height: height ?? block.props.height,
         },
       })
-
-      // TODO: Terminate any code if still running
-
-      // Reset stderr, stdout and images
-      setStdout('')
-      setStderr('')
-      setImages([])
     },
     [block.id, block.props, editor],
   )
+
+  useEffect(() => {
+    // TODO: Terminate any code if still running
+
+    // Reset stderr, stdout and images
+    setStdout('')
+    setStderr('')
+    setImages([])
+  }, [language])
 
   const runCode = useCallback(async () => {
     if (isRunning) {
