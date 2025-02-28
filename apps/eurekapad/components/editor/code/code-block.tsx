@@ -2,6 +2,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 
 import { InlineContentSchema, StyleSchema } from '@blocknote/core'
 import { ReactCustomBlockRenderProps } from '@blocknote/react'
+import { standardKeymap } from '@codemirror/commands'
+import { Prec } from '@codemirror/state'
+import { keymap } from '@codemirror/view'
 import { langNames, langs } from '@uiw/codemirror-extensions-langs'
 import { vscodeDarkInit, vscodeLightInit } from '@uiw/codemirror-theme-vscode'
 import ReactCodeMirror from '@uiw/react-codemirror'
@@ -124,7 +127,6 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
   const stdoutHandler = useCallback((msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()), [])
-
   const stderrHandler = useCallback((msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()), [])
 
   const imageHandler = useCallback(
@@ -166,7 +168,6 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     ({ code, language, height }: { code?: string; language?: string; height?: number }) => {
       editor.updateBlock(block.id, {
         props: {
-          ...block.props,
           language: language ?? block.props.language,
           code: code ?? block.props.code,
           height: height ?? block.props.height,
@@ -230,6 +231,18 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     }, 0)
   }, [stdout, stderr, images, editor, block.id, block.props])
 
+  const customKeymap = Prec.highest(
+    keymap.of([
+      {
+        key: 'Mod-Enter',
+        run: () => {
+          runCode()
+          return true
+        },
+      },
+    ]),
+  )
+
   const { theme } = useTheme()
   const editorTheme =
     theme === 'light'
@@ -292,7 +305,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
         <ReactCodeMirror
           id={block?.id}
           placeholder={'Write your code here...'}
-          extensions={[langs[language as keyof typeof langs]()]}
+          extensions={[langs[language as keyof typeof langs](), keymap.of(standardKeymap), customKeymap]}
           value={code}
           theme={editorTheme}
           editable={editor.isEditable}
