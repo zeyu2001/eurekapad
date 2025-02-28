@@ -82,4 +82,6 @@ export class SingletonJSRunner {
       stderr(error?.toString() ?? 'An unknown error occurred')
     }
   }
+
+  // TODO: Create a function to stop the process
 }
