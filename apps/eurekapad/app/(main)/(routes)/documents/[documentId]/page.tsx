@@ -1,45 +1,32 @@
-'use client'
-
-import { useAuth } from '@clerk/nextjs'
-import { useQuery } from 'convex/react'
+import { fetchQuery, preloadQuery } from 'convex/nextjs'
 import { notFound } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
-import { Cover } from '@/components/cover'
 import { CoverSkeleton } from '@/components/coverSkeleton'
-import Editor from '@/components/editor/dynamicEditor'
-import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import { useDocumentId } from '@/hooks/use-documentId'
-import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
+import type { Id } from '@/convex/_generated/dataModel'
+import { getAuthToken } from '@/convex/utils/auth'
 
-export default function DocumentIdPage() {
-  const documentId = useDocumentId()
-  const document = useQuery(api.documents.getById, { documentId })
-  const documentPermissions = useQuery(api.documentPermissions.getUserPermissions, { documentId })
+import DocumentEditor from './_components/editor'
 
-  const [authToken, setAuthToken] = useState<string | null>(null)
+interface DocumentPageProps {
+  params: Promise<{ documentId: string }>
+}
 
-  const auth = useAuth()
+export default async function DocumentPage(props: DocumentPageProps) {
+  const { documentId: documentIdWithTitle } = await props.params
+  const documentId = documentIdWithTitle.split('-').pop() as Id<'documents'>
 
-  useEffect(() => {
-    const fetchAuthData = async () => {
-      setAuthToken(
-        await auth.getToken({
-          template: 'convex',
-        }),
-      )
-    }
-    fetchAuthData()
-  }, [auth])
+  const token = await getAuthToken()
+  const documentPermissions = await fetchQuery(api.documentPermissions.getUserPermissions, { documentId }, { token })
+  const preloadedDocument = await preloadQuery(api.documents.getById, { documentId }, { token })
 
   if (documentPermissions && !documentPermissions.isViewer) {
     return notFound()
   }
 
   // TODO: also return this skeleton if in collab mode and still loading
-  if (document === undefined || documentPermissions === undefined || authToken === null) {
+  if (preloadedDocument === undefined) {
     return (
       <div>
         <CoverSkeleton />
@@ -55,29 +42,7 @@ export default function DocumentIdPage() {
     )
   }
 
-  if (document === null) {
-    return notFound()
-  }
-
-  // Update url without reloading
-  const url = getUrlFriendlyTitle(document.title, document._id)
-  window.history.replaceState({ ...window.history.state, as: url, url }, '', url)
-
   return (
-    <>
-      <title>{getTitle(document.title)}</title>
-      <div className="pb-40">
-        <Cover url={document.coverImage} />
-        <div className="mx-auto md:max-w-3xl lg:max-w-4xl">
-          <Toolbar initialData={document} />
-          <Editor
-            savable={documentPermissions.isEditor}
-            editable={documentPermissions.isEditor}
-            collab
-            authToken={authToken}
-          />
-        </div>
-      </div>
-    </>
+    <DocumentEditor preloadedDocument={preloadedDocument} authToken={token} canEdit={documentPermissions.isEditor} />
   )
 }
