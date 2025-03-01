@@ -1,1 +1,3 @@
+touch .git/index.lock
 pnpx lint-staged
+pnpx rimraf .git/index.lock
