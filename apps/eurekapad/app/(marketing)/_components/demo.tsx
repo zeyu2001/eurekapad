@@ -2,10 +2,10 @@
 
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import clsx from 'clsx'
-import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
+import { Editor } from '@/components/editor/dynamicEditor'
 import backgroundImage from '@/images/background-features.jpg'
 import codeBlockImage from '@/images/code-block.png'
 import mathBlockImage from '@/images/math-block.png'
@@ -13,8 +13,6 @@ import mathBlockImage from '@/images/math-block.png'
 import codeBlockDemo from './codeBlockDemo.json'
 import graphBlockDemo from './graphBlockDemo.json'
 import mathBlockDemo from './mathBlockDemo.json'
-
-const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
 const features = [
   {

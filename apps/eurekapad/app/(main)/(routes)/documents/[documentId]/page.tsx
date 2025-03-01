@@ -2,18 +2,16 @@
 
 import { useAuth } from '@clerk/nextjs'
 import { useQuery } from 'convex/react'
-import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { Cover } from '@/components/cover'
+import { Editor } from '@/components/editor/dynamicEditor'
 import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { getTitle, getUrlFriendlyTitle } from '@/lib/utils'
-
-const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
 export default function DocumentIdPage() {
   const documentId = useDocumentId()
@@ -39,6 +37,7 @@ export default function DocumentIdPage() {
     return notFound()
   }
 
+  // TODO: also return this skeleton if in collab mode and still loading
   if (document === undefined || documentPermissions === undefined || authToken === null) {
     return (
       <div>
