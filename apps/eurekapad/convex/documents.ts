@@ -316,14 +316,14 @@ export const updateDocumentFromYjs = mutation({
       throw new Error('Unauthorized')
     }
 
+    const document = await ctx.db.patch(args.documentId, {
+      contentId: args.contentId,
+    })
+
     const currentContentId = existingDocument.contentId
     if (currentContentId) {
       await ctx.storage.delete(currentContentId)
     }
-
-    const document = await ctx.db.patch(args.documentId, {
-      contentId: args.contentId,
-    })
 
     return document
   },
