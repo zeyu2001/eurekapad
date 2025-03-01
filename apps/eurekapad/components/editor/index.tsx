@@ -13,7 +13,7 @@ import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
-import { useEffect } from 'react'
+import { type KeyboardEvent, useEffect } from 'react'
 import { toast } from 'sonner'
 import YPartyKitProvider from 'y-partykit/provider'
 import * as Y from 'yjs'
