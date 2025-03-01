@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-import { Editor } from '@/components/editor/dynamicEditor'
+import Editor from '@/components/editor/dynamicEditor'
 import backgroundImage from '@/images/background-features.jpg'
 import codeBlockImage from '@/images/code-block.png'
 import mathBlockImage from '@/images/math-block.png'
