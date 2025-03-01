@@ -178,6 +178,66 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     editor.setTextCursorPosition({ id: block.id })
   }
 
+  const handleCodeBlockShortcut = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      // Check if user is enterring a code block
+      const currentBlock = editor.getTextCursorPosition().block
+
+      if (
+        currentBlock.type === 'paragraph' &&
+        currentBlock.content?.[0]?.type === 'text' &&
+        (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('```')
+      ) {
+        event.preventDefault()
+        replaceWithCodeBlock(currentBlock)
+      }
+    }
+  }
+
+  // handles the case where we are deleting an empty block right after a block with content
+  // https://github.com/TypeCellOS/BlockNote/issues/605
+  const handleBackspaceOnEmptyBlock = (event: KeyboardEvent) => {
+    if (event.key === 'Backspace') {
+      const selection = editor.getSelection()
+      const position = editor.getTextCursorPosition()
+
+      if (selection === undefined && position && position.block.type === 'paragraph') {
+        const block = position.block
+        const blockPos = editor._tiptapEditor.state.doc.resolve(editor._tiptapEditor.state.selection.anchor)
+
+        const isTopBlock = blockPos.depth === 3
+        const isEmptyBlock = block.content.length === 0 && block.children.length === 0
+        const isEmptyContentWithChildren = block.content.length === 0 && block.children.length > 0
+
+        if (isTopBlock && isEmptyBlock) {
+          event.stopPropagation()
+          event.preventDefault()
+          editor.removeBlocks([block])
+
+          if (position.prevBlock) {
+            editor.setTextCursorPosition(position.prevBlock, 'end')
+          }
+        } else if (
+          isTopBlock &&
+          position.prevBlock &&
+          isEmptyContentWithChildren &&
+          Array.isArray(position.prevBlock.children)
+        ) {
+          event.stopPropagation()
+          event.preventDefault()
+          editor.updateBlock(position.prevBlock, {
+            children: position.prevBlock.children.concat(block.children),
+          })
+          editor.removeBlocks([block])
+
+          if (position.prevBlock) {
+            editor.setTextCursorPosition(position.prevBlock, 'end')
+          }
+        }
+      }
+    }
+  }
+
   return (
     <div>
       <BlockNoteView
@@ -187,19 +247,8 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         slashMenu={false}
         onChange={() => onChange?.(JSON.stringify(editor.document, null, 2))}
         onKeyDownCapture={event => {
-          if (event.key === 'Enter') {
-            // Check if user is enterring a code block
-            const currentBlock = editor.getTextCursorPosition().block
-
-            if (
-              currentBlock.type === 'paragraph' &&
-              currentBlock.content?.[0]?.type === 'text' &&
-              (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('```')
-            ) {
-              event.preventDefault()
-              replaceWithCodeBlock(currentBlock)
-            }
-          }
+          handleCodeBlockShortcut(event)
+          handleBackspaceOnEmptyBlock(event)
         }}
       >
         <CustomSlashMenu editor={editor} />
