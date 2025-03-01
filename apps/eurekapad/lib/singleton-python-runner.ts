@@ -1,22 +1,8 @@
-import { type IMimeBundle } from '@jupyterlab/nbformat'
 import { ContentsManager, type KernelMessage } from '@jupyterlab/services'
+import type { IDisplayDataMsg, IInputRequestMsg, IStreamMsg } from '@jupyterlab/services/lib/kernel/messages'
 import { PyodideKernel } from '@jupyterlite/pyodide-kernel'
-import { type PartialJSONObject } from '@lumino/coreutils'
 
 import { PYODIDE } from './constants'
-
-type StreamContent = {
-  name: 'stdout' | 'stderr'
-  text: string
-}
-
-type DisplayDataContent = {
-  data: IMimeBundle
-  metadata: PartialJSONObject
-  transient?: {
-    display_id?: string
-  }
-}
 
 const handleMessage = (msg: KernelMessage.IMessage<KernelMessage.MessageType>) => {
   SingletonPythonRunner.getInstance().sendMessage(msg)
@@ -76,22 +62,33 @@ export class SingletonPythonRunner {
     if (msg.channel === 'iopub') {
       switch (msg.header.msg_type) {
         case 'stream': {
-          const content = msg.content as StreamContent
-          if (content.name === 'stdout') {
-            this.stdout(content.text)
-          } else if (content.name === 'stderr') {
-            this.stderr(content.text)
+          const message = msg as IStreamMsg
+          if (message.content.name === 'stdout') {
+            this.stdout(message.content.text)
+          } else if (message.content.name === 'stderr') {
+            this.stderr(message.content.text)
           }
           break
         }
         case 'display_data': {
-          const content = msg.content as DisplayDataContent
-          const formats = Object.keys(content.data).filter(key => key.startsWith('image/'))
+          const message = msg as IDisplayDataMsg
+          const formats = Object.keys(message.content.data).filter(key => key.startsWith('image/'))
           if (formats.length > 0) {
             const format = formats[0]
-            const data = content.data[format] as string
+            const data = message.content.data[format] as string
             this.image(format, data)
           }
+          break
+        }
+      }
+    } else if (msg.channel === 'stdin') {
+      switch (msg.header.msg_type) {
+        case 'input_request': {
+          const message = msg as IInputRequestMsg
+          // We use prompt here to block the thread, which is needed for the package
+          const value = prompt(message.content.prompt) ?? ''
+          // TODO: Implement hiding of input if `message.content.password` is true
+          this.kernel.inputReply({ value, status: 'ok' })
           break
         }
       }
@@ -107,6 +104,9 @@ export class SingletonPythonRunner {
     this.stdout = stdout
     this.stderr = stderr
     this.image = image
+
+    // TODO: Before running code, we may want to consider hotpatching
+    // any calls to Input, as they currently need to be 'awaited' in the code
 
     const result = await this.kernel.executeRequest({
       code: code,
@@ -136,4 +136,11 @@ export class SingletonPythonRunner {
     this.idle = this.idle.then(() => this._runPython(code, stdout, stderr, image))
     return this.idle
   }
+
+  // TODO: Functionality to stop the process
+  // public async stopPython() {
+  //   if (!this.loaded) {
+  //     throw new Error('Pyodide is not loaded yet')
+  //   }
+  // }
 }

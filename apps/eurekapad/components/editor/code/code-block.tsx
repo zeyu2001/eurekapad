@@ -2,6 +2,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 
 import { InlineContentSchema, StyleSchema } from '@blocknote/core'
 import { ReactCustomBlockRenderProps } from '@blocknote/react'
+import { standardKeymap } from '@codemirror/commands'
+import { Prec } from '@codemirror/state'
+import { keymap } from '@codemirror/view'
 import { langNames, langs } from '@uiw/codemirror-extensions-langs'
 import { vscodeDarkInit, vscodeLightInit } from '@uiw/codemirror-theme-vscode'
 import ReactCodeMirror from '@uiw/react-codemirror'
@@ -124,7 +127,6 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
   const stdoutHandler = useCallback((msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()), [])
-
   const stderrHandler = useCallback((msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()), [])
 
   const imageHandler = useCallback(
@@ -166,7 +168,6 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     ({ code, language, height }: { code?: string; language?: string; height?: number }) => {
       editor.updateBlock(block.id, {
         props: {
-          ...block.props,
           language: language ?? block.props.language,
           code: code ?? block.props.code,
           height: height ?? block.props.height,
@@ -176,7 +177,21 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     [block.id, block.props, editor],
   )
 
+  useEffect(() => {
+    // TODO: Terminate any code if still running
+
+    // Reset stderr, stdout and images
+    setStdout('')
+    setStderr('')
+    setImages([])
+  }, [language])
+
   const runCode = useCallback(async () => {
+    if (isRunning) {
+      toast.error(`Hang tight, ${capitalizeFirstLetter(language)} runner is still running...`)
+      return
+    }
+
     const runnerConfig = {
       python: { runner: pythonRunner, loaded: pythonLoaded },
       javascript: { runner: jsRunner, loaded: jsLoaded },
@@ -213,22 +228,44 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     } finally {
       setIsRunning(false)
     }
-  }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler])
+  }, [
+    isRunning,
+    pythonRunner,
+    pythonLoaded,
+    jsRunner,
+    jsLoaded,
+    language,
+    code,
+    stdoutHandler,
+    stderrHandler,
+    imageHandler,
+  ])
 
   useEffect(() => {
     // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
     // Causes error: flushSync was called from inside a lifecycle method
-    setTimeout(() => {
+    queueMicrotask(() => {
       editor.updateBlock(block.id, {
         props: {
-          ...block.props,
           stdout: stdout,
           stderr: stderr,
           images: JSON.stringify(images),
         },
       })
-    }, 0)
+    })
   }, [stdout, stderr, images, editor, block.id, block.props])
+
+  const customKeymap = Prec.highest(
+    keymap.of([
+      {
+        key: 'Mod-Enter',
+        run: () => {
+          if (runnable) runCode()
+          return runnable
+        },
+      },
+    ]),
+  )
 
   const { theme } = useTheme()
   const editorTheme =
@@ -263,7 +300,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
           <div>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost" onClick={runCode}>
+                <Button size="icon" variant="ghost" onClick={runCode} disabled={isRunning}>
                   {isRunning ? <Spinner /> : <Play size={16} />}
                 </Button>
               </TooltipTrigger>
@@ -292,7 +329,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
         <ReactCodeMirror
           id={block?.id}
           placeholder={'Write your code here...'}
-          extensions={[langs[language as keyof typeof langs]()]}
+          extensions={[langs[language as keyof typeof langs](), keymap.of(standardKeymap), customKeymap]}
           value={code}
           theme={editorTheme}
           editable={editor.isEditable}

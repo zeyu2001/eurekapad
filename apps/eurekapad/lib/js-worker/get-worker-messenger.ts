@@ -11,6 +11,7 @@ interface IError {
 interface IResult {
   stdout: unknown
   error?: IError
+  completed?: true
 }
 
 interface ICallback {
@@ -26,14 +27,8 @@ export const getWorkerMessenger = () => {
     const workerURL = URL.createObjectURL(blob)
     const worker = new Worker(workerURL)
 
-    const cleanup = () => {
-      worker.terminate()
-      // Release memory as we may have many and large functions
-      URL.revokeObjectURL(workerURL)
-    }
-
-    worker.onmessage = ({ data: { stdout, error } }: { data: IResult }) => {
-      callback(error, stdout)
+    worker.onmessage = ({ data: { stdout, error, completed } }: { data: IResult }) => {
+      callback(error, stdout, completed)
     }
 
     worker.onerror = err => {
@@ -48,8 +43,10 @@ export const getWorkerMessenger = () => {
 
     // Kill the worker after 5 seconds
     setTimeout(() => {
-      cleanup()
+      worker.terminate()
       callback(undefined, undefined, true)
+      // Release memory as we may have many and large functions
+      URL.revokeObjectURL(workerURL)
     }, 5000)
 
     worker.postMessage(args)
