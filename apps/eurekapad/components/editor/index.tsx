@@ -178,6 +178,35 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     editor.setTextCursorPosition({ id: block.id })
   }
 
+  const replaceWithSeparator = (block: CustomBlock) => {
+    if (block.type !== 'paragraph') return
+    const firstContent = block.content?.[0]
+    if (!firstContent || firstContent.type !== 'text') return
+
+    const text = (firstContent as StyledText<StyleSchema>).text
+    const match = text.match(/^---(.*)$/)
+
+    if (!match) return
+
+    const label = match[1].trim()
+
+    if (label) {
+      editor.updateBlock(block.id, {
+        type: 'separator',
+
+        props: {
+          label,
+        },
+      })
+    } else {
+      editor.updateBlock(block.id, {
+        type: 'separator',
+      })
+    }
+
+    editor.setTextCursorPosition({ id: block.id + 1 })
+  }
+
   return (
     <div>
       <BlockNoteView
@@ -198,6 +227,15 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
             ) {
               event.preventDefault()
               replaceWithCodeBlock(currentBlock)
+            }
+
+            if (
+              currentBlock.type === 'paragraph' &&
+              currentBlock.content?.[0]?.type === 'text' &&
+              (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('---')
+            ) {
+              event.preventDefault()
+              replaceWithSeparator(currentBlock)
             }
           }
         }}

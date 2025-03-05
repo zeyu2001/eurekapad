@@ -13,12 +13,13 @@ import { CustomEditor } from '@/components/editor/schema'
 import { insertTranscriptionBlock } from '@/components/editor/transcription'
 
 import { insertGraphBlock } from './graph'
+import { insertSeparatorBlock } from './separator'
 
 interface CustomSlashMenuProps {
   editor: CustomEditor
 }
 
-const groupOrder = ['Headings', 'Basic blocks', 'Advanced', 'Media', 'Others']
+const groupOrder = ['Headings', 'Basic Blocks', 'Advanced', 'Media', 'Others']
 
 export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
   return (
@@ -33,6 +34,7 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
               insertCodeBlock(editor),
               insertTranscriptionBlock(editor),
               insertGraphBlock(editor),
+              insertSeparatorBlock(editor),
             ].sort(
               (a, b) =>
                 groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title),
