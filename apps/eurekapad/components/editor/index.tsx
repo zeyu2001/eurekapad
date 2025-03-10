@@ -194,9 +194,23 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     }
   }
 
+  // temporary fix: https://github.com/TypeCellOS/BlockNote/issues/1516
+  const handleSelectAll = (event: KeyboardEvent) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+      // let default behavior happen first
+      setTimeout(() => {
+        const firstBlockWithContent = editor.document.find(block => block.content && block.content.length > 0)
+        const lastBlockWithContent = editor.document.reverse().find(block => block.content && block.content.length > 0)
+        if (firstBlockWithContent && lastBlockWithContent) {
+          editor.setSelection(firstBlockWithContent, lastBlockWithContent)
+        }
+      }, 0)
+    }
+  }
+
   // handles the case where we are deleting an empty block right after a block with content
   // https://github.com/TypeCellOS/BlockNote/issues/605
-  const handleBackspaceOnEmptyBlock = (event: KeyboardEvent) => {
+  const handleBackspace = (event: KeyboardEvent) => {
     if (event.key === 'Backspace') {
       const selection = editor.getSelection()
       const position = editor.getTextCursorPosition()
@@ -223,6 +237,8 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         const isEmptyContentWithChildren = block.content.length === 0 && block.children.length > 0
         const isAtStart = offset === 0
 
+        if (!isAtStart) return
+
         if (isTopBlock && isEmptyBlock) {
           event.stopPropagation()
           event.preventDefault()
@@ -247,7 +263,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
           if (position.prevBlock) {
             editor.setTextCursorPosition(position.prevBlock, 'end')
           }
-        } else if (isAtStart && position.prevBlock && blockTypesToNotDelete.includes(position.prevBlock.type)) {
+        } else if (position.prevBlock && blockTypesToNotDelete.includes(position.prevBlock.type)) {
           // when cursor is at the start of non-empty block, it also shouldn't immediately delete the previous block
           // this only applies to rich blocks like codeblock, graph, etc.
           // BlockNote already handles merging of blocks with content
@@ -269,7 +285,8 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         onChange={() => onChange?.(JSON.stringify(editor.document, null, 2))}
         onKeyDownCapture={event => {
           handleCodeBlockShortcut(event)
-          handleBackspaceOnEmptyBlock(event)
+          handleBackspace(event)
+          handleSelectAll(event)
         }}
       >
         <CustomSlashMenu editor={editor} />
