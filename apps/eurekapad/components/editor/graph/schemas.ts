@@ -236,6 +236,8 @@ export const graphStateSchema = z.object({
     list: z.array(itemStateSchema),
     ticker: tickerSchema.optional(),
   }),
+  includeFunctionParametersInRandomSeed: z.boolean().optional(),
+  doNotMigrateMovablePointStyle: z.boolean().optional(),
 })
 
 export const graphStateJSONSchema = z
