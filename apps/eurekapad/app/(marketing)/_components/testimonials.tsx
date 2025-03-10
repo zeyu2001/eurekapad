@@ -1,178 +1,211 @@
-'use client'
-
-// const testimonials = [
-//   [
-//     {
-//       content:
-//         'EurekaPad is the perfect middle ground between Google Docs and LaTeX. I never knew how much I needed this until I started using it.',
-//       author: {
-//         name: 'Kai Xuan Lee',
-//         role: 'Computer Science at NUS',
-//         image: nusImage,
-//       },
-//     },
-//   ],
-//   [
-//     {
-//       content:
-//         "The UI is so amazing. I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
-//       author: {
-//         name: 'Gracie Zhou',
-//         role: 'Computer Science at Cambridge',
-//         image: cambridgeImage,
-//       },
-//     },
-//   ],
-//   [
-//     {
-//       content:
-//         'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
-//       author: {
-//         name: 'Chad Spensky',
-//         role: 'CEO @ Allthenticate',
-//         image: allthenticateImage,
-//       },
-//     },
-//   ],
-// ]
-// function QuoteIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-//   return (
-//     <svg aria-hidden="true" width={105} height={78} {...props}>
-//       <path d="M25.086 77.292c-4.821 0-9.115-1.205-12.882-3.616-3.767-2.561-6.78-6.102-9.04-10.622C1.054 58.534 0 53.411 0 47.686c0-5.273.904-10.396 2.712-15.368 1.959-4.972 4.746-9.567 8.362-13.786a59.042 59.042 0 0 1 12.43-11.3C28.325 3.917 33.599 1.507 39.324 0l11.074 13.786c-6.479 2.561-11.677 5.951-15.594 10.17-3.767 4.219-5.65 7.835-5.65 10.848 0 1.356.377 2.863 1.13 4.52.904 1.507 2.637 3.089 5.198 4.746 3.767 2.41 6.328 4.972 7.684 7.684 1.507 2.561 2.26 5.5 2.26 8.814 0 5.123-1.959 9.19-5.876 12.204-3.767 3.013-8.588 4.52-14.464 4.52Zm54.24 0c-4.821 0-9.115-1.205-12.882-3.616-3.767-2.561-6.78-6.102-9.04-10.622-2.11-4.52-3.164-9.643-3.164-15.368 0-5.273.904-10.396 2.712-15.368 1.959-4.972 4.746-9.567 8.362-13.786a59.042 59.042 0 0 1 12.43-11.3C82.565 3.917 87.839 1.507 93.564 0l11.074 13.786c-6.479 2.561-11.677 5.951-15.594 10.17-3.767 4.219-5.65 7.835-5.65 10.848 0 1.356.377 2.863 1.13 4.52.904 1.507 2.637 3.089 5.198 4.746 3.767 2.41 6.328 4.972 7.684 7.684 1.507 2.561 2.26 5.5 2.26 8.814 0 5.123-1.959 9.19-5.876 12.204-3.767 3.013-8.588 4.52-14.464 4.52Z" />
-//     </svg>
-//   )
-// }
-// export function Testimonials() {
-//   return (
-//     <section id="testimonials" aria-label="What our customers are saying" className="py-20 sm:py-32">
-//       <div className="container">
-//         <div className="mx-auto max-w-2xl md:text-center">
-//           <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl dark:text-slate-100">
-//             Why students love EurekaPad
-//           </h2>
-//           <p className="mt-4 text-lg tracking-tight text-slate-700 dark:text-slate-300">
-//             By students, for students. EurekaPad is the app that speaks your language.
-//           </p>
-//         </div>
-//         <ul
-//           role="list"
-//           className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:gap-8 lg:mt-20 lg:max-w-none lg:grid-cols-3"
-//         >
-//           {testimonials.map((column, columnIndex) => (
-//             <li key={columnIndex}>
-//               <ul role="list" className="flex flex-col gap-y-6 sm:gap-y-8">
-//                 {column.map((testimonial, testimonialIndex) => (
-//                   <li key={testimonialIndex}>
-//                     <figure className="relative rounded-2xl bg-white p-6 shadow-xl shadow-slate-900/10 dark:bg-slate-800 dark:shadow-blue-500/20">
-//                       <QuoteIcon className="absolute left-6 top-6 fill-slate-100 dark:fill-slate-900" />
-//                       <blockquote className="relative">
-//                         <p className="text-lg tracking-tight text-slate-900 dark:text-slate-100">
-//                           {testimonial.content}
-//                         </p>
-//                       </blockquote>
-//                       <figcaption className="relative mt-6 flex items-center justify-between border-t border-slate-100 pt-6">
-//                         <div>
-//                           <div className="font-display text-base text-slate-900 dark:text-slate-100">
-//                             {testimonial.author.name}
-//                           </div>
-//                           <div className="mt-1 text-sm text-slate-500 dark:text-slate-300">
-//                             {testimonial.author.role}
-//                           </div>
-//                         </div>
-//                         <div className="overflow-hidden">
-//                           <Image
-//                             className="w-14 object-cover"
-//                             src={testimonial.author.image}
-//                             alt=""
-//                             width={56}
-//                             height={56}
-//                           />
-//                         </div>
-//                       </figcaption>
-//                     </figure>
-//                   </li>
-//                 ))}
-//               </ul>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//     </section>
-//   )
-// }
 import Image from 'next/image'
 
-import allthenticateImage from '@/images/allthenticate.png'
-import cambridgeImage from '@/images/cambridge_square.png'
-import nusImage from '@/images/nus_crest.png'
-
-import { useScrollAnimation } from '../utils/useScrollAnimation'
+const featuredTestimonial = {
+  body: "The UI is so amazing, I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
+  author: {
+    name: 'Gracie Zhou',
+    role: 'Computer Science @ Cambridge',
+    imageUrl: '/placeholder.svg?height=400&width=400',
+    logoUrl: '/placeholder.svg?height=100&width=100',
+  },
+}
 
 const testimonials = [
-  {
-    quote:
-      'EurekaPad is the perfect middle ground between Google Docs and LaTeX. I never knew how much I needed this until I started using it.',
-    author: 'Kai Xuan Lee',
-    role: 'Computer Science @ NUS',
-    logo: nusImage,
-  },
-  {
-    quote:
-      "The UI is so amazing, I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
-    author: 'Gracie Zhou',
-    role: 'Computer Science @ Cambridge',
-    logo: cambridgeImage,
-  },
-  {
-    quote:
-      'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
-    author: 'Chad Spensky',
-    role: 'CEO @ Allthenticate',
-    logo: allthenticateImage,
-  },
+  [
+    [
+      {
+        body: 'EurekaPad is the perfect middle ground between Google Docs and LaTeX. I never knew how much I needed this until I started using it.',
+        author: {
+          name: 'Kai Xuan Lee',
+          role: 'Computer Science @ NUS',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+      {
+        body: 'The math input feature alone saved me hours of work. Being able to just speak equations and have them formatted perfectly is incredible.',
+        author: {
+          name: 'Sophia Rodriguez',
+          role: 'Physics PhD @ MIT',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+    ],
+    [
+      {
+        body: 'I use EurekaPad for all my research notes now. The ability to collaborate with my lab partners in real-time has streamlined our entire workflow.',
+        author: {
+          name: 'James Wilson',
+          role: 'Biochemistry @ Stanford',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+      {
+        body: 'As someone who struggles with LaTeX syntax, EurekaPad has been a lifesaver for my mathematics coursework. I can focus on the content instead of formatting.',
+        author: {
+          name: 'Emma Chen',
+          role: 'Mathematics @ ETH Zurich',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+    ],
+  ],
+  [
+    [
+      {
+        body: 'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
+        author: {
+          name: 'Chad Spensky',
+          role: 'CEO @ Allthenticate',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+      {
+        body: 'The live transcription feature has completely changed how I take notes during lectures. I can actually pay attention instead of frantically typing.',
+        author: {
+          name: 'Olivia Taylor',
+          role: 'Engineering @ Georgia Tech',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+    ],
+    [
+      {
+        body: "I've tried every note-taking app out there, and EurekaPad is the only one that truly understands the needs of STEM students. It's become essential to my studies.",
+        author: {
+          name: 'David Park',
+          role: 'Computer Engineering @ UC Berkeley',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+      {
+        body: 'The seamless integration between handwritten notes and digital formatting is brilliant. EurekaPad has completely transformed my research documentation process.',
+        author: {
+          name: 'Aisha Johnson',
+          role: 'Neuroscience @ Johns Hopkins',
+          imageUrl: '/placeholder.svg?height=400&width=400',
+          logoUrl: '/placeholder.svg?height=100&width=100',
+        },
+      },
+    ],
+  ],
 ]
 
-export default function Testimonials() {
-  const { ref, isVisible } = useScrollAnimation()
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
+}
 
+export default function Testimonials() {
   return (
-    <section
-      ref={ref}
-      className={`py-24 px-4 sm:px-6 lg:px-8 transition-opacity duration-1000 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-    >
-      <div className="container mx-auto max-w-6xl">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Why students love EurekaPad</h2>
-          <p className="text-xl text-gray-600">
+    <div className="relative isolate bg-white pb-32 pt-24 sm:pt-32">
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-1/2 -z-10 -translate-y-1/2 transform-gpu overflow-hidden opacity-30 blur-3xl"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+          }}
+          className="ml-[max(50%,38rem)] aspect-[1313/771] w-[82.0625rem] bg-gradient-to-tr from-blue-300 to-blue-600"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 -z-10 flex transform-gpu overflow-hidden pt-32 opacity-25 blur-3xl sm:pt-40 xl:justify-end"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+          }}
+          className="ml-[-22rem] aspect-[1313/771] w-[82.0625rem] flex-none origin-top-right rotate-[30deg] bg-gradient-to-tr from-blue-300 to-blue-600 xl:ml-0 xl:mr-[calc(50%-12rem)]"
+        />
+      </div>
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-xl text-center">
+          <h2 className="text-lg font-semibold leading-8 tracking-tight text-blue-600">Testimonials</h2>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Why students love EurekaPad
+          </p>
+          <p className="mt-4 text-lg leading-8 text-gray-600">
             By students, for students. EurekaPad is the app that speaks your language.
           </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className={`flex flex-col p-8 rounded-2xl bg-gray-50 transition-all duration-1000 ease-in-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-              style={{ transitionDelay: `${index * 200}ms` }}
-            >
-              <blockquote className="flex-1 text-lg mb-8">{testimonial.quote}</blockquote>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">{testimonial.author}</div>
-                  <div className="text-sm text-gray-600">{testimonial.role}</div>
-                </div>
-                <Image
-                  src={testimonial.logo || '/placeholder.svg'}
-                  alt={`${testimonial.author}'s institution logo`}
-                  width={48}
-                  height={48}
-                  className="rounded-lg"
-                />
+        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
+          <figure className="col-span-2 hidden sm:block rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1">
+            <blockquote className="p-12 text-xl font-semibold leading-8 tracking-tight text-gray-900">
+              <p>{`"${featuredTestimonial.body}"`}</p>
+            </blockquote>
+            <figcaption className="flex items-center gap-x-4 border-t border-gray-900/10 px-6 py-4">
+              <Image
+                src={featuredTestimonial.author.imageUrl || '/placeholder.svg'}
+                alt=""
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full bg-gray-50"
+              />
+              <div className="flex-auto">
+                <div className="font-semibold">{featuredTestimonial.author.name}</div>
+                <div className="text-gray-600">{featuredTestimonial.author.role}</div>
               </div>
+              <Image
+                src={featuredTestimonial.author.logoUrl || '/placeholder.svg'}
+                alt=""
+                width={40}
+                height={40}
+                className="h-10 w-auto"
+              />
+            </figcaption>
+          </figure>
+          {testimonials.map((columnGroup, columnGroupIdx) => (
+            <div key={columnGroupIdx} className="space-y-8 xl:contents xl:space-y-0">
+              {columnGroup.map((column, columnIdx) => (
+                <div
+                  key={columnIdx}
+                  className={classNames(
+                    (columnGroupIdx === 0 && columnIdx === 0) ||
+                      (columnGroupIdx === testimonials.length - 1 && columnIdx === columnGroup.length - 1)
+                      ? 'xl:row-span-2'
+                      : 'xl:row-start-1',
+                    'space-y-8',
+                  )}
+                >
+                  {column.map(testimonial => (
+                    <figure
+                      key={testimonial.author.name}
+                      className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-900/5"
+                    >
+                      <blockquote className="text-gray-900">
+                        <p>{`"${testimonial.body}"`}</p>
+                      </blockquote>
+                      <figcaption className="mt-6 flex items-center gap-x-4">
+                        <Image
+                          src={testimonial.author.imageUrl || '/placeholder.svg'}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="h-10 w-10 rounded-full bg-gray-50"
+                        />
+                        <div>
+                          <div className="font-semibold">{testimonial.author.name}</div>
+                          <div className="text-gray-600">{testimonial.author.role}</div>
+                        </div>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ))}
             </div>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   )
 }

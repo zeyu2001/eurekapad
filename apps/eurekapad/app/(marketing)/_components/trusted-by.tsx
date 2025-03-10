@@ -1,25 +1,26 @@
 import Image from 'next/image'
 
+import CambridgeImage from '@/images/cambridge.png'
+import ImperialImage from '@/images/imperial.png'
+import NUSImage from '@/images/nus.png'
+import SUTDImage from '@/images/sutd-logo.png'
+
 const universities = [
   {
-    name: 'MIT',
-    logo: '/placeholder.svg?height=40&width=120',
-  },
-  {
-    name: 'Stanford',
-    logo: '/placeholder.svg?height=40&width=120',
-  },
-  {
-    name: 'Harvard',
-    logo: '/placeholder.svg?height=40&width=120',
-  },
-  {
-    name: 'Berkeley',
-    logo: '/placeholder.svg?height=40&width=120',
+    name: 'NUS',
+    logo: NUSImage,
   },
   {
     name: 'Cambridge',
-    logo: '/placeholder.svg?height=40&width=120',
+    logo: CambridgeImage,
+  },
+  {
+    name: 'SUTD',
+    logo: SUTDImage,
+  },
+  {
+    name: 'Imperial',
+    logo: ImperialImage,
   },
 ]
 
@@ -33,15 +34,12 @@ export default function TrustedBy() {
 
         <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
           {universities.map(university => (
-            <div
-              key={university.name}
-              className="flex items-center grayscale opacity-70 hover:opacity-100 transition-opacity"
-            >
+            <div key={university.name} className="flex items-center opacity-80 hover:opacity-100 transition-opacity">
               <Image
                 src={university.logo || '/placeholder.svg'}
                 alt={`${university.name} logo`}
-                width={120}
-                height={40}
+                width={200}
+                height={100}
                 className="h-8 w-auto"
               />
             </div>

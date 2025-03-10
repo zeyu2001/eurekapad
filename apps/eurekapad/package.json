@@ -57,6 +57,7 @@
     "dayjs": "^1.11.13",
     "desmos": "^1.5.4",
     "emoji-mart": "^5.6.0",
+    "framer-motion": "^12.4.10",
     "lucide-react": "^0.469.0",
     "mathlive": "^0.103.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
