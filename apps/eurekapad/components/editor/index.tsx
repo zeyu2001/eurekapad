@@ -199,8 +199,12 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
       // let default behavior happen first
       setTimeout(() => {
-        const firstBlockWithContent = editor.document.find(block => block.content && block.content.length > 0)
-        const lastBlockWithContent = editor.document.reverse().find(block => block.content && block.content.length > 0)
+        const firstBlockWithContent = editor.document.find(
+          block => block.content && 'length' in block.content && block.content.length > 0,
+        )
+        const lastBlockWithContent = editor.document
+          .reverse()
+          .find(block => block.content && 'length' in block.content && block.content.length > 0)
         if (firstBlockWithContent && lastBlockWithContent) {
           editor.setSelection(firstBlockWithContent, lastBlockWithContent)
         }
