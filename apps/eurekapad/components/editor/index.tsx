@@ -201,13 +201,27 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
       const selection = editor.getSelection()
       const position = editor.getTextCursorPosition()
 
+      const blockTypesToNotDelete = [
+        'audio',
+        'codeblock',
+        'file',
+        'graph',
+        'image',
+        'math',
+        'table',
+        'transcription',
+        'video',
+      ]
+
       if (selection === undefined && position && position.block.type === 'paragraph') {
         const block = position.block
         const blockPos = editor._tiptapEditor.state.doc.resolve(editor._tiptapEditor.state.selection.anchor)
+        const offset = editor._tiptapEditor.state.selection.$anchor.parentOffset
 
         const isTopBlock = blockPos.depth === 3
         const isEmptyBlock = block.content.length === 0 && block.children.length === 0
         const isEmptyContentWithChildren = block.content.length === 0 && block.children.length > 0
+        const isAtStart = offset === 0
 
         if (isTopBlock && isEmptyBlock) {
           event.stopPropagation()
@@ -233,6 +247,13 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
           if (position.prevBlock) {
             editor.setTextCursorPosition(position.prevBlock, 'end')
           }
+        } else if (isAtStart && position.prevBlock && blockTypesToNotDelete.includes(position.prevBlock.type)) {
+          // when cursor is at the start of non-empty block, it also shouldn't immediately delete the previous block
+          // this only applies to rich blocks like codeblock, graph, etc.
+          // BlockNote already handles merging of blocks with content
+          event.stopPropagation()
+          event.preventDefault()
+          editor.setTextCursorPosition(position.prevBlock, 'end')
         }
       }
     }
