@@ -25,13 +25,16 @@ export const ansiToSpans = (text: string) => {
   ))
 }
 
-export const getTitle = (subtitle: string) => `${subtitle} | EurekaPad`
+export const getTitle = (subtitle: string) => `${subtitle || 'Untitled'} | EurekaPad`
 
 export const getUrlFriendlyTitle = (title: string, id: string) =>
-  `${title
-    .trim()
-    .replace(/[^0-9a-z_]/gi, '-')
-    .replace(/-+/g, '-')
-    .replace(/-$/, '')
-    .split(/-/)
-    .reduce((acc, curr) => (`${acc}-${curr}`.length <= 100 ? `${acc}-${curr}` : acc))}-${id}`
+  `${
+    title ||
+    'Untitled'
+      .trim()
+      .replace(/[^0-9a-z_]/gi, '-')
+      .replace(/-+/g, '-')
+      .replace(/-$/, '')
+      .split(/-/)
+      .reduce((acc, curr) => (`${acc}-${curr}`.length <= 100 ? `${acc}-${curr}` : acc))
+  }-${id}`

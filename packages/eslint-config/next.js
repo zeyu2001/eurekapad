@@ -1,8 +1,9 @@
-import pluginReactHooks from "eslint-plugin-react-hooks";
-import pluginReact from "eslint-plugin-react";
-import globals from "globals";
 import pluginNext from "@next/eslint-plugin-next";
 import tsEslintParser from "@typescript-eslint/parser"
+import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import tailwind from "eslint-plugin-tailwindcss";
+import globals from "globals";
 import { config as baseConfig } from "./base.js";
 
 /** @type {import("eslint").Linter.Config[]} */
@@ -37,6 +38,7 @@ export const nextJsConfig = [
       "react/react-in-jsx-scope": "off",
     },
   },
+  ...tailwind.configs['flat/recommended'],
   {
     languageOptions: {
       parser: tsEslintParser,

@@ -23,7 +23,7 @@ export const Navbar = () => {
       )}
     >
       <Logo />
-      <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
+      <div className="flex w-full items-center justify-between gap-x-2 md:ml-auto md:justify-end">
         <AuthLoading>
           <Spinner />
         </AuthLoading>

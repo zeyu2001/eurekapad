@@ -30,7 +30,7 @@ export const getUploadUrl = action({
 
     const containerName = 'uploads'
 
-    const containerClient = await blobServiceClient.getContainerClient(containerName)
+    const containerClient = blobServiceClient.getContainerClient(containerName)
 
     const blobName = randomUUID()
     const blockBlobClient = containerClient.getBlockBlobClient(blobName)

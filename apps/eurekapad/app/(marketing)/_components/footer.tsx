@@ -8,10 +8,10 @@ export function Footer() {
   return (
     <footer className="dark:text-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="py-16 flex items-center justify-center flex-col">
-          <Logo className="h-10 w-auto flex" />
+        <div className="flex flex-col items-center justify-center py-16">
+          <Logo className="flex h-10 w-auto" />
           <nav className="mt-10 text-sm" aria-label="quick links">
-            <div className="-my-1 flex justify-center gap-x-6 text-center flex-wrap">
+            <div className="-my-1 flex flex-wrap justify-center gap-x-6 text-center">
               <NavLink href="/help">Help Center</NavLink>
               <NavLink href="/help/privacy-policy">Privacy Policy</NavLink>
               <NavLink href="/help/terms-and-conditions">Terms & Conditions</NavLink>
@@ -22,7 +22,7 @@ export function Footer() {
           <div className="flex gap-x-6">
             <Link href="https://x.com/eurekapad" className="group" aria-label="EurekaPad on X">
               <svg
-                className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300"
+                className="size-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300"
                 aria-hidden="true"
                 viewBox="0 0 24 24"
               >
@@ -30,20 +30,20 @@ export function Footer() {
               </svg>
             </Link>
             <Link href="https://www.instagram.com/eurekapad" className="group" aria-label="EurekaPad on Instagram">
-              <FaInstagram className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
+              <FaInstagram className="size-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
             </Link>
             <Link
               href="https://www.linkedin.com/company/eurekapad"
               className="group"
               aria-label="EurekaPad on LinkedIn"
             >
-              <FaLinkedin className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
+              <FaLinkedin className="size-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
             </Link>
             <Link href="https://discord.gg/CM6zFT6MRr" className="group" aria-label="EurekaPad on Discord">
-              <FaDiscord className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
+              <FaDiscord className="size-6 fill-slate-500 group-hover:fill-slate-700 dark:hover:fill-slate-300" />
             </Link>
           </div>
-          <p className="mt-6 text-sm text-slate-500 sm:mt-0 darK:text-slate-300">
+          <p className="darK:text-slate-300 mt-6 text-sm text-slate-500 sm:mt-0">
             Copyright &copy; {new Date().getFullYear()} EurekaPad. All rights reserved.
           </p>
         </div>

@@ -38,23 +38,19 @@ const features = [
 ]
 
 export function Demo() {
-  const [tabOrientation, setTabOrientation] = useState<'horizontal' | 'vertical'>('horizontal')
   const [isLg, setIsLg] = useState(false)
 
   useEffect(() => {
     const lgMediaQuery = window.matchMedia('(min-width: 1024px)')
 
     function onMediaQueryChange({ matches }: { matches: boolean }) {
-      setTabOrientation(matches ? 'vertical' : 'horizontal')
       setIsLg(matches)
     }
 
     onMediaQueryChange(lgMediaQuery)
     lgMediaQuery.addEventListener('change', onMediaQueryChange)
 
-    return () => {
-      lgMediaQuery.removeEventListener('change', onMediaQueryChange)
-    }
+    return () => lgMediaQuery.removeEventListener('change', onMediaQueryChange)
   }, [])
 
   return (
@@ -71,7 +67,7 @@ export function Demo() {
         height={1636}
         unoptimized
       />
-      <div className="relative max-w-7xl container">
+      <div className="container relative max-w-7xl">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">
             The last note-taking app you&apos;ll ever need.
@@ -82,7 +78,7 @@ export function Demo() {
         </div>
         <TabGroup
           className="mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0"
-          vertical={tabOrientation === 'vertical'}
+          vertical={isLg}
         >
           {({ selectedIndex }) => (
             <>
@@ -101,7 +97,7 @@ export function Demo() {
                       <h3>
                         <Tab
                           className={clsx(
-                            'font-display text-lg ui-not-focus-visible:outline-none',
+                            'ui-not-focus-visible:outline-none font-display text-lg',
                             selectedIndex === featureIndex
                               ? 'text-blue-600 lg:text-white'
                               : 'text-blue-100 hover:text-white lg:text-white',
@@ -135,14 +131,14 @@ export function Demo() {
                     <div
                       className={clsx(
                         'mt-10 overflow-hidden rounded-xl shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0',
-                        isLg ? 'bg-white dark:bg-[#1F1F1F] p-4' : 'mt-10 w-[45rem] overflow-hidden sm:w-auto',
+                        isLg ? 'bg-white p-4 dark:bg-[#1F1F1F]' : 'mt-10 w-[45rem] overflow-hidden sm:w-auto',
                       )}
                     >
                       <div>
-                        {isLg && <Editor initialContent={feature.initialContent} onChange={() => {}} editable={true} />}
+                        {isLg && <Editor initialContent={feature.initialContent} editable={true} />}
                         {!isLg && feature.image && (
                           <Image
-                            className="w-full relative z-10"
+                            className="relative z-10 w-full"
                             src={feature.image}
                             alt={feature.title}
                             priority
@@ -150,7 +146,7 @@ export function Demo() {
                           />
                         )}
                         {!isLg && feature.video && (
-                          <video className="w-full relative z-10" src={feature.video} autoPlay loop muted playsInline />
+                          <video className="relative z-10 w-full" src={feature.video} autoPlay loop muted playsInline />
                         )}
                       </div>
                     </div>

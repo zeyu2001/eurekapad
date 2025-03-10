@@ -1,9 +1,9 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
-import turboPlugin from "eslint-plugin-turbo";
-import tseslint from "typescript-eslint";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import turboPlugin from "eslint-plugin-turbo";
 import unusedImports from "eslint-plugin-unused-imports";
+import tseslint from "typescript-eslint";
 
 /** @type {import("eslint").Linter.Config[]}*/
 export const config = [

@@ -55,11 +55,11 @@ export const SearchCommand = () => {
             <CommandItem
               key={document._id}
               value={`${document._id}-${document.title}`}
-              title={document.title}
+              title={document.title || 'Untitled'}
               onSelect={() => onSelect(document._id)}
             >
-              {document.icon ? <p className="mr-2 text-[18px]">{document.icon}</p> : <File className="mr-2 h-4 w-4" />}
-              <span>{document.title}</span>
+              {document.icon ? <p className="mr-2 text-[18px]">{document.icon}</p> : <File className="mr-2 size-4" />}
+              <span>{document.title || 'Untitled'}</span>
             </CommandItem>
           ))}
         </CommandGroup>

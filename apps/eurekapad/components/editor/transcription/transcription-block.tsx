@@ -44,10 +44,6 @@ const TranscriptionComponent = ({
 
   const audioConfig = AudioConfig.fromDefaultMicrophoneInput()
 
-  const handleRecognizing = useCallback((e: SpeechRecognitionEventArgs) => {
-    console.log('Recognizing:', e.result.text)
-  }, [])
-
   const handleRecognized = useCallback(
     (e: SpeechRecognitionEventArgs) => {
       console.log('Recognized:', e.result.text)
@@ -77,10 +73,6 @@ const TranscriptionComponent = ({
     if (isListening) {
       recognizer.startListening()
 
-      recognizer.setRecognizingHandler((s, e) => {
-        handleRecognizing(e)
-      })
-
       recognizer.setRecognizedHandler(async (s, e) => {
         if (e.result.reason == ResultReason.RecognizedSpeech) {
           handleRecognized(e)
@@ -101,14 +93,10 @@ const TranscriptionComponent = ({
         recognizer.stopListening()
         setIsListening(false)
       })
-
-      recognizer.setSessionStoppedHandler(() => {
-        console.log('\n    Session stopped event.')
-      })
     } else {
       recognizer.stopListening()
     }
-  }, [isListening, speechConfig, audioConfig, handleRecognized, handleRecognizing])
+  }, [isListening, speechConfig, audioConfig, handleRecognized])
 
   useEffect(() => {
     handleListen()
@@ -120,11 +108,7 @@ const TranscriptionComponent = ({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button className="mb-4" variant="outline" size="icon" onClick={() => setIsListening(l => !l)}>
-              {isListening ? (
-                <FaRegStopCircle color="red" className="h-4 w-4" />
-              ) : (
-                <AiOutlineAudio className="h-4 w-4" />
-              )}
+              {isListening ? <FaRegStopCircle color="red" className="size-4" /> : <AiOutlineAudio className="size-4" />}
             </Button>
           </TooltipTrigger>
           <TooltipContent>{isListening ? 'Stop recording' : 'Start recording'}</TooltipContent>
@@ -144,7 +128,7 @@ const TranscriptionComponent = ({
           </PopoverContent>
         </Popover>
       </div>
-      <AlertDescription className="w-full max-h-52 overflow-y-scroll my-4 bg-background">
+      <AlertDescription className="my-4 max-h-52 w-full overflow-y-scroll bg-background">
         <div ref={contentRef} className="w-full"></div>
       </AlertDescription>
     </Alert>
@@ -158,7 +142,7 @@ export const TranscriptionBlock: FC<
 
   if (!token || !region) {
     return (
-      <div className="flex items-center h-32 w-full justify-center">
+      <div className="flex h-32 w-full items-center justify-center">
         <Spinner />
       </div>
     )

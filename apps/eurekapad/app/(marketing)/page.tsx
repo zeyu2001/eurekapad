@@ -5,7 +5,7 @@ import { Testimonials } from './_components/testimonials'
 
 const MarketingPage = () => {
   return (
-    <div className="min-h-full flex flex-col dark:bg-[#1F1F1F]">
+    <div className="flex min-h-full flex-col dark:bg-[#1F1F1F]">
       <Heading />
       <Demo />
       <Testimonials />

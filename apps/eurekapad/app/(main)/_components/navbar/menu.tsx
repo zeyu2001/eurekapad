@@ -44,21 +44,21 @@ export const Menu = ({ documentId }: MenuProps) => {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button size="sm" variant="ghost">
-          <MoreHorizontal className="h-4 w-4" />
+          <MoreHorizontal className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-60" align="end" alignOffset={8} forceMount>
         <DropdownMenuItem onClick={onArchive}>
-          <Trash className="h-4 w-4 mr-2" />
+          <Trash className="mr-2 size-4" />
           Delete
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <div className="text-xs text-muted-foreground p-2">Last edited by: {user?.fullName}</div>
+        <div className="p-2 text-xs text-muted-foreground">Last edited by: {user?.fullName}</div>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
 Menu.Skeleton = function MenuSkeleton() {
-  return <Skeleton className="h-10 w-10" />
+  return <Skeleton className="size-10" />
 }

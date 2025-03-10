@@ -22,6 +22,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       turbo:
         specifier: ^2.3.3
         version: 2.3.3
@@ -148,9 +151,6 @@ importers:
       ansicolor:
         specifier: ^2.0.3
         version: 2.0.3
-      axios:
-        specifier: ^1.7.9
-        version: 1.7.9
       babel-plugin-react-compiler:
         specifier: 19.0.0-beta-55955c9-20241229
         version: 19.0.0-beta-55955c9-20241229
@@ -381,6 +381,9 @@ importers:
       eslint-plugin-simple-import-sort:
         specifier: ^12.1.1
         version: 12.1.1(eslint@9.17.0(jiti@1.21.7))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.18.0
+        version: 3.18.0(tailwindcss@3.4.17)
       eslint-plugin-turbo:
         specifier: ^2.3.0
         version: 2.3.3(eslint@9.17.0(jiti@1.21.7))
@@ -3381,9 +3384,6 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.7.9:
-    resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
-
   babel-plugin-react-compiler@19.0.0-beta-55955c9-20241229:
     resolution: {integrity: sha512-APpa9fRiG5UN5kxnB/vznaSBKbXwAWZs6QshN3MLntzWa4cUhOxzUSd7Ohmr5sLQaM0ZHjjOg07pw1ZoR7+Oog==}
 
@@ -3900,6 +3900,10 @@ packages:
     resolution: {integrity: sha512-3T8uNMC3OQTHkFUsFq8r/BwAXLHvU/9O9mE0fBc/MY5iq/8H7ncvO947LmYA6ldWw9Uh8Yhf25zu6n7nML5QWQ==}
     engines: {node: '>= 0.4'}
 
+  es-set-tostringtag@2.1.0:
+    resolution: {integrity: sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==}
+    engines: {node: '>= 0.4'}
+
   es-shim-unscopables@1.0.2:
     resolution: {integrity: sha512-J3yBRXCzDu4ULnQwxyToo/OjdMx6akgVC7K6few0a7F/0wLtmKKN7I73AH5T2836UuXRqN7Qg+IIUw/+YJksRw==}
 
@@ -3969,6 +3973,12 @@ packages:
     resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
     peerDependencies:
       eslint: '>=5.0.0'
+
+  eslint-plugin-tailwindcss@3.18.0:
+    resolution: {integrity: sha512-PQDU4ZMzFH0eb2DrfHPpbgo87Zgg2EXSMOj1NSfzdZm+aJzpuwGerfowMIaVehSREEa0idbf/eoNYAOHSJoDAQ==}
+    engines: {node: '>=18.12.0'}
+    peerDependencies:
+      tailwindcss: ^3.4.0
 
   eslint-plugin-turbo@2.3.3:
     resolution: {integrity: sha512-j8UEA0Z+NNCsjZep9G5u5soDQHcXq/x4amrwulk6eHF1U91H2qAjp5I4jQcvJewmccCJbVp734PkHHTRnosjpg==}
@@ -4152,15 +4162,6 @@ packages:
   flatted@3.3.2:
     resolution: {integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==}
 
-  follow-redirects@1.15.9:
-    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
 
@@ -4168,8 +4169,8 @@ packages:
     resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
     engines: {node: '>=14'}
 
-  form-data@4.0.1:
-    resolution: {integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==}
+  form-data@4.0.2:
+    resolution: {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
     engines: {node: '>= 6'}
 
   fraction.js@4.3.7:
@@ -5713,9 +5714,6 @@ packages:
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
-
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   proxy-target@3.0.2:
     resolution: {integrity: sha512-FFE1XNwXX/FNC3/P8HiKaJSy/Qk68RitG/QEcLy/bVnTAPlgTAWPZKh0pARLAnpfXQPKyalBhk009NRTgsk8vQ==}
@@ -10176,14 +10174,6 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  axios@1.7.9:
-    dependencies:
-      follow-redirects: 1.15.9
-      form-data: 4.0.1
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
   babel-plugin-react-compiler@19.0.0-beta-55955c9-20241229:
     dependencies:
       '@babel/types': 7.26.3
@@ -10771,6 +10761,13 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
 
+  es-set-tostringtag@2.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      get-intrinsic: 1.2.6
+      has-tostringtag: 1.0.2
+      hasown: 2.0.2
+
   es-shim-unscopables@1.0.2:
     dependencies:
       hasown: 2.0.2
@@ -10918,6 +10915,12 @@ snapshots:
   eslint-plugin-simple-import-sort@12.1.1(eslint@9.17.0(jiti@1.21.7)):
     dependencies:
       eslint: 9.17.0(jiti@1.21.7)
+
+  eslint-plugin-tailwindcss@3.18.0(tailwindcss@3.4.17):
+    dependencies:
+      fast-glob: 3.3.2
+      postcss: 8.4.49
+      tailwindcss: 3.4.17
 
   eslint-plugin-turbo@2.3.3(eslint@9.17.0(jiti@1.21.7)):
     dependencies:
@@ -11138,8 +11141,6 @@ snapshots:
 
   flatted@3.3.2: {}
 
-  follow-redirects@1.15.9: {}
-
   for-each@0.3.3:
     dependencies:
       is-callable: 1.2.7
@@ -11149,10 +11150,11 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  form-data@4.0.1:
+  form-data@4.0.2:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
 
   fraction.js@4.3.7: {}
@@ -11813,7 +11815,7 @@ snapshots:
       cssstyle: 4.2.1
       data-urls: 5.0.0
       decimal.js: 10.4.3
-      form-data: 4.0.1
+      form-data: 4.0.2
       html-encoding-sniffer: 4.0.0
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -13237,8 +13239,6 @@ snapshots:
       prosemirror-transform: 1.10.2
 
   proto-list@1.2.4: {}
-
-  proxy-from-env@1.1.0: {}
 
   proxy-target@3.0.2: {}
 

@@ -77,7 +77,7 @@ const LanguageDropdown = ({
       <PopoverTrigger asChild>
         <Button variant="ghost" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
           {capitalizeFirstLetter(value) || 'Select language...'}
-          <ChevronsDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsDown className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
@@ -87,11 +87,11 @@ const LanguageDropdown = ({
             <CommandEmpty>No language found.</CommandEmpty>
             <ScrollArea className="overflow-auto">
               <CommandGroup>
-                <p className="text-xs text-gray-500 px-4 py-2">Runnable</p>
+                <p className="px-4 py-2 text-xs text-gray-500">Runnable</p>
                 {runnableLanguages.map(lang => (
                   <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
                 ))}
-                <p className="text-xs text-gray-500 px-4 py-2">Other</p>
+                <p className="px-4 py-2 text-xs text-gray-500">Other</p>
                 {otherLanguages.map(lang => (
                   <LanguageCommandItem lang={lang} selected={value === lang.value} onSelect={onSelect} key={lang.key} />
                 ))}
@@ -256,8 +256,8 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   }, [debouncedHeight, handleInputChange])
 
   return (
-    <div className="w-full border border-gray-200 rounded-lg dark:border-none">
-      <div className="flex text-sm p-2 bg-background rounded-t-lg justify-between">
+    <div className="w-full rounded-lg border border-gray-200 dark:border-none">
+      <div className="flex justify-between rounded-t-lg bg-background p-2 text-sm">
         <LanguageDropdown language={language} onChange={lang => handleInputChange({ language: lang })} />
         {runnable && (
           <div>
@@ -302,28 +302,28 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
         />
         <div
           className={clsx(
-            'flex justify-center text-xs bg-secondary dark:bg-secondary-dark dark:text-gray-200 text-gray-700 p-2 cursor-row-resize',
+            'flex cursor-row-resize justify-center bg-secondary p-2 text-xs text-gray-700 dark:text-gray-200',
             isResizing && 'bg-blue-200 dark:bg-blue-800',
           )}
           onMouseDown={handleMouseDown}
         >
-          <ChevronsDown className="mr-2 h-4 w-4" />
+          <ChevronsDown className="mr-2 size-4" />
         </div>
       </div>
 
       <div>
         {stdout && (
-          <div className={clsx('font-mono p-4 bg-background border-green-600 border-l-4', stderr || 'rounded-b-lg')}>
+          <div className={clsx('border-l-4 border-green-600 bg-background p-4 font-mono', stderr || 'rounded-b-lg')}>
             {stdout.split('\n').map((line, index) => (
               <div key={index}>{ansiToSpans(line)}</div>
             ))}
           </div>
         )}
         {stderr && (
-          <div className="font-mono p-4 bg-background rounded-b-lg border-red-600 border-l-4">
+          <div className="rounded-b-lg border-l-4 border-red-600 bg-background p-4 font-mono">
             {stderr.split('\n').map((line, index) => (
               <div key={index}>
-                {index === 0 && <CircleAlert className="mr-4 my-2 inline-block text-red-600" />}
+                {index === 0 && <CircleAlert className="my-2 mr-4 inline-block text-red-600" />}
                 {ansiToSpans(line)}
               </div>
             ))}
@@ -332,7 +332,7 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
       </div>
       <div
         className={clsx(
-          'w-full place-items-center grid',
+          'grid w-full place-items-center',
           images.length >= 2 ? 'grid-cols-2' : 'grid-cols-1',
           isProcessingMedia && 'h-64',
         )}

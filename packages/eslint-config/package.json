@@ -17,6 +17,7 @@
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-tailwindcss": "^3.18.0",
     "eslint-plugin-turbo": "^2.3.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^15.14.0",

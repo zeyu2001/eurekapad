@@ -13,9 +13,7 @@ import { v } from 'convex/values'
 import { action } from './_generated/server'
 
 export const parsePdf = action({
-  args: {
-    fileUrl: v.string(),
-  },
+  args: { fileUrl: v.string() },
   handler: async (ctx, args): Promise<[AnalyzeResultOutput, string[]]> => {
     const identity = await ctx.auth.getUserIdentity()
 
@@ -23,31 +21,19 @@ export const parsePdf = action({
       throw new Error('Not authenticated')
     }
 
-    if (
-      !process.env.DOCUMENT_INTELLIGENCE_ENDPOINT ||
-      !process.env.DOCUMENT_INTELLIGENCE_API_KEY ||
-      !process.env.DOCUMENT_INTELLIGENCE_API_VERSION
-    ) {
-      throw new Error('Document Intelligence is not configured')
-    }
-
     const endpoint = process.env.DOCUMENT_INTELLIGENCE_ENDPOINT
     const apiKey = process.env.DOCUMENT_INTELLIGENCE_API_KEY
     const apiVersion = process.env.DOCUMENT_INTELLIGENCE_API_VERSION
 
-    const client = DocumentIntelligence(
-      endpoint,
-      {
-        key: apiKey,
-      },
-      { apiVersion: apiVersion },
-    )
+    if (!endpoint || !apiKey || !apiVersion) {
+      throw new Error('Document Intelligence is not configured')
+    }
+
+    const client = DocumentIntelligence(endpoint, { key: apiKey }, { apiVersion })
 
     const initialResponse = await client.path('/documentModels/{modelId}:analyze', 'prebuilt-layout').post({
       contentType: 'application/json',
-      body: {
-        urlSource: args.fileUrl,
-      },
+      body: { urlSource: args.fileUrl },
       queryParameters: { features: ['formulas'], pages: '1-5', output: ['figures'] }, // TODO: only limit free tier to 2 pages
     })
 

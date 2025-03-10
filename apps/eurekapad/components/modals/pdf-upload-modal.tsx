@@ -82,10 +82,14 @@ export const PdfUploadModal = () => {
         }
 
         const documentId = await createDocument({ title: file.name.replace(/\.pdf$/, '') })
-        await saveContent(JSON.stringify(blocks), documentId)
+        const promise = saveContent(JSON.stringify(blocks), documentId).then(() =>
+          router.push(`/documents/${documentId}`),
+        )
 
-        toast.success('Redirecting to your new document...')
-        router.push(`/documents/${documentId}`)
+        toast.promise(promise, {
+          success: 'Redirecting to your new document...',
+          error: 'Something went wrong while processing the PDF. Please try again.',
+        })
       } catch (error) {
         console.error(error)
         toast.error('Something went wrong while processing the PDF. Please try again.')
