@@ -5,6 +5,13 @@ import React from 'react'
 
 import Navbar from '../_components/navbar'
 
+interface Tag {
+  name: string
+  color: string
+  textColor: string
+  dotColor: string
+}
+
 // Function to format date string from "DD-MM-YYYY" to "Month DD, YYYY"
 const formatDate = (dateString: string) => {
   // Parse the date string (assuming format is "DD-MM-YYYY")
@@ -98,7 +105,7 @@ export default async function Changelog() {
                 {/* Content in the middle - Now wider */}
                 <div className="transform transition-all duration-300 ease-in-out max-w-4xl">
                   <div className="mb-6 flex flex-wrap gap-2">
-                    {post.tags.map((tag, index: number) => (
+                    {post.tags.map((tag: Tag, index: number) => (
                       <span
                         key={index}
                         className={`inline-flex items-center rounded-full ${tag.color} px-3 py-1 text-xs font-medium ${tag.textColor} shadow-sm`}
