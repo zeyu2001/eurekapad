@@ -199,14 +199,31 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
       // let default behavior happen first
       setTimeout(() => {
+        if (editor.getSelection() !== undefined) return
+
         const firstBlockWithContent = editor.document.find(
           block => block.content && 'length' in block.content && block.content.length > 0,
         )
         const lastBlockWithContent = editor.document
           .reverse()
           .find(block => block.content && 'length' in block.content && block.content.length > 0)
+
         if (firstBlockWithContent && lastBlockWithContent) {
-          editor.setSelection(firstBlockWithContent, lastBlockWithContent)
+          if (firstBlockWithContent !== lastBlockWithContent) {
+            editor.setSelection(firstBlockWithContent, lastBlockWithContent)
+          } else {
+            const dummyBlock = editor.insertBlocks(
+              [
+                {
+                  type: 'paragraph',
+                  content: '',
+                },
+              ],
+              firstBlockWithContent.id,
+              'after',
+            )[0]
+            editor.setSelection(firstBlockWithContent, dummyBlock)
+          }
         }
       }, 0)
     }
