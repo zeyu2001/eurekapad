@@ -1,3 +1,5 @@
+// https://github.com/DesModder/DesModder/blob/main/graph-state/state.ts
+
 /**
  * Reference sources:
  *  - core/types/*
