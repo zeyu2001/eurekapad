@@ -3,6 +3,7 @@ import Image from 'next/image'
 import AllthenticateLogo from '@/images/allthenticate.png'
 import CambridgeLogo from '@/images/cambridge_square.png'
 import NUSLogo from '@/images/nus_crest.png'
+import SITLogo from '@/images/sit_logo.png'
 
 const featuredTestimonial = {
   body: "The UI is so amazing, I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
@@ -25,11 +26,11 @@ const testimonials = [
         },
       },
       {
-        body: 'The math input feature alone saved me hours of work. Being able to just speak equations and have them formatted perfectly is incredible.',
+        body: 'Eurapakad has completely transformed the way I take technical notes, a game-changer for my workflow!',
         author: {
-          name: 'Sophia Rodriguez',
-          role: 'Physics PhD @ MIT',
-          logoUrl: '/placeholder.svg?height=100&width=100',
+          name: 'Michael Yuen',
+          role: 'Information Security @ SIT',
+          logoUrl: SITLogo,
         },
       },
     ],
