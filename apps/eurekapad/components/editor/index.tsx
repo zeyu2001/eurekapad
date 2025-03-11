@@ -13,7 +13,7 @@ import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
-import { useEffect } from 'react'
+import { type KeyboardEvent, useEffect } from 'react'
 import { toast } from 'sonner'
 import YPartyKitProvider from 'y-partykit/provider'
 import * as Y from 'yjs'
@@ -178,6 +178,124 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     editor.setTextCursorPosition({ id: block.id })
   }
 
+  const handleCodeBlockShortcut = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      // Check if user is enterring a code block
+      const currentBlock = editor.getTextCursorPosition().block
+
+      if (
+        currentBlock.type === 'paragraph' &&
+        currentBlock.content?.[0]?.type === 'text' &&
+        (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('```')
+      ) {
+        event.preventDefault()
+        replaceWithCodeBlock(currentBlock)
+      }
+    }
+  }
+
+  // temporary fix: https://github.com/TypeCellOS/BlockNote/issues/1516
+  const handleSelectAll = (event: KeyboardEvent) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+      // let default behavior happen first
+      setTimeout(() => {
+        if (editor.getSelection() !== undefined) return
+
+        const firstBlockWithContent = editor.document.find(
+          block => block.content && 'length' in block.content && block.content.length > 0,
+        )
+        const lastBlockWithContent = editor.document
+          .reverse()
+          .find(block => block.content && 'length' in block.content && block.content.length > 0)
+
+        if (firstBlockWithContent && lastBlockWithContent) {
+          if (firstBlockWithContent !== lastBlockWithContent) {
+            editor.setSelection(firstBlockWithContent, lastBlockWithContent)
+          } else {
+            const dummyBlock = editor.insertBlocks(
+              [
+                {
+                  type: 'paragraph',
+                  content: '',
+                },
+              ],
+              firstBlockWithContent.id,
+              'after',
+            )[0]
+            editor.setSelection(firstBlockWithContent, dummyBlock)
+          }
+        }
+      }, 0)
+    }
+  }
+
+  // handles the case where we are deleting an empty block right after a block with content
+  // https://github.com/TypeCellOS/BlockNote/issues/605
+  const handleBackspace = (event: KeyboardEvent) => {
+    if (event.key === 'Backspace') {
+      const selection = editor.getSelection()
+      const position = editor.getTextCursorPosition()
+
+      const blockTypesToNotDelete = [
+        'audio',
+        'codeblock',
+        'file',
+        'graph',
+        'image',
+        'math',
+        'table',
+        'transcription',
+        'video',
+      ]
+
+      if (selection === undefined && position && position.block.type === 'paragraph') {
+        const block = position.block
+        const blockPos = editor._tiptapEditor.state.doc.resolve(editor._tiptapEditor.state.selection.anchor)
+        const offset = editor._tiptapEditor.state.selection.$anchor.parentOffset
+
+        const isTopBlock = blockPos.depth === 3
+        const isEmptyBlock = block.content.length === 0 && block.children.length === 0
+        const isEmptyContentWithChildren = block.content.length === 0 && block.children.length > 0
+        const isAtStart = offset === 0
+
+        if (!isAtStart) return
+
+        if (isTopBlock && isEmptyBlock) {
+          event.stopPropagation()
+          event.preventDefault()
+          editor.removeBlocks([block])
+
+          if (position.prevBlock) {
+            editor.setTextCursorPosition(position.prevBlock, 'end')
+          }
+        } else if (
+          isTopBlock &&
+          position.prevBlock &&
+          isEmptyContentWithChildren &&
+          Array.isArray(position.prevBlock.children)
+        ) {
+          event.stopPropagation()
+          event.preventDefault()
+          editor.updateBlock(position.prevBlock, {
+            children: position.prevBlock.children.concat(block.children),
+          })
+          editor.removeBlocks([block])
+
+          if (position.prevBlock) {
+            editor.setTextCursorPosition(position.prevBlock, 'end')
+          }
+        } else if (position.prevBlock && blockTypesToNotDelete.includes(position.prevBlock.type)) {
+          // when cursor is at the start of non-empty block, it also shouldn't immediately delete the previous block
+          // this only applies to rich blocks like codeblock, graph, etc.
+          // BlockNote already handles merging of blocks with content
+          event.stopPropagation()
+          event.preventDefault()
+          editor.setTextCursorPosition(position.prevBlock, 'end')
+        }
+      }
+    }
+  }
+
   return (
     <div>
       <BlockNoteView
@@ -187,19 +305,9 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         slashMenu={false}
         onChange={() => onChange?.(JSON.stringify(editor.document, null, 2))}
         onKeyDownCapture={event => {
-          if (event.key === 'Enter') {
-            // Check if user is enterring a code block
-            const currentBlock = editor.getTextCursorPosition().block
-
-            if (
-              currentBlock.type === 'paragraph' &&
-              currentBlock.content?.[0]?.type === 'text' &&
-              (currentBlock.content[0] as StyledText<StyleSchema>).text.startsWith('```')
-            ) {
-              event.preventDefault()
-              replaceWithCodeBlock(currentBlock)
-            }
-          }
+          handleCodeBlockShortcut(event)
+          handleBackspace(event)
+          handleSelectAll(event)
         }}
       >
         <CustomSlashMenu editor={editor} />
