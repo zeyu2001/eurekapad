@@ -1,55 +1,75 @@
-import 'desmos'
-
 import { InlineContentSchema, StyleSchema } from '@blocknote/core'
 import { ReactCustomBlockRenderProps } from '@blocknote/react'
-import { FC, useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { FC, useEffect, useRef } from 'react'
 
 import { GraphBlockConfig } from './config'
-import { graphStateJSONSchema } from './schemas'
-import { GraphState } from './types'
+import { graphStateJSONSchema, graphStateSchema } from './schemas'
 
 export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, InlineContentSchema, StyleSchema>> = ({
   block,
   editor,
 }) => {
-  const result = graphStateJSONSchema.safeParse(block.props.state)
-
+  const pathname = usePathname()
   const graphRef = useRef<HTMLDivElement>(null)
-  const [graphState, setGraphState] = useState<GraphState | null>(result.error ? null : result.data)
+  const calculatorRef = useRef<Desmos.Calculator | null>(null)
 
-  const updateEditor = () => {
-    editor.updateBlock(block.id, {
-      props: {
-        ...block.props,
-        state: JSON.stringify(graphState),
-      },
-    })
-  }
-
-  // can only initialize GraphingCalculator after graphRef is mounted
+  // Initialize calculator only once
   useEffect(() => {
     if (!graphRef.current) return
 
-    const calculator = Desmos.GraphingCalculator(graphRef.current)
-
-    if (graphState) calculator.setState(graphState)
-
-    calculator.observeEvent('change', () => {
-      setGraphState(calculator.getState() as GraphState)
+    calculatorRef.current = Desmos.GraphingCalculator(graphRef.current, {
+      keypad: !pathname?.startsWith('/preview'),
     })
 
-    // on subsequent callbacks, a duplicate graph is appended to the graphRef
-    // this is a workaround to remove the duplicate graphs
-    while (graphRef.current.children.length > 1) graphRef.current.removeChild(graphRef.current.lastChild as ChildNode)
-  }, [graphRef, graphState])
+    return () => {
+      calculatorRef.current?.destroy()
+      calculatorRef.current = null
+    }
+  }, [pathname])
 
-  return (
-    <div
-      ref={graphRef}
-      // update when Desmos input loses focus,
-      // otherwise interactive element will lose focus while user is still typing
-      onBlur={updateEditor}
-      className="flex h-96 w-full items-center justify-center"
-    ></div>
-  )
+  // Update calculator state when state changes externally (e.g. from upstream changes)
+  useEffect(() => {
+    const calculator = calculatorRef.current
+    if (!calculator) return
+
+    const editorStateResult = graphStateJSONSchema.safeParse(block.props.state)
+    if (editorStateResult.success) {
+      const currentStateResult = graphStateSchema.safeParse(calculator.getState())
+      // Only update calculator if states are different
+      // This will prevent the currently typing user from losing focus, while other users will lose focus
+      // and see the updated state
+      if (
+        currentStateResult.success &&
+        JSON.stringify(currentStateResult.data) !== JSON.stringify(editorStateResult.data)
+      ) {
+        calculator.setState(editorStateResult.data) // this causes the calculator to lose focus
+      }
+    }
+  }, [block.props.state])
+
+  useEffect(() => {
+    const calculator = calculatorRef.current
+    if (!calculator) return
+
+    const handleChange = () => {
+      const result = graphStateSchema.safeParse(calculator.getState())
+      if (!result.success) return
+
+      editor.updateBlock(block.id, {
+        props: {
+          ...block.props,
+          state: JSON.stringify(result.data),
+        },
+      })
+    }
+
+    calculator.observeEvent('change', handleChange)
+
+    return () => {
+      calculator.unobserveEvent('change')
+    }
+  }, [block.id, block.props, editor])
+
+  return <div ref={graphRef} className="flex h-96 w-full items-center justify-center"></div>
 }

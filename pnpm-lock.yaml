@@ -22,6 +22,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       turbo:
         specifier: ^2.3.3
         version: 2.3.3
@@ -169,9 +172,6 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
-      desmos:
-        specifier: ^1.5.4
-        version: 1.5.4
       emoji-mart:
         specifier: ^5.6.0
         version: 5.6.0
@@ -276,8 +276,8 @@ importers:
         specifier: ^0.5.15
         version: 0.5.15(tailwindcss@3.4.17)
       '@types/desmos':
-        specifier: ^1.6.3
-        version: 1.6.3
+        specifier: ^1.11.0
+        version: 1.11.0
       '@types/glob':
         specifier: ^8.1.0
         version: 8.1.0
@@ -2948,8 +2948,8 @@ packages:
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
-  '@types/desmos@1.6.3':
-    resolution: {integrity: sha512-OloA2cVc2dKAJhA1m8/pTWG3ZpM5Ks2rrRx146qNwFg4feQ6u+kBUOWuEcDC+gicxcZLjb4Gm1bUofcNG9C+vg==}
+  '@types/desmos@1.11.0':
+    resolution: {integrity: sha512-bx2VyonCstH0oy9wrBZoFvxV46hiXOD8YcTI6BhNhQg3oERtrcit32p/+06MBiXi3ocNmUr/3kC5B5Sod9vIrg==}
 
   '@types/emscripten@1.39.13':
     resolution: {integrity: sha512-cFq+fO/isvhvmuP/+Sl4K4jtU6E23DoivtbO4r50e3odaxAiVdbfSYRDdJ4gCdxx+3aRjhphS5ZMwIH4hFy/Cw==}
@@ -3776,9 +3776,6 @@ packages:
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
-
-  desmos@1.5.4:
-    resolution: {integrity: sha512-8BxQqU/7n6J9cxAiSDm6sNCqSu29z5VaYKcfOx0N4MY2oT75NE5oo6MRgtulVHibMBxCuH+6fpXr0WP4IoL0Dg==}
 
   detect-libc@2.0.3:
     resolution: {integrity: sha512-bwy0MGW55bG41VqxxypOsdSdGqLwXPI/focwgTYCFMbdUiBAxLg9CFzG08sz2aqzknwiX7Hkl0bQENjg8iLByw==}
@@ -9675,7 +9672,7 @@ snapshots:
     dependencies:
       '@types/ms': 0.7.34
 
-  '@types/desmos@1.6.3': {}
+  '@types/desmos@1.11.0': {}
 
   '@types/emscripten@1.39.13': {}
 
@@ -10586,8 +10583,6 @@ snapshots:
   delayed-stream@1.0.0: {}
 
   dequal@2.0.3: {}
-
-  desmos@1.5.4: {}
 
   detect-libc@2.0.3: {}
 

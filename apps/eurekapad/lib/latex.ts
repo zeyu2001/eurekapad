@@ -101,11 +101,12 @@ function extractTextFromContent(content: CustomInlineContent, escape: boolean = 
       const text = (c as StyledText<typeof customSchema.styleSchema>).text || ''
       parts.push(escape ? escapeLatex(text) : text)
     } else if (ctype === 'mathInline') {
+      // expecting a content array of only one element, which is a text node with $$...$$
       const innerText = fixLatexArray(extractTextFromContent(c.content || [], false))
       if (innerText.length === 0) {
         continue
       }
-      parts.push(`$${innerText}$`)
+      parts.push(`$${innerText.replace(/^\$\$/, '').replace(/\$\$$/, '')}$`)
     }
   }
   return parts.join('')
