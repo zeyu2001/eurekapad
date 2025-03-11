@@ -1,5 +1,6 @@
-import { Beaker } from 'lucide-react'
 import React from 'react'
+
+import { Logo } from './logo'
 
 const Footer = () => {
   return (
@@ -8,8 +9,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center">
-              <Beaker className="h-6 w-6 text-blue-400" />
-              <span className="ml-2 text-lg font-bold text-white">EurekaPad</span>
+              {/* <Beaker className="h-6 w-6 text-blue-400" />
+              <span className="ml-2 text-lg font-bold text-white">EurekaPad</span> */}
+              <Logo darkMode />
             </div>
             <p className="mt-4 text-sm text-slate-400">
               The ultimate note-taking platform for STEM students and professionals.

@@ -1,5 +1,7 @@
 'use client'
 
+import { SignUpButton } from '@clerk/nextjs'
+import { Authenticated, Unauthenticated } from 'convex/react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -138,12 +140,21 @@ export default function DemoSection() {
           })()}
 
           <div className="mt-12 text-center">
-            <Link
-              href="/note/note"
-              className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors"
-            >
-              Try EurekaPad for Free
-            </Link>
+            <Unauthenticated>
+              <SignUpButton mode="modal">
+                <button className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors">
+                  Try EurekaPad for Free
+                </button>
+              </SignUpButton>
+            </Unauthenticated>
+            <Authenticated>
+              <Link
+                href="/documents"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors"
+              >
+                Try EurekaPad for Free
+              </Link>
+            </Authenticated>
           </div>
         </div>
       </div>

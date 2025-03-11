@@ -1,7 +1,11 @@
 'use client'
+import { SignInButton, SignUpButton, UserProfile } from '@clerk/nextjs'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+
+import { Spinner } from '@/components/spinner'
 
 import { Logo } from './logo'
 
@@ -12,7 +16,7 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <Logo />
+              <Logo darkMode={false} />
             </Link>
 
             <nav className="ml-10 hidden space-x-8 md:flex">
@@ -84,18 +88,43 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link
-              href="#"
-              className="rounded-md border border-slate-300 px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="#"
-              className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-            >
-              Start for free
-            </Link>
+            <AuthLoading>
+              <button
+                disabled
+                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-x-2"
+              >
+                <Spinner size="sm" />
+                Sign in
+              </button>
+              <button
+                disabled
+                className="rounded-md border border-slate-300 px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-x-2"
+              >
+                <Spinner size="sm" />
+                Start for free
+              </button>
+            </AuthLoading>
+            <Unauthenticated>
+              <SignInButton mode="modal">
+                <button className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+                  Sign in
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="rounded-md border border-slate-300 px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                  Start for free
+                </button>
+              </SignUpButton>
+            </Unauthenticated>
+            <Authenticated>
+              <UserProfile />
+              <Link
+                href="/documents"
+                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+              >
+                Go to Eurekapad
+              </Link>
+            </Authenticated>
           </div>
         </div>
       </div>

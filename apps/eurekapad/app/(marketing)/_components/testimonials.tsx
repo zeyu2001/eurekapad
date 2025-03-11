@@ -1,12 +1,15 @@
 import Image from 'next/image'
 
+import AllthenticateLogo from '@/images/allthenticate.png'
+import CambridgeLogo from '@/images/cambridge_square.png'
+import NUSLogo from '@/images/nus_crest.png'
+
 const featuredTestimonial = {
   body: "The UI is so amazing, I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
   author: {
     name: 'Gracie Zhou',
     role: 'Computer Science @ Cambridge',
-    imageUrl: '/placeholder.svg?height=400&width=400',
-    logoUrl: '/placeholder.svg?height=100&width=100',
+    logoUrl: CambridgeLogo,
   },
 }
 
@@ -18,8 +21,7 @@ const testimonials = [
         author: {
           name: 'Kai Xuan Lee',
           role: 'Computer Science @ NUS',
-          imageUrl: '/placeholder.svg?height=400&width=400',
-          logoUrl: '/placeholder.svg?height=100&width=100',
+          logoUrl: NUSLogo,
         },
       },
       {
@@ -27,7 +29,6 @@ const testimonials = [
         author: {
           name: 'Sophia Rodriguez',
           role: 'Physics PhD @ MIT',
-          imageUrl: '/placeholder.svg?height=400&width=400',
           logoUrl: '/placeholder.svg?height=100&width=100',
         },
       },
@@ -38,16 +39,6 @@ const testimonials = [
         author: {
           name: 'James Wilson',
           role: 'Biochemistry @ Stanford',
-          imageUrl: '/placeholder.svg?height=400&width=400',
-          logoUrl: '/placeholder.svg?height=100&width=100',
-        },
-      },
-      {
-        body: 'As someone who struggles with LaTeX syntax, EurekaPad has been a lifesaver for my mathematics coursework. I can focus on the content instead of formatting.',
-        author: {
-          name: 'Emma Chen',
-          role: 'Mathematics @ ETH Zurich',
-          imageUrl: '/placeholder.svg?height=400&width=400',
           logoUrl: '/placeholder.svg?height=100&width=100',
         },
       },
@@ -60,28 +51,17 @@ const testimonials = [
         author: {
           name: 'Chad Spensky',
           role: 'CEO @ Allthenticate',
-          imageUrl: '/placeholder.svg?height=400&width=400',
-          logoUrl: '/placeholder.svg?height=100&width=100',
-        },
-      },
-      {
-        body: 'The live transcription feature has completely changed how I take notes during lectures. I can actually pay attention instead of frantically typing.',
-        author: {
-          name: 'Olivia Taylor',
-          role: 'Engineering @ Georgia Tech',
-          imageUrl: '/placeholder.svg?height=400&width=400',
-          logoUrl: '/placeholder.svg?height=100&width=100',
+          logoUrl: AllthenticateLogo,
         },
       },
     ],
     [
       {
-        body: "I've tried every note-taking app out there, and EurekaPad is the only one that truly understands the needs of STEM students. It's become essential to my studies.",
+        body: 'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
         author: {
-          name: 'David Park',
-          role: 'Computer Engineering @ UC Berkeley',
-          imageUrl: '/placeholder.svg?height=400&width=400',
-          logoUrl: '/placeholder.svg?height=100&width=100',
+          name: 'Chad Spensky',
+          role: 'CEO @ Allthenticate',
+          logoUrl: AllthenticateLogo,
         },
       },
       {
@@ -89,7 +69,6 @@ const testimonials = [
         author: {
           name: 'Aisha Johnson',
           role: 'Neuroscience @ Johns Hopkins',
-          imageUrl: '/placeholder.svg?height=400&width=400',
           logoUrl: '/placeholder.svg?height=100&width=100',
         },
       },
@@ -144,24 +123,11 @@ export default function Testimonials() {
               <p>{`"${featuredTestimonial.body}"`}</p>
             </blockquote>
             <figcaption className="flex items-center gap-x-4 border-t border-gray-900/10 px-6 py-4">
-              <Image
-                src={featuredTestimonial.author.imageUrl || '/placeholder.svg'}
-                alt=""
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full bg-gray-50"
-              />
               <div className="flex-auto">
                 <div className="font-semibold">{featuredTestimonial.author.name}</div>
                 <div className="text-gray-600">{featuredTestimonial.author.role}</div>
               </div>
-              <Image
-                src={featuredTestimonial.author.logoUrl || '/placeholder.svg'}
-                alt=""
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
+              <Image src={featuredTestimonial.author.logoUrl} alt="" width={40} height={40} className="h-10 w-auto" />
             </figcaption>
           </figure>
           {testimonials.map((columnGroup, columnGroupIdx) => (
@@ -187,11 +153,11 @@ export default function Testimonials() {
                       </blockquote>
                       <figcaption className="mt-6 flex items-center gap-x-4">
                         <Image
-                          src={testimonial.author.imageUrl || '/placeholder.svg'}
+                          src={testimonial.author.logoUrl}
                           alt=""
                           width={40}
                           height={40}
-                          className="h-10 w-10 rounded-full bg-gray-50"
+                          className="h-10 w-10 object-contain"
                         />
                         <div>
                           <div className="font-semibold">{testimonial.author.name}</div>

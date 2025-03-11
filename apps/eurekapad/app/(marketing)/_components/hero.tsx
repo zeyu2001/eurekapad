@@ -1,6 +1,11 @@
+'use client'
+import { SignUpButton } from '@clerk/nextjs'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+
+import { Spinner } from '@/components/spinner'
 
 const Hero = () => {
   return (
@@ -44,12 +49,30 @@ const Hero = () => {
               scientists, engineers, mathematicians, and students.
             </p>
             <div className="mt-10 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
-              <Link
-                href="/note/note"
-                className="rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
-              >
-                Get Started for Free
-              </Link>
+              <AuthLoading>
+                <button
+                  disabled
+                  className="rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-x-2"
+                >
+                  <Spinner size="sm" />
+                  Get Started for Free
+                </button>
+              </AuthLoading>
+              <Unauthenticated>
+                <SignUpButton mode="modal">
+                  <button className="rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 transition-colors">
+                    Get Started for Free
+                  </button>
+                </SignUpButton>
+              </Unauthenticated>
+              <Authenticated>
+                <Link
+                  href="/documents"
+                  className="rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
+                >
+                  Open EurekaPad
+                </Link>
+              </Authenticated>
               <Link
                 href="/changelog"
                 className="rounded-md border border-slate-300 bg-white px-6 py-3 text-base font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-colors"
@@ -63,7 +86,7 @@ const Hero = () => {
           <div className="mt-16 max-w-5xl w-full">
             <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
               <Image
-                src="/placeholder.svg?height=630&width=1200"
+                src="/hero-image.webp"
                 alt="EurekaPad app interface showing note-taking with equations"
                 width={1200}
                 height={630}

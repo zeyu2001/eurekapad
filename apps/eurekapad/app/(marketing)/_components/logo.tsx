@@ -8,11 +8,22 @@ const font = Poppins({
   weight: ['400', '600'],
 })
 
-export const Logo = ({ className }: { className?: string }) => {
+export const Logo = ({ className, darkMode }: { className?: string; darkMode?: boolean }) => {
   return (
     <div className={cn('hidden md:flex items-center gap-x-2', className)}>
-      <Image src="/logo.svg" height="40" width="40" alt="Logo" className="dark:hidden" />
-      <Image src="/logo-dark.svg" height="40" width="40" alt="Logo" className="hidden dark:block" />
+      {darkMode === null && (
+        <>
+          <Image src="/logo.svg" height="40" width="40" alt="Logo" className="dark:hidden" />
+          <Image src="/logo-dark.svg" height="40" width="40" alt="Logo" className="hidden dark:block" />
+        </>
+      )}
+
+      {darkMode ? (
+        <Image src="/logo-dark.svg" height="40" width="40" alt="Logo" />
+      ) : (
+        <Image src="/logo.svg" height="40" width="40" alt="Logo" />
+      )}
+
       <p className={cn('font-semibold', font.className)}>EurekaPad</p>
     </div>
   )

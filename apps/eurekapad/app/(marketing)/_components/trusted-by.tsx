@@ -36,11 +36,11 @@ export default function TrustedBy() {
           {universities.map(university => (
             <div key={university.name} className="flex items-center opacity-80 hover:opacity-100 transition-opacity">
               <Image
-                src={university.logo || '/placeholder.svg'}
+                src={university.logo}
                 alt={`${university.name} logo`}
-                width={200}
-                height={100}
-                className="h-8 w-auto"
+                width={150}
+                height={32}
+                className="h-10 object-contain"
               />
             </div>
           ))}
