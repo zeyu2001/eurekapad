@@ -41,27 +41,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Analytics />
         <SpeedInsights />
         <body className={clsx(inter.className, lexend.variable)}>
-          <PostHogProvider>
-            <Script
-              src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
-              strategy="beforeInteractive"
-            />
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="eurekapad-theme-2"
-            >
-              <ConvexClientProvider>
+          <ConvexClientProvider>
+            <PostHogProvider>
+              <Script
+                src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
+                strategy="beforeInteractive"
+              />
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                storageKey="eurekapad-theme-2"
+              >
                 <TooltipProvider>
                   <Toaster position="bottom-center" />
                   <ModalProvider />
                   {children}
                 </TooltipProvider>
-              </ConvexClientProvider>
-            </ThemeProvider>
-          </PostHogProvider>
+              </ThemeProvider>
+            </PostHogProvider>
+          </ConvexClientProvider>
         </body>
       </html>
     </ClientProvider>
