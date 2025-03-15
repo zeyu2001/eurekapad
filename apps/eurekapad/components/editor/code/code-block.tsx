@@ -124,7 +124,6 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
   const stdoutHandler = useCallback((msg: string) => setStdout((prev: string) => `${prev}\n${msg}`.trim()), [])
-
   const stderrHandler = useCallback((msg: string) => setStderr((prev: string) => `${prev}\n${msg}`.trim()), [])
 
   const imageHandler = useCallback(
@@ -161,20 +160,6 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
 
   const { runner: pythonRunner, loaded: pythonLoaded } = usePythonRunner(language)
   const { runner: jsRunner, loaded: jsLoaded } = useJSRunner(language)
-
-  const handleInputChange = useCallback(
-    ({ code, language, height }: { code?: string; language?: string; height?: number }) => {
-      editor.updateBlock(block.id, {
-        props: {
-          ...block.props,
-          language: language ?? block.props.language,
-          code: code ?? block.props.code,
-          height: height ?? block.props.height,
-        },
-      })
-    },
-    [block.id, block.props, editor],
-  )
 
   const runCode = useCallback(async () => {
     const runnerConfig = {
@@ -215,20 +200,30 @@ export const CodeBlock: FC<ReactCustomBlockRenderProps<CodeBlockConfig, InlineCo
     }
   }, [pythonRunner, jsRunner, pythonLoaded, jsLoaded, language, code, stdoutHandler, stderrHandler, imageHandler])
 
+  const handleInputChange = useCallback(
+    (updates: Partial<typeof block.props>) => {
+      editor.updateBlock(block.id, { props: { ...block.props, ...updates } })
+    },
+    [block.id, block.props, editor],
+  )
+
+  // Update upstream with local changes
   useEffect(() => {
-    // https://github.com/ueberdosis/tiptap/discussions/5801#discussioncomment-11151337
-    // Causes error: flushSync was called from inside a lifecycle method
-    setTimeout(() => {
-      editor.updateBlock(block.id, {
-        props: {
-          ...block.props,
-          stdout: stdout,
-          stderr: stderr,
-          images: JSON.stringify(images),
-        },
-      })
-    }, 0)
-  }, [stdout, stderr, images, editor, block.id, block.props])
+    handleInputChange({ stdout, stderr, images: JSON.stringify(images) })
+  }, [stdout, stderr, images])
+
+  // Update state from upstream changes
+  useEffect(() => {
+    if (block.props.stdout !== stdout) {
+      setStdout(block.props.stdout || '')
+    }
+    if (block.props.stderr !== stderr) {
+      setStderr(block.props.stderr || '')
+    }
+    if (block.props.images !== JSON.stringify(images)) {
+      setImages(imagesJSONSchema.parse(block.props.images))
+    }
+  }, [block.props.stdout, block.props.stderr, block.props.images])
 
   const { theme } = useTheme()
   const editorTheme =
