@@ -1,10 +1,11 @@
 import './globals.css'
 
 import { TooltipProvider } from '@radix-ui/react-tooltip'
+import { PostHogProvider } from '@/components/providers/posthog-provider'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import clsx from 'clsx'
-import type { Metadata } from 'next'
+import type { Metadata } from 'next/types'
 import { Inter, Lexend } from 'next/font/google'
 import Script from 'next/script'
 import { Toaster } from 'sonner'
@@ -40,25 +41,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Analytics />
         <SpeedInsights />
         <body className={clsx(inter.className, lexend.variable)}>
-          <Script
-            src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
-            strategy="beforeInteractive"
-          />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            storageKey="eurekapad-theme-2"
-          >
-            <ConvexClientProvider>
-              <TooltipProvider>
-                <Toaster position="bottom-center" />
-                <ModalProvider />
-                {children}
-              </TooltipProvider>
-            </ConvexClientProvider>
-          </ThemeProvider>
+          <PostHogProvider>
+            <Script
+              src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
+              strategy="beforeInteractive"
+            />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+              storageKey="eurekapad-theme-2"
+            >
+              <ConvexClientProvider>
+                <TooltipProvider>
+                  <Toaster position="bottom-center" />
+                  <ModalProvider />
+                  {children}
+                </TooltipProvider>
+              </ConvexClientProvider>
+            </ThemeProvider>
+          </PostHogProvider>
         </body>
       </html>
     </ClientProvider>
