@@ -4,6 +4,8 @@ import AllthenticateLogo from '@/images/allthenticate.png'
 import CambridgeLogo from '@/images/cambridge_square.png'
 import NUSLogo from '@/images/nus_crest.png'
 import SITLogo from '@/images/sit_logo.png'
+import SUTDLogo from '@/images/sutd-logo.png'
+import UNSWLogo from '@/images/unsw-logo.png'
 
 const featuredTestimonial = {
   body: "The UI is so amazing, I love the flexibility and diverse features that EurekaPad offers. It's a game changer!",
@@ -36,11 +38,11 @@ const testimonials = [
     ],
     [
       {
-        body: 'I use EurekaPad for all my research notes now. The ability to collaborate with my lab partners in real-time has streamlined our entire workflow.',
+        body: "As a longtime Obsidian user, I appreciate that code blocks can be executed natively without external plugins, allowing me to visualize my code's execution more effectively.",
         author: {
-          name: 'James Wilson',
-          role: 'Biochemistry @ Stanford',
-          logoUrl: '/placeholder.svg?height=100&width=100',
+          name: 'Low Wei Yang',
+          role: 'Computer Science @ SUTD',
+          logoUrl: SUTDLogo,
         },
       },
     ],
@@ -58,11 +60,11 @@ const testimonials = [
     ],
     [
       {
-        body: 'As a big Notion fan, this is truly the best of both worlds: super clean UI with academic friendly features like PDF to WYSWYG to LaTeX to PDF!',
+        body: 'EurekaPad has revolutionized my note-taking by allowing me to seamlessly code and run Python in one place, saving time and hassle. Its ease of use made it my go-to note-taking solution.',
         author: {
-          name: 'Chad Spensky',
-          role: 'CEO @ Allthenticate',
-          logoUrl: AllthenticateLogo,
+          name: 'Hong Kai',
+          role: 'Computer Science @ UNSW',
+          logoUrl: UNSWLogo,
         },
       },
       {
