@@ -89,6 +89,7 @@
     "@jupyterlab/nbformat": "^4.3.4",
     "@jupyterlab/services": "^7.3.4",
     "@lumino/coreutils": "^2.2.0",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/desmos": "^1.6.3",
     "@types/glob": "^8.1.0",

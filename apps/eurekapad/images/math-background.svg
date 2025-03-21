@@ -1,4 +1,4 @@
-<svg width="1440" height="800" viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Grid lines -->
   <g opacity="0.3" stroke="#d1d5db">
     <!-- Vertical grid lines -->
@@ -62,19 +62,19 @@
 
   <!-- Code snippets -->
   <g opacity="0.7" fill="#0f766e">
-    <text x="180" y="150" font-family="'VT323', monospace" font-size="16" transform="rotate(-5, 180, 150)">def fibonacci(n):</text>
+    <text x="180" y="150" font-family="'Source Code Pro', monospace" font-size="16" transform="rotate(-5, 180, 150)">def fibonacci(n):</text>
     <text x="420" y="120" font-family="'Courier New', monospace" font-size="14" transform="rotate(8, 420, 120)">for i in range(10):</text>
     <text x="660" y="200" font-family="'Consolas', monospace" font-size="15" transform="rotate(-10, 660, 200)">x = np.linspace(0, 10)</text>
-    <text x="900" y="130" font-family="'VT323', monospace" font-size="17" transform="rotate(6, 900, 130)">import matplotlib.pyplot</text>
+    <text x="900" y="130" font-family="'Source Code Pro', monospace" font-size="17" transform="rotate(6, 900, 130)">import matplotlib.pyplot</text>
     <text x="1140" y="220" font-family="'Courier New', monospace" font-size="14" transform="rotate(-7, 1140, 220)">class Node:</text>
     <text x="230" y="300" font-family="'Consolas', monospace" font-size="16" transform="rotate(9, 230, 300)">return x => x * x</text>
-    <text x="470" y="250" font-family="'VT323', monospace" font-size="15" transform="rotate(-12, 470, 250)">useState&lt;number&gt;(0)</text>
+    <text x="470" y="250" font-family="'Source Code Pro', monospace" font-size="15" transform="rotate(-12, 470, 250)">useState&lt;number&gt;(0)</text>
     <text x="710" y="320" font-family="'Courier New', monospace" font-size="14" transform="rotate(7, 710, 320)">async function getData()</text>
     <text x="950" y="270" font-family="'Consolas', monospace" font-size="16" transform="rotate(-9, 950, 270)">const [x, y] = point</text>
-    <text x="1190" y="330" font-family="'VT323', monospace" font-size="15" transform="rotate(11, 1190, 330)">export default function</text>
+    <text x="1190" y="330" font-family="'Source Code Pro', monospace" font-size="15" transform="rotate(11, 1190, 330)">export default function</text>
     <text x="280" y="450" font-family="'Courier New', monospace" font-size="14" transform="rotate(-6, 280, 450)">def fibonacci(n):</text>
     <text x="520" y="400" font-family="'Consolas', monospace" font-size="16" transform="rotate(10, 520, 400)">for i in range(10):</text>
-    <text x="760" y="470" font-family="'VT323', monospace" font-size="15" transform="rotate(-8, 760, 470)">x = np.linspace(0, 10)</text>
+    <text x="760" y="470" font-family="'Source Code Pro', monospace" font-size="15" transform="rotate(-8, 760, 470)">x = np.linspace(0, 10)</text>
     <text x="1000" y="420" font-family="'Courier New', monospace" font-size="14" transform="rotate(5, 1000, 420)">import matplotlib.pyplot</text>
     <text x="1240" y="480" font-family="'Consolas', monospace" font-size="16" transform="rotate(-11, 1240, 480)">class Node:</text>
   </g>
