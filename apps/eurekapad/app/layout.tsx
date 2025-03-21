@@ -27,8 +27,13 @@ const lexend = Lexend({
 })
 
 export const metadata: Metadata = {
-  title: 'EurekaPad',
-  description: 'Where better, faster work happens.',
+  title: {
+    default: 'EurekaPad - The Ultimate Note-Taking Platform for STEM',
+    template: '%s | EurekaPad',
+  },
+  description:
+    'Capture complex ideas, equations, and research data with powerful tools designed specifically for scientists, engineers, mathematicians, and students.',
+  metadataBase: new URL('https://eurekapad.app'),
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

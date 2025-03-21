@@ -1,7 +1,6 @@
 'use client'
 
-import { Minus, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 const faqs = [
   {
@@ -27,38 +26,36 @@ const faqs = [
 ]
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-
   return (
-    <section className="py-32 px-4 sm:px-6 lg:px-8">
+    <section className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-4">FAQ</h2>
-          <p className="text-gray-600">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl font-bold mb-6 text-neutral-900">Frequently Asked Questions</h2>
+          <p className="text-neutral-600 max-w-2xl mx-auto">
             More questions? Reach out at{' '}
-            <a href="mailto:hey@eurekalabs.dev" className="underline hover:text-gray-900">
+            <a href="mailto:hey@eurekalabs.dev" className="text-blue-600 hover:text-blue-700 underline">
               hey@eurekalabs.dev
             </a>
           </p>
         </div>
 
-        <div className="space-y-6">
-          {faqs.map((faq, index) => (
-            <div key={index} className="border-b border-gray-200">
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full py-6 flex justify-between items-center text-left"
+        <div className="max-w-3xl mx-auto">
+          <Accordion type="single" collapsible className="space-y-6">
+            {faqs.map((faq, index) => (
+              <AccordionItem
+                key={index}
+                value={`item-${index}`}
+                className="border border-neutral-200 rounded-lg overflow-hidden shadow-sm"
               >
-                <span className="text-lg">{faq.question}</span>
-                {openIndex === index ? (
-                  <Minus className="h-5 w-5 flex-shrink-0" />
-                ) : (
-                  <Plus className="h-5 w-5 flex-shrink-0" />
-                )}
-              </button>
-              {openIndex === index && <div className="pb-6 text-gray-600">{faq.answer}</div>}
-            </div>
-          ))}
+                <AccordionTrigger className="px-6 py-4 flex justify-between items-center text-left text-lg font-medium text-neutral-900 hover:bg-neutral-50">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6 pt-2 text-neutral-600 leading-relaxed">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </section>

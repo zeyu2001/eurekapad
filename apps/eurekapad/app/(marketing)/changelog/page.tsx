@@ -1,16 +1,12 @@
 import { glob } from 'glob'
-import { ArrowRight, Beaker, ChevronDownIcon } from 'lucide-react'
+import { ArrowRight, Calendar } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import Navbar from '../_components/navbar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
-interface Tag {
-  name: string
-  color: string
-  textColor: string
-  dotColor: string
-}
+import Navbar from '../_components/navbar'
 
 // Function to format date string from "DD-MM-YYYY" to "Month DD, YYYY"
 const formatDate = (dateString: string) => {
@@ -45,41 +41,50 @@ export default async function Changelog() {
           tags: data.meta.tags || [],
         }
       }),
-  )
+  ).then(posts => {
+    return posts.toSorted((a, b) => Date.parse(b.dateTime) - Date.parse(a.dateTime))
+  })
 
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Navigation */}
       <Navbar />
-
       {/* Main Content */}
       <main>
-        {/* Redesigned Hero Section - Full Width */}
         <div className="relative w-full overflow-hidden border-b border-slate-200 bg-gradient-to-br from-blue-50 to-slate-100">
-          {/* Background Pattern - Full Width */}
-          <div className="absolute inset-0">
-            <svg className="h-full w-full" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59, 130, 246, 0.1)" strokeWidth="1"></path>
-                </pattern>
-                <pattern id="circles" width="100" height="100" patternUnits="userSpaceOnUse">
-                  <circle cx="50" cy="50" r="2" fill="rgba(59, 130, 246, 0.1)"></circle>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)"></rect>
-              <rect width="100%" height="100%" fill="url(#circles)"></rect>
-            </svg>
+          {/* Background Pattern */}
+          <div className="absolute inset-0 overflow-hidden opacity-80">
+            <div className="relative h-full w-full">
+              <svg className="h-full w-full" viewBox="0 0 1750 650" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="1.5"></path>
+                  </pattern>
+                  <linearGradient id="fade-out" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="white" stopOpacity="0" />
+                    <stop offset="5%" stopColor="white" stopOpacity="1" />
+                    <stop offset="95%" stopColor="white" stopOpacity="1" />
+                    <stop offset="100%" stopColor="white" stopOpacity="0" />
+                  </linearGradient>
+                  <mask id="fade-mask">
+                    <rect width="100%" height="100%" fill="url(#fade-out)" />
+                  </mask>
+                </defs>
+                <g mask="url(#fade-mask)">
+                  <rect width="100%" height="100%" fill="url(#grid)" />
+                </g>
+              </svg>
+            </div>
           </div>
 
           {/* Content Container */}
-          <div className="container relative mx-auto px-4 py-[60px] sm:px-6 lg:px-8 lg:py-[90px]">
+          <div className="container relative mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
             <div className="flex flex-col items-center">
               <div className="max-w-3xl text-center">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-                  EurekaPad Changelog
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
+                  Product Updates
                 </h1>
-                <p className="mt-4 text-base sm:text-lg text-slate-600">
+                <p className="mt-3 sm:mt-4 text-base sm:text-lg text-slate-600">
                   Track our journey as we build the ultimate note-taking tool for STEM researchers and students.
                 </p>
               </div>
@@ -87,36 +92,46 @@ export default async function Changelog() {
           </div>
         </div>
 
-        {/* Container for changelog entries - Wider Layout */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-7xl">
+        {/* Container for changelog entries */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-6xl">
+          {/* Changelog Entry */}
+
           {posts.map(post => (
-            <div key={post.id} className="relative border-b border-slate-200 py-[40px] sm:py-[50px] lg:py-[90px] group">
-              <div className="grid lg:grid-cols-[200px_1fr_100px] gap-6">
+            <div key={post.id} className="relative border-b border-slate-100 py-10 sm:py-16 md:py-20 group">
+              <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-4 lg:gap-8">
                 {/* Date on the left */}
-                <div className="mb-6 lg:mb-0">
+                <div className="mb-4 lg:mb-0">
                   <div className="lg:sticky lg:top-24">
-                    <div className="flex flex-col items-start">
-                      <div className="text-sm font-medium text-blue-600">{formatDate(post.dateTime)}</div>
-                      <div className="mt-2 h-1 w-12 rounded-full bg-blue-600 opacity-80"></div>
+                    <div className="flex flex-row lg:flex-col items-center lg:items-start">
+                      <div className="flex items-center text-sm font-medium text-blue-600">
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {formatDate(post.dateTime)}
+                      </div>
+                      <div className="hidden lg:block mt-2 h-1 w-12 rounded-full bg-blue-600"></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Content in the middle - Now wider */}
+                {/* Content in the middle */}
                 <div className="transform transition-all duration-300 ease-in-out max-w-4xl">
-                  <div className="mb-6 flex flex-wrap gap-2">
-                    {post.tags.map((tag: Tag, index: number) => (
-                      <span
-                        key={index}
-                        className={`inline-flex items-center rounded-full ${tag.color} px-3 py-1 text-xs font-medium ${tag.textColor} shadow-sm`}
-                      >
-                        <span className={`mr-1.5 h-2 w-2 rounded-full ${tag.dotColor}`}></span>
-                        {tag.name}
-                      </span>
-                    ))}
+                  <div className="mb-4 sm:mb-6 flex flex-wrap gap-2">
+                    <Badge
+                      variant="secondary"
+                      className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200"
+                    >
+                      <span className="mr-1.5 h-2 w-2 rounded-full bg-emerald-500"></span>
+                      New Feature
+                    </Badge>
+                    <Badge
+                      variant="secondary"
+                      className="bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
+                    >
+                      <span className="mr-1.5 h-2 w-2 rounded-full bg-amber-500"></span>
+                      Enhancement
+                    </Badge>
                   </div>
 
-                  <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+                  <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
                     {post.title}
                   </h2>
 
@@ -124,9 +139,8 @@ export default async function Changelog() {
                     {post.content()}
                   </div>
 
-                  {/* Feature Media - Image or Video */}
                   {post.featureMedia && (
-                    <div className="mt-8 overflow-hidden rounded-lg border border-slate-200 shadow-md bg-white transition-all hover:shadow-lg">
+                    <div className="mt-6 sm:mt-10 overflow-hidden rounded-xl border border-slate-200 shadow-md bg-white transition-all hover:shadow-lg">
                       <div className="p-2">
                         {post.featureMedia.type === 'video' ? (
                           <video
@@ -145,7 +159,7 @@ export default async function Changelog() {
                             alt={post.featureMedia.alt || 'Feature image'}
                             width={1000}
                             height={500}
-                            className="w-full object-cover rounded-md"
+                            className="w-full object-cover rounded-lg"
                             loading="lazy"
                           />
                         )}
@@ -154,131 +168,28 @@ export default async function Changelog() {
                   )}
 
                   {/* Read more link */}
-                  <div className="mt-6 flex justify-end">
-                    <a
-                      href="#"
-                      className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700 group"
-                    >
+                  <div className="mt-6 sm:mt-8 flex justify-end">
+                    <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                       Read full release notes
-                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                    </a>
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </Button>
                   </div>
                 </div>
-
-                {/* Right column (smaller for balance) */}
-                <div></div>
               </div>
             </div>
           ))}
 
-          {/* Modern Load more button */}
-          <div className="py-16 flex justify-center">
-            <button className="group inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              <span>Load more updates</span>
-              <ChevronDownIcon className="h-4 w-4 transition-transform duration-200 ease-in-out group-hover:translate-y-1" />
-            </button>
-          </div>
+          {/* Load more button */}
+          {/* <div className="py-10 sm:py-16 flex justify-center">
+            <Button
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:text-white hover:bg-blue-600 hover:border-blue-700 transition-colors duration-200 min-h-[44px] px-6 active:scale-[0.98]"
+            >
+              Load more updates
+            </Button>
+          </div> */}
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-200 py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center">
-                <Beaker className="h-6 w-6 text-blue-400" />
-                <span className="ml-2 text-lg font-bold text-white">EurekaPad</span>
-              </div>
-              <p className="mt-4 text-sm text-slate-400">
-                The ultimate note-taking platform for STEM students and professionals.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Product</h3>
-              <ul className="mt-4 space-y-2">
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Changelog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Roadmap
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Resources</h3>
-              <ul className="mt-4 space-y-2">
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Tutorials
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Community
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Company</h3>
-              <ul className="mt-4 space-y-2">
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Contact
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
-                    Privacy
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-12 border-t border-slate-700 pt-8">
-            <p className="text-sm text-slate-400">&copy; 2025 EurekaPad. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

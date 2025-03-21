@@ -1,7 +1,6 @@
 'use client'
-import { SignInButton, SignUpButton, UserProfile } from '@clerk/nextjs'
+import { SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
-import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -20,12 +19,11 @@ const Navbar = () => {
             </Link>
 
             <nav className="ml-10 hidden space-x-8 md:flex">
-              <div className="relative group">
+              {/* <div className="relative group">
                 <button className="flex items-center text-slate-700 px-2 py-1 text-sm font-medium">
                   Features
                   <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
                 </button>
-                {/* Features Dropdown */}
                 <div className="absolute left-0 top-full z-10 mt-1 w-56 origin-top-left rounded-md bg-white p-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   <div className="py-1">
                     <Link href="#" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-md">
@@ -45,13 +43,14 @@ const Navbar = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div className="relative group">
+              </div> */}
+              {/* <div className="relative group">
                 <button className="flex items-center text-slate-700 px-2 py-1 text-sm font-medium">
                   Resources
                   <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
                 </button>
-                {/* Resources Dropdown */}
+
+
                 <div className="absolute left-0 top-full z-10 mt-1 w-56 origin-top-left rounded-md bg-white p-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   <div className="py-1">
                     <Link href="#" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-md">
@@ -71,13 +70,19 @@ const Navbar = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <Link
+                href="/changelog"
+                className="text-slate-700 px-2 py-1 text-sm font-medium hover:text-blue-600 transition-colors"
+              >
+                Changelog
+              </Link>
+              {/* <Link
                 href="#"
                 className="text-slate-700 px-2 py-1 text-sm font-medium hover:text-blue-600 transition-colors"
               >
                 Pricing
-              </Link>
+              </Link> */}
               <Link
                 href="#"
                 className="text-slate-700 px-2 py-1 text-sm font-medium hover:text-blue-600 transition-colors"
@@ -117,7 +122,7 @@ const Navbar = () => {
               </SignUpButton>
             </Unauthenticated>
             <Authenticated>
-              <UserProfile />
+              <UserButton />
               <Link
                 href="/documents"
                 className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
