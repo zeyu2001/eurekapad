@@ -24,8 +24,15 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
   return (
     <SuggestionMenuController
       triggerCharacter={'/'}
-      getItems={async query =>
-        filterSuggestionItems(
+      getItems={async query => {
+        const customSort = (a: { title: string; group?: string }, b: { title: string; group?: string }) => {
+          if (query.toLowerCase() === 'graph' && a.title === 'Graph') return -1
+          if (query.toLowerCase() === 'graph' && b.title === 'Graph') return 1
+
+          return groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title)
+        }
+
+        return filterSuggestionItems(
           combineByGroup(
             [
               ...getDefaultReactSlashMenuItems(editor),
@@ -33,15 +40,12 @@ export const CustomSlashMenu = ({ editor }: CustomSlashMenuProps) => {
               insertCodeBlock(editor),
               insertTranscriptionBlock(editor),
               insertGraphBlock(editor),
-            ].sort(
-              (a, b) =>
-                groupOrder.indexOf(a.group || '') - groupOrder.indexOf(b.group || '') || a.title.localeCompare(b.title),
-            ),
+            ].sort(customSort),
             getMultiColumnSlashMenuItems(editor),
           ),
           query,
         )
-      }
+      }}
     />
   )
 }
