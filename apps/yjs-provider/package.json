@@ -19,10 +19,10 @@
     "@trpc/react-query": "^10.45.2",
     "superjson": "^2.2.2",
     "y-partykit": "^0.0.32",
+    "partykit": "^0.0.112",
     "yjs": "^13.6.23"
   },
   "devDependencies": {
-    "partykit": "^0.0.110",
     "typescript": "^5.5.4"
   }
 }
