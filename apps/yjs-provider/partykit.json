@@ -6,5 +6,10 @@
   "vars": {
     "CLERK_ENDPOINT": "https://regular-cricket-92.clerk.accounts.dev",
     "CLERK_JWT_KEY": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2dSCuWQhwhCrtp6nFJxJ\nj6p9am3BYXTGi5owD6zh1HuS7BacwNj5JBWG0/ePwA5vraEQ+25VWIZ2975vYp5v\nE7xrMtWhKhtf5/wUksb9ibH0PvD4qsuZlbvPPqxCtg7kPNL+ce2jpQFNojq1tsZP\nl5vm3CUprhgL66gHR4njQ88jHuKcfWARkJOi9/WKkXnUaXqX2k6Oa87q9i/6YHha\nLMiv2roER8bJloxK68TSYTLuLBt0kLnzjA+mO+rpcUjhs2WcNJanmsSDoAcz2Zew\nIdkvCsGWSezZI3zAMAgZgh0hra715SGg9DIqraSUKqT9fPjnko4/AjwHV8gUcF7E\nmQIDAQAB\n-----END PUBLIC KEY-----"
+  },
+  "domain": "partykit.eurekapad.app",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1.0
   }
 }
