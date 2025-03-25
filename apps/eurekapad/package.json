@@ -51,7 +51,7 @@
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@react-email/components": "^0.0.32",
-    "@sentry/nextjs": "^9",
+    "@sentry/nextjs": "^9.9.0",
     "@sentry/webpack-plugin": "^3.2.2",
     "@swc/wasm-web": "^1.10.4",
     "@tanstack/react-query": "^4.35.3",
