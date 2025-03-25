@@ -5,9 +5,12 @@
       "dependsOn": ["^build"],
       "env": [
         "NEXT_PUBLIC_*",
+        "CLERK_SECRET_KEY",
+        "CONVEX_DEPLOYMENT",
         "CLERK_WEBHOOK_SECRET",
         "RESEND_API_KEY",
-        "RESEND_AUDIENCE_ID"
+        "RESEND_AUDIENCE_ID",
+        "SENTRY_AUTH_TOKEN"
       ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
@@ -19,10 +22,13 @@
       "dependsOn": ["^build"],
       "env": [
         "NEXT_PUBLIC_*",
+        "CLERK_SECRET_KEY",
+        "CONVEX_DEPLOYMENT",
         "CONVEX_DEPLOY_KEY",
         "CLERK_WEBHOOK_SECRET",
         "RESEND_API_KEY",
-        "RESEND_AUDIENCE_ID"
+        "RESEND_AUDIENCE_ID",
+        "SENTRY_AUTH_TOKEN"
       ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]

@@ -11,5 +11,6 @@
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1.0
-  }
+  },
+  "tailConsumers": ["eurekapad-yjs-provider-tail"]
 }
