@@ -1,6 +1,7 @@
 import { PartialInlineContent, StyledText } from '@blocknote/core'
 
 import { imagesJSONSchema } from '@/components/editor/code/schemas'
+import { graphStateJSONSchema } from '@/components/editor/graph/schemas'
 import { customSchema } from '@/components/editor/schema'
 
 type CustomPartialBlock = typeof customSchema.Block
@@ -10,6 +11,7 @@ type CustomInlineContent = Extract<CustomPartialBlock['content'], PartialInlineC
 const fromTemplate = (latex: string) => {
   return (
     `\\documentclass[a4paper,12pt]{article}
+\\usepackage{caption}
 \\usepackage{amsmath}
 \\usepackage{amsfonts}
 \\usepackage{amssymb}
@@ -88,9 +90,48 @@ function fixLatexArray(input: string): string {
   })
 }
 
-function processImageUrl(url: string): string {
+/**
+ * Returns the data URI of the graph image in PNG format, and the list of expressions
+ */
+async function exportGraph(
+  props: Extract<CustomPartialBlock, { type: 'graph' }>['props'],
+): Promise<{ imageUrl: string; expressions: string[] }> {
+  const editorStateResult = graphStateJSONSchema.safeParse(props.state)
+  if (editorStateResult.success) {
+    const element = document.createElement('div')
+    const gc = Desmos.GraphingCalculator(element)
+    gc.setState(editorStateResult.data)
+    const imgDataUrl = await new Promise<string>((resolve, reject) => {
+      gc.asyncScreenshot({ format: 'png' }, (url: string) => {
+        if (url) {
+          resolve(url)
+        } else {
+          reject(new Error('Failed to generate graph image URL'))
+        }
+      })
+    })
+
+    const exprList = editorStateResult.data.expressions.list
+    const expressions = exprList
+      .filter(
+        (e): e is Extract<(typeof exprList)[number], { type: 'expression' }> => e.type === 'expression' && !!e.latex,
+      )
+      .map(e => `$${e.latex}$`)
+
+    gc.destroy()
+    element.remove()
+    return { imageUrl: imgDataUrl, expressions }
+  }
+  throw new Error('Invalid graph state')
+}
+
+function processImageUrl(url: string, captions?: string[]): string {
   const fileName = fileNameFromUrl(url)
-  return `\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.75\\textwidth]{./${fileName}}\n\\end{figure}\n\n`
+  return `\\begin{figure}[H]
+\\centering
+\\includegraphics[width=0.75\\textwidth]{./${fileName}}
+${captions ? captions.map(c => `\\caption*{${c}}`).join('\n') : ''}
+\\end{figure}\n\n`
 }
 
 function extractTextFromContent(content: CustomInlineContent, escape: boolean = true): string {
@@ -115,7 +156,7 @@ function extractTextFromContent(content: CustomInlineContent, escape: boolean = 
 let currentListType: 'bullet' | 'numbered' | null = null
 let listBuffer: string[] = []
 
-function processNode(node: CustomPartialBlock): string {
+async function processNode(node: CustomPartialBlock): Promise<string> {
   const nodeType = node.type || ''
 
   if (nodeType !== 'bulletListItem' && nodeType !== 'numberedListItem' && currentListType) {
@@ -203,6 +244,10 @@ function processNode(node: CustomPartialBlock): string {
   } else if (nodeType === 'image') {
     const props = (node as Extract<CustomPartialBlock, { type: 'image' }>).props || {}
     return processImageUrl(props.url)
+  } else if (nodeType === 'graph') {
+    const props = (node as Extract<CustomPartialBlock, { type: 'graph' }>).props || {}
+    const { imageUrl, expressions } = await exportGraph(props)
+    return processImageUrl(imageUrl, expressions)
   }
   return ''
 }
@@ -226,11 +271,11 @@ function flushList(): string {
   return result
 }
 
-function processNonListNode(node: CustomPartialBlock): string {
-  return processNode(node)
+async function processNonListNode(node: CustomPartialBlock): Promise<string> {
+  return await processNode(node)
 }
 
-function finalizeProcessing(): string {
+async function finalizeProcessing(): Promise<string> {
   if (currentListType) {
     const result = flushList()
     currentListType = null
@@ -240,6 +285,13 @@ function finalizeProcessing(): string {
 }
 
 function fileNameFromUrl(url: string): string {
+  if (new URL(url).protocol === 'data:') {
+    const base64Data = url.split(',')[1]
+    const base64Header = url.split(',')[0]
+    const mimeType = base64Header.split(':')[1].split(';')[0]
+    const extension = mimeType.split('/')[1]
+    return `${base64Data.slice(0, 10)}.${extension}`
+  }
   const result = url.match(/[^/]+$/)?.[0] || url.slice(-10)
   if (/\.\w+$/.test(result)) {
     return result
@@ -257,6 +309,10 @@ export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<s
     } else if (node.type === 'codeblock') {
       const props = (node as Extract<CustomPartialBlock, { type: 'codeblock' }>).props || {}
       urls = urls.concat(imagesJSONSchema.parse(props.images).map((url: URL) => url.href))
+    } else if (node.type === 'graph') {
+      const props = (node as Extract<CustomPartialBlock, { type: 'graph' }>).props || {}
+      const { imageUrl } = await exportGraph(props)
+      urls.push(imageUrl)
     }
   }
 
@@ -273,7 +329,7 @@ export async function getAllImages(data: CustomPartialBlock[]): Promise<Record<s
   return images
 }
 
-export function blocksToLaTeX(data: CustomPartialBlock[]): string {
+export async function blocksToLaTeX(data: CustomPartialBlock[]): Promise<string> {
   // TODO: this check is incomplete
   // TODO: For some reason document https://www.eurekapad.app/documents/hello-j575yh515gxdp8gp6y956xfkz972937w is invalid
   // TODO: https://www.eurekapad.app/documents/Test-j574hjs9s13vbh2ef732xjsmcd70g5m6 this too
@@ -284,8 +340,8 @@ export function blocksToLaTeX(data: CustomPartialBlock[]): string {
   // const content = data.map(node => processNode(node)).join('')
   let output = ''
   for (const node of data) {
-    output += processNode(node)
+    output += await processNode(node)
   }
-  output += finalizeProcessing()
+  output += await finalizeProcessing()
   return fromTemplate(output)
 }
