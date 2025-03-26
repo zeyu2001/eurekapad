@@ -51,10 +51,10 @@ const PreviewButton = ({ pdfUrl }: { pdfUrl: string }) => {
   )
 }
 
-const Loading = () => (
+const Loading = ({ message }: { message: string }) => (
   <div className="flex size-full items-center justify-center">
     <Spinner />
-    <p className="ml-2 text-sm text-gray-500">Exporting PDF...</p>
+    <p className="ml-2 text-sm text-gray-500">{message}</p>
   </div>
 )
 
@@ -125,10 +125,18 @@ interface LatexModalProps {
 export default function LatexModal({ document }: LatexModalProps) {
   const { engine, loaded } = useSwiftLatexEngine()
   const [contentLoaded, content] = useContent(document)
-  const [latex, setLatex] = useDebounceValue<string | undefined>(
-    content === undefined ? undefined : blocksToLaTeX(JSON.parse(content || '[]')),
-    500,
-  )
+  const [latex, setLatex] = useDebounceValue<string | undefined>(undefined, 500)
+
+  useEffect(() => {
+    const fetchLatex = async () => {
+      if (content !== undefined) {
+        const result = await blocksToLaTeX(JSON.parse(content || '[]'))
+        setLatex(result)
+      }
+    }
+    fetchLatex()
+  }, [content])
+
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [numPages, setNumPages] = useState(0)
   const { theme } = useTheme()
@@ -187,14 +195,18 @@ export default function LatexModal({ document }: LatexModalProps) {
           <CopyButton text={latex || ''} />
         </div>
         <div className="h-full overflow-auto">
-          <ReactCodeMirror
-            value={latex}
-            extensions={[langs.stex()]}
-            theme={editorTheme}
-            height={editorHeight.toString()}
-            onChange={setLatex}
-            editable={false}
-          />
+          {latex ? (
+            <ReactCodeMirror
+              value={latex}
+              extensions={[langs.stex()]}
+              theme={editorTheme}
+              height={editorHeight.toString()}
+              onChange={setLatex}
+              editable={true}
+            />
+          ) : (
+            <Loading message="Exporting LaTeX..." />
+          )}
         </div>
       </div>
       <div ref={pdfContainerRef} className="relative h-full overflow-auto">
@@ -228,7 +240,7 @@ export default function LatexModal({ document }: LatexModalProps) {
             </div>
           </>
         ) : (
-          <Loading />
+          <Loading message="Exporting PDF..." />
         )}
       </div>
     </div>
