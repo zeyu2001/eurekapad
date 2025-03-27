@@ -1,4 +1,4 @@
-import { Extension } from '@tiptap/core'
+import { Editor, Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import { Decoration, DecorationSet } from '@tiptap/pm/view'
 
@@ -35,6 +35,19 @@ export interface InlineCompletionStorage {
   }
 }
 
+const triggerPaste = (pasteText: string, editor: Editor) => {
+  const clipboardData = new DataTransfer()
+  clipboardData.setData('text/plain', pasteText)
+
+  const pasteEvent = new ClipboardEvent('paste', {
+    clipboardData,
+    bubbles: true,
+    cancelable: true,
+  })
+
+  editor.view.dom.dispatchEvent(pasteEvent)
+}
+
 export const InlineCompletionExtension = Extension.create<InlineCompletionOptions, InlineCompletionStorage>({
   name: 'inlineCompletion',
 
@@ -62,12 +75,12 @@ export const InlineCompletionExtension = Extension.create<InlineCompletionOption
           if (this.storage.data.currentSuggestion) {
             return chain()
               .command(() => {
-                const chunkifiedSuggestion = this.storage.data.currentSuggestion!.split('')
+                const chunkifiedSuggestion = this.storage.data.currentSuggestion!.split(' ')
 
                 this.storage.data = {}
 
                 for (let i = 0; i < chunkifiedSuggestion.length; i++) {
-                  setTimeout(() => editor.chain().insertContent(chunkifiedSuggestion[i]).focus().run(), 2 * i)
+                  setTimeout(() => triggerPaste(chunkifiedSuggestion[i] + ' ', editor), 2 * i)
                 }
 
                 return true

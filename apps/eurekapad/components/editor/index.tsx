@@ -139,7 +139,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         ArrowConversionExtension,
         InlineCompletionExtension.configure({
           fetchAutocompletion: async (_existingText: string) => {
-            return `Some suggestion`
+            return `Some suggestion $$F=ma$$ \`test\` **test** *test* \`test\``
           },
         }),
       ],
