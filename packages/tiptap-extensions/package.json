@@ -27,6 +27,7 @@
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-sourcemaps2": "^0.4.3",
     "rollup-plugin-typescript2": "^0.36.0",
+    "tslib": "^2.8.1",
     "typescript": "^5.7.2"
   },
   "prettier": "@eurekapad/prettier-config",
