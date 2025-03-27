@@ -15,51 +15,14 @@ import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
 import { type KeyboardEvent, useEffect } from 'react'
 import { toast } from 'sonner'
-import YPartyKitProvider from 'y-partykit/provider'
-import * as Y from 'yjs'
 
+import { newCollabProvider } from '@/components/editor/collab'
 import { customSchema } from '@/components/editor/schema'
 import { CustomSlashMenu } from '@/components/editor/slash-menu'
 import { api } from '@/convex/_generated/api'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
-
-const cursorColors = [
-  '#FF6B6B',
-  '#6BCB77',
-  '#4D96FF',
-  '#FFD93D',
-  '#FF6EC7',
-  '#6B8EFF',
-  '#FFB347',
-  '#8AFF80',
-  '#B388FF',
-  '#FF8A65',
-  '#64FFDA',
-  '#F06292',
-  '#7C4DFF',
-  '#A1887F',
-  '#00E676',
-]
-
-const animalNames = [
-  'Panda',
-  'Koala',
-  'Bunny',
-  'Otter',
-  'Fox',
-  'Hedgehog',
-  'Penguin',
-  'Kitten',
-  'Puppy',
-  'Lamb',
-  'Squirrel',
-  'Raccoon',
-  'Alpaca',
-  'Sloth',
-  'Chinchilla',
-]
 
 type EditorProps =
   | {
@@ -122,8 +85,6 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     return url.href ?? ''
   }
 
-  const doc = new Y.Doc()
-
   const editor = useCreateBlockNote({
     schema: customSchema,
     dropCursor: multiColumnDropCursor,
@@ -137,27 +98,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
       extensions: [InlineMathExtension, ArrowConversionExtension],
     },
     initialContent: initialContent && !collab ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
-    collaboration: collab
-      ? {
-          provider: new YPartyKitProvider(
-            process.env.NEXT_PUBLIC_YPARTYKIT_HOST ?? 'localhost:1999',
-            documentId || 'default',
-            doc,
-            {
-              params: {
-                token: authToken,
-                documentId,
-              },
-            },
-          ),
-          fragment: doc.getXmlFragment('prosemirror'),
-          user: {
-            name: user?.user?.fullName ?? 'Anonymous ' + animalNames[Math.floor(Math.random() * animalNames.length)],
-            color: cursorColors[Math.floor(Math.random() * cursorColors.length)],
-          },
-          // showCursorLabels: 'always',
-        }
-      : undefined,
+    collaboration: collab ? newCollabProvider(documentId, authToken, user?.user?.fullName) : undefined,
   })
 
   const replaceWithCodeBlock = (block: CustomBlock) => {
