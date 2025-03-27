@@ -23,6 +23,11 @@ const editor = ServerBlockNoteEditor.create({
 })
 
 export const appRouter = router({
+  /**
+   * Convert a BlockNote document to a YDoc
+   * @param input - BlockNote block array
+   * @returns {Uint8Array} - YDoc state update
+   */
   blocksToYDoc: publicProcedure.input(z.array(z.custom<CustomBlock>())).query(async ({ input }) => {
     const editor = ServerBlockNoteEditor.create({
       schema: serverCustomSchema,
@@ -31,6 +36,13 @@ export const appRouter = router({
     return Y.encodeStateAsUpdate(editor.blocksToYDoc(input))
   }),
 
+  /**
+   * Gets YDoc from a documentId and auth token
+   * @param input.documentId - documentId to fetch
+   * @param input.token - auth token for the user with access to the document
+   * @returns {Uint8Array} - YDoc state update, which when applied to a fresh YDoc
+   *  will give the same state as the document
+   */
   getYDocByDocumentId: publicProcedure
     .input(
       z.object({
@@ -61,6 +73,13 @@ export const appRouter = router({
       return Y.encodeStateAsUpdate(editor.blocksToYDoc(blocks))
     }),
 
+  /**
+   * Called by the Partykit server to save the YDoc to the database
+   * @param input.documentId - documentId to save
+   * @param input.base64YDoc - YDoc state update, which when applied to a fresh YDoc
+   *  will give the same state as the document
+   * @param input.yjsToken - a shared secret between the Partykit server and the Convex server
+   */
   saveYDoc: publicProcedure
     .input(
       z.object({
@@ -91,6 +110,15 @@ export const appRouter = router({
         yjsToken: input.yjsToken,
       })
     }),
+
+  /**
+   * Fetch inline completion suggestions
+   * @param input - existing text in the node
+   * @returns {string} - the suggestion to be shown
+   */
+  inlineCompletion: publicProcedure.input(z.string()).mutation(async ({ _input }) => {
+    return `Some suggestion $$F=ma$$ \`test\` **test** *test* \`test\``
+  }),
 })
 
 // export only the type definition of the API
