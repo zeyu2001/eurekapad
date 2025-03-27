@@ -474,6 +474,13 @@ importers:
         version: 5.7.2
 
   packages/tiptap-extensions:
+    dependencies:
+      prosemirror-state:
+        specifier: ^1.4.3
+        version: 1.4.3
+      prosemirror-view:
+        specifier: 1.38.0
+        version: 1.38.0
     devDependencies:
       '@eurekapad/eslint-config':
         specifier: workspace:*

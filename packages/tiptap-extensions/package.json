@@ -29,5 +29,9 @@
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.7.2"
   },
-  "prettier": "@eurekapad/prettier-config"
+  "prettier": "@eurekapad/prettier-config",
+  "dependencies": {
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-view": "1.38.0"
+  }
 }

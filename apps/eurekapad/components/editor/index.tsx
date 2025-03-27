@@ -9,7 +9,7 @@ import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
 import { useUser } from '@clerk/nextjs'
-import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
+import { ArrowConversionExtension, InlineCompletionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
@@ -134,7 +134,15 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     // initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     uploadFile: handleUpload,
     _tiptapOptions: {
-      extensions: [InlineMathExtension, ArrowConversionExtension],
+      extensions: [
+        InlineMathExtension,
+        ArrowConversionExtension,
+        InlineCompletionExtension.configure({
+          fetchAutocompletion: async (_existingText: string) => {
+            return `Some suggestion`
+          },
+        }),
+      ],
     },
     initialContent: initialContent && !collab ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     collaboration: collab
