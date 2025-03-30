@@ -75,14 +75,20 @@ export const InlineCompletionExtension = Extension.create<InlineCompletionOption
           if (this.storage.data.currentSuggestion) {
             return chain()
               .command(() => {
-                const chunkifiedSuggestion = this.storage.data.currentSuggestion!.split(' ')
+                // Matches either a $$...$$ block or a sequence of non-whitespace
+                const latexOrNonWhitespace = /(\$\$.*?\$\$|[^\s]+)/g
+                const chunkifiedSuggestion = this.storage.data.currentSuggestion!.match(latexOrNonWhitespace) || []
 
                 this.storage.data = {}
 
                 for (let i = 0; i < chunkifiedSuggestion.length; i++) {
-                  setTimeout(() => triggerPaste(chunkifiedSuggestion[i] + ' ', editor), 2 * i)
-                }
+                  const token = chunkifiedSuggestion[i]
+                  // If it is a LaTeX block, paste it directly
+                  // Otherwise append a space because we ignored whitespaces earlier
+                  const textToPaste = token.startsWith('$$') && token.endsWith('$$') ? token : token + ' '
 
+                  setTimeout(() => triggerPaste(textToPaste, editor), 2 * i)
+                }
                 return true
               })
               .run()

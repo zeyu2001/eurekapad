@@ -4,6 +4,7 @@ import { fetchMutation, fetchQuery } from 'convex/nextjs'
 import * as Y from 'yjs'
 import { z } from 'zod'
 
+import { inlineCompletion } from '@/components/editor/ai/completions'
 import { CustomBlock, serverCustomSchema } from '@/components/editor/serverSchema'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -116,8 +117,8 @@ export const appRouter = router({
    * @param input - existing text in the node
    * @returns {string} - the suggestion to be shown
    */
-  inlineCompletion: publicProcedure.input(z.string()).mutation(async ({ _input }) => {
-    return `Some suggestion $$F=ma$$ \`test\` **test** *test* \`test\``
+  inlineCompletion: publicProcedure.input(z.string()).mutation(async ({ input }) => {
+    return await inlineCompletion(input)
   }),
 })
 
