@@ -1,14 +1,7 @@
-import { createAzure } from '@ai-sdk/azure'
 import { generateObject } from 'ai'
 import { z } from 'zod'
 
-const azure = createAzure({
-  resourceName: process.env.AZURE_OPENAI_RESOURCE_NAME,
-  apiKey: process.env.AZURE_OPENAI_API_KEY,
-})
-
-const gpt4oMini = azure('gpt-4o-mini')
-// const gpt4o = azure('gpt-4o')
+import { gpt4oMini } from './models'
 
 export const inlineCompletion = async (
   currText: string,

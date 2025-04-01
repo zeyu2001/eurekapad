@@ -4,6 +4,7 @@ import { fetchMutation, fetchQuery } from 'convex/nextjs'
 import * as Y from 'yjs'
 import { z } from 'zod'
 
+import { inlineChat } from '@/components/editor/ai/chat'
 import { inlineCompletion } from '@/components/editor/ai/completions'
 import { CustomBlock, serverCustomSchema } from '@/components/editor/serverSchema'
 import { api } from '@/convex/_generated/api'
@@ -132,12 +133,26 @@ export const appRouter = router({
       const nextBlockDescription = input.nextBlock
         ? `${input.nextBlock.type} - ${JSON.stringify(input.nextBlock)}`
         : 'No next block'
-      // console.log('Generating inline completion for:', {
-      //   currText: input.currText,
-      //   prevBlockDescription,
-      //   nextBlockDescription,
-      // })
       return await inlineCompletion(input.currText, prevBlockDescription, nextBlockDescription)
+    }),
+
+  /**
+   * Inline chat response
+   * @param query - query from the user
+   * @param selectedBlock - UUID of block selected by the user
+   * @param documentBlocks - blocks in the document
+   * @returns {string} - the response to be shown
+   */
+  inlineChat: publicProcedure
+    .input(
+      z.object({
+        query: z.string(),
+        selectedBlock: z.string(),
+        documentBlocks: z.array(z.custom<CustomBlock>()),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return await inlineChat(input.query, input.selectedBlock, input.documentBlocks)
     }),
 })
 

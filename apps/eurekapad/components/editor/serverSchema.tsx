@@ -46,4 +46,5 @@ export const serverCustomSchema = withMultiColumn(
 
 export type CustomEditor = typeof serverCustomSchema.BlockNoteEditor
 export type CustomBlock = typeof serverCustomSchema.Block
+export type CustomPartialBlock = typeof serverCustomSchema.PartialBlock
 export type CustomInlineContentSchema = typeof serverCustomSchema.inlineContentSchema

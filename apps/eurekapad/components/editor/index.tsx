@@ -9,16 +9,23 @@ import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
 import { useUser } from '@clerk/nextjs'
-import { ArrowConversionExtension, InlineCompletionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
+import {
+  ArrowConversionExtension,
+  InlineChatPlugin,
+  InlineCompletionExtension,
+  InlineMathExtension,
+} from '@eurekapad/tiptap-extensions'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
-import { type KeyboardEvent, useEffect } from 'react'
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import YPartyKitProvider from 'y-partykit/provider'
 import * as Y from 'yjs'
 
-import { customSchema } from '@/components/editor/schema'
+import InlineChatForm from '@/components/editor/ai/inline-chat-form'
+import { CustomEditor, customSchema } from '@/components/editor/schema'
 import { CustomSlashMenu } from '@/components/editor/slash-menu'
 import { api } from '@/convex/_generated/api'
 import { useDocumentId } from '@/hooks/use-documentId'
@@ -47,7 +54,41 @@ type EditorProps =
 
 type CustomBlock = typeof customSchema.Block
 
+export type InlineChatFormProps = {
+  refs: ReturnType<typeof useFloating>['refs']
+  strategy: 'absolute' | 'fixed'
+  x: number | null
+  y: number | null
+  editor: CustomEditor
+  inlineChatMutation: ReturnType<typeof trpc.inlineChat.useMutation>
+}
+
 const Editor = ({ onChange, editable, savable, collab, initialContent, authToken }: EditorProps) => {
+  const [showMenu, setShowMenu] = useState(false)
+  const [refEl, setRefEl] = useState<HTMLElement | null>(null)
+  const editorWrapperRef = useRef<HTMLDivElement | null>(null)
+
+  const { x, y, refs, strategy, update } = useFloating({
+    placement: 'top',
+    middleware: [
+      offset(8),
+      flip(),
+      editorWrapperRef.current &&
+        shift({
+          boundary: editorWrapperRef.current,
+        }),
+    ],
+    whileElementsMounted: autoUpdate,
+  })
+
+  // Update the reference element for the floating menu when it's set by the InlineChatPlugin
+  useEffect(() => {
+    if (refEl) {
+      refs.setReference(refEl)
+      update()
+    }
+  }, [refEl, refs.setReference, update])
+
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
   const user = useUser()
@@ -60,6 +101,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
   }, [isAuthenticated, isLoading, savable, setAuthenticated, setSavable])
 
   const inlineCompletionMutation = trpc.inlineCompletion.useMutation()
+  const inlineChatMutation = trpc.inlineChat.useMutation()
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
@@ -122,6 +164,12 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
                 },
               )
             })
+          },
+        }),
+        InlineChatPlugin.configure({
+          onTrigger: (target: HTMLElement | null) => {
+            setRefEl(target)
+            setShowMenu(true)
           },
         }),
       ],
@@ -287,7 +335,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
   }
 
   return (
-    <div>
+    <div ref={editorWrapperRef} className="relative">
       <BlockNoteView
         editor={editor}
         editable={editable}
@@ -299,9 +347,22 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
           handleBackspace(event)
           handleSelectAll(event)
         }}
+        onSelectionChange={() => {
+          setShowMenu(false)
+        }}
       >
         <CustomSlashMenu editor={editor} />
       </BlockNoteView>
+      {showMenu && (
+        <InlineChatForm
+          refs={refs}
+          strategy={strategy}
+          x={x}
+          y={y}
+          editor={editor}
+          inlineChatMutation={inlineChatMutation}
+        />
+      )}
     </div>
   )
 }

@@ -35,6 +35,7 @@
     "@clerk/themes": "^2.2.3",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
+    "@floating-ui/react": "^0.27.5",
     "@headlessui/react": "^2.2.0",
     "@hookform/resolvers": "^3.10.0",
     "@jupyterlite/pyodide-kernel": "^0.4.6",
