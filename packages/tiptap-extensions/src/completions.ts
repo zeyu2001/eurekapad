@@ -75,8 +75,8 @@ export const InlineCompletionExtension = Extension.create<InlineCompletionOption
           if (this.storage.data.currentSuggestion) {
             return chain()
               .command(() => {
-                // Matches either a $$...$$ block or a sequence of non-whitespace
-                const latexOrNonWhitespace = /(\$\$.*?\$\$|[^\s]+)/g
+                // Matches e.g. a $$...$$ block or a sequence of non-whitespace
+                const latexOrNonWhitespace = /(\$\$.*?\$\$|\*\*.*?\*\*|\*.*?\*|``.*?``|[^\s]+)/g
                 const chunkifiedSuggestion = this.storage.data.currentSuggestion!.match(latexOrNonWhitespace) || []
 
                 this.storage.data = {}
@@ -143,7 +143,7 @@ export const InlineCompletionExtension = Extension.create<InlineCompletionOption
             if (storage.currentSuggestion && storage.nodeDetails) {
               const { from, to } = storage.nodeDetails
 
-              const decoration = Decoration.node(from, to, {
+              const decoration = Decoration.inline(from, to, {
                 'data-inline-suggestion': storage.currentSuggestion,
               })
 

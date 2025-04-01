@@ -117,9 +117,28 @@ export const appRouter = router({
    * @param input - existing text in the node
    * @returns {string} - the suggestion to be shown
    */
-  inlineCompletion: publicProcedure.input(z.string()).mutation(async ({ input }) => {
-    return await inlineCompletion(input)
-  }),
+  inlineCompletion: publicProcedure
+    .input(
+      z.object({
+        currText: z.string(),
+        prevBlock: z.optional(z.custom<CustomBlock>()),
+        nextBlock: z.optional(z.custom<CustomBlock>()),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const prevBlockDescription = input.prevBlock
+        ? `${input.prevBlock.type} - ${JSON.stringify(input.prevBlock)}`
+        : 'No previous block'
+      const nextBlockDescription = input.nextBlock
+        ? `${input.nextBlock.type} - ${JSON.stringify(input.nextBlock)}`
+        : 'No next block'
+      // console.log('Generating inline completion for:', {
+      //   currText: input.currText,
+      //   prevBlockDescription,
+      //   nextBlockDescription,
+      // })
+      return await inlineCompletion(input.currText, prevBlockDescription, nextBlockDescription)
+    }),
 })
 
 // export only the type definition of the API

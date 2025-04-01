@@ -108,10 +108,19 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
         InlineCompletionExtension.configure({
           fetchAutocompletion: async (existingText: string) => {
             return new Promise<string>((resolve, reject) => {
-              inlineCompletionMutation.mutate(existingText, {
-                onSuccess: result => resolve(result),
-                onError: error => reject(error),
-              })
+              const prevBlock = editor.getTextCursorPosition().prevBlock
+              const nextBlock = editor.getTextCursorPosition().nextBlock
+              inlineCompletionMutation.mutate(
+                {
+                  currText: existingText,
+                  prevBlock: prevBlock ? (prevBlock as CustomBlock) : undefined,
+                  nextBlock: nextBlock ? (nextBlock as CustomBlock) : undefined,
+                },
+                {
+                  onSuccess: result => resolve(result),
+                  onError: error => reject(error),
+                },
+              )
             })
           },
         }),
