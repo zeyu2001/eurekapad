@@ -61,6 +61,7 @@ export type InlineChatFormProps = {
   y: number | null
   editor: CustomEditor
   inlineChatMutation: ReturnType<typeof trpc.inlineChat.useMutation>
+  update: () => void
 }
 
 const Editor = ({ onChange, editable, savable, collab, initialContent, authToken }: EditorProps) => {
@@ -361,6 +362,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
           y={y}
           editor={editor}
           inlineChatMutation={inlineChatMutation}
+          update={update}
         />
       )}
     </div>

@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { CustomBlock } from '@/components/editor/schema'
 import { CustomPartialBlock } from '@/components/editor/serverSchema'
+import { capitalizeFirstLetter } from '@/lib/utils'
 
 import { gpt4o } from './models'
 
@@ -80,7 +81,7 @@ export const inlineChat = async (query: string, selectedBlock: string, documentB
             children: [],
           }
           newBlocks.push(block as CustomPartialBlock)
-          return `Graph created with ${expressions.join(', ')}`
+          return `Graph created with expression ${expressions.map(expr => expr.latex).join(', ')}.`
         },
       },
       createMathBlock: {
@@ -89,7 +90,7 @@ export const inlineChat = async (query: string, selectedBlock: string, documentB
           expression: z.string().describe('The LaTeX expression to display, e.g. x^2 + y^2 = 1'),
         }),
 
-        execute: async ({ expression }) => {
+        execute: async ({ expression }: { expression: string }) => {
           const block = {
             type: 'math',
             content: [
@@ -102,7 +103,7 @@ export const inlineChat = async (query: string, selectedBlock: string, documentB
             children: [],
           }
           newBlocks.push(block as CustomPartialBlock)
-          return `Math block created with expression: ${expression}`
+          return `Math block created with expression ${expression}.`
         },
       },
       createCodeBlock: {
@@ -111,7 +112,7 @@ export const inlineChat = async (query: string, selectedBlock: string, documentB
           code: z.string().describe('The code to display'),
           language: z.string().describe('The programming language of the code'),
         }),
-        execute: async ({ code, language }) => {
+        execute: async ({ code, language }: { code: string; language: string }) => {
           const block = {
             type: 'codeblock',
             props: {
@@ -121,7 +122,7 @@ export const inlineChat = async (query: string, selectedBlock: string, documentB
             children: [],
           }
           newBlocks.push(block as CustomPartialBlock)
-          return `Code block created with code: ${code}`
+          return `${capitalizeFirstLetter(language)} code block created.`
         },
       },
     },
