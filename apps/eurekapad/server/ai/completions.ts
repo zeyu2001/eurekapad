@@ -1,7 +1,7 @@
 import { generateObject } from 'ai'
 import { z } from 'zod'
 
-import { gpt4oMini } from './models'
+import { gpt4oMini } from '@/server/ai/models'
 
 export const inlineCompletion = async (
   currText: string,

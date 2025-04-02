@@ -4,11 +4,10 @@ import { fetchMutation, fetchQuery } from 'convex/nextjs'
 import * as Y from 'yjs'
 import { z } from 'zod'
 
-import { inlineChat } from '@/components/editor/ai/chat'
-import { inlineCompletion } from '@/components/editor/ai/completions'
 import { CustomBlock, serverCustomSchema } from '@/components/editor/serverSchema'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { inlineCompletion } from '@/server/ai/completions'
 
 import { transformer } from '../utils/transformer'
 
@@ -25,19 +24,6 @@ const editor = ServerBlockNoteEditor.create({
 })
 
 export const appRouter = router({
-  /**
-   * Convert a BlockNote document to a YDoc
-   * @param input - BlockNote block array
-   * @returns {Uint8Array} - YDoc state update
-   */
-  blocksToYDoc: publicProcedure.input(z.array(z.custom<CustomBlock>())).query(async ({ input }) => {
-    const editor = ServerBlockNoteEditor.create({
-      schema: serverCustomSchema,
-    })
-
-    return Y.encodeStateAsUpdate(editor.blocksToYDoc(input))
-  }),
-
   /**
    * Gets YDoc from a documentId and auth token
    * @param input.documentId - documentId to fetch
@@ -134,25 +120,6 @@ export const appRouter = router({
         ? `${input.nextBlock.type} - ${JSON.stringify(input.nextBlock)}`
         : 'No next block'
       return await inlineCompletion(input.currText, prevBlockDescription, nextBlockDescription)
-    }),
-
-  /**
-   * Inline chat response
-   * @param query - query from the user
-   * @param selectedBlock - UUID of block selected by the user
-   * @param documentBlocks - blocks in the document
-   * @returns {string} - the response to be shown
-   */
-  inlineChat: publicProcedure
-    .input(
-      z.object({
-        query: z.string(),
-        selectedBlock: z.string(),
-        documentBlocks: z.array(z.custom<CustomBlock>()),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      return await inlineChat(input.query, input.selectedBlock, input.documentBlocks)
     }),
 })
 

@@ -60,7 +60,6 @@ export type InlineChatFormProps = {
   x: number | null
   y: number | null
   editor: CustomEditor
-  inlineChatMutation: ReturnType<typeof trpc.inlineChat.useMutation>
   update: () => void
 }
 
@@ -102,7 +101,6 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
   }, [isAuthenticated, isLoading, savable, setAuthenticated, setSavable])
 
   const inlineCompletionMutation = trpc.inlineCompletion.useMutation()
-  const inlineChatMutation = trpc.inlineChat.useMutation()
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
@@ -335,6 +333,12 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     }
   }
 
+  const handleEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setShowMenu(false)
+    }
+  }
+
   return (
     <div ref={editorWrapperRef} className="relative">
       <BlockNoteView
@@ -347,6 +351,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
           handleCodeBlockShortcut(event)
           handleBackspace(event)
           handleSelectAll(event)
+          handleEscape(event)
         }}
         onSelectionChange={() => {
           setShowMenu(false)
@@ -354,17 +359,7 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
       >
         <CustomSlashMenu editor={editor} />
       </BlockNoteView>
-      {showMenu && (
-        <InlineChatForm
-          refs={refs}
-          strategy={strategy}
-          x={x}
-          y={y}
-          editor={editor}
-          inlineChatMutation={inlineChatMutation}
-          update={update}
-        />
-      )}
+      {showMenu && <InlineChatForm refs={refs} strategy={strategy} x={x} y={y} editor={editor} update={update} />}
     </div>
   )
 }

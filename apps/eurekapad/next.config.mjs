@@ -36,6 +36,9 @@ const nextConfig = {
         ],
       }),
     )
+
+    // https://github.com/remarkjs/remark-math/issues/39
+    config.resolve.alias['micromark-extension-math'] = 'micromark-extension-llm-math'
     return config
   },
   compiler: {
