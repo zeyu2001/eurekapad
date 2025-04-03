@@ -124,16 +124,16 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {messages.length > 0 && (
-          <ScrollArea className="h-[300px] pr-4">
+          <ScrollArea className="h-[300px] pr-4 [&_[data-radix-scroll-area-viewport]>:first-child]:!block">
             <div className="flex flex-col gap-3" ref={scrollRef}>
               {messages.map(message => (
                 <div
                   key={message.id}
                   className={cn(
-                    'flex flex-col rounded-lg p-3 max-w-[80%]',
+                    'flex flex-col rounded-lg p-3',
                     message.role === 'user'
-                      ? 'ml-auto border border-blue-100 bg-blue-200 dark:border-blue-800 dark:bg-blue-600'
-                      : 'border border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-700',
+                      ? 'ml-auto max-w-[60%] border border-blue-100 bg-blue-200 dark:border-blue-800 dark:bg-blue-600'
+                      : 'self-start max-w-[80%] border border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-700',
                   )}
                   style={{
                     alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
