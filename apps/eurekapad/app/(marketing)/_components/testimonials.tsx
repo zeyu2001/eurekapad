@@ -148,7 +148,7 @@ export default function Testimonials() {
                           className="h-10 w-10 object-contain"
                         />
                         <div>
-                          <div className="font-semibold">{testimonial.author.name}</div>
+                          <div className="font-semibold text-gray-900">{testimonial.author.name}</div>
                           <div className="text-gray-600">{testimonial.author.role}</div>
                         </div>
                       </CardFooter>
