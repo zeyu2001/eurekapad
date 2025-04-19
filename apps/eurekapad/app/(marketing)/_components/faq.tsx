@@ -4,20 +4,23 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 
 const faqs = [
   {
-    question: 'Is there a mobile version?',
-    answer: 'Currently, EurekaPad is optimized for desktop use, with mobile support coming soon.',
+    question: 'Do you support handwriting?',
+    answer:
+      "Not at the moment, but we're actively developing a feature that lets you upload handwritten notes and convert them into editable digital content.",
   },
   {
     question: 'Is it free to use?',
     answer: 'We offer a free tier with basic features. Premium features are available with our paid plans.',
   },
   {
-    question: 'Is the chrome extension required?',
-    answer: 'No, the Chrome extension is optional but recommended for enhanced functionality.',
+    question: 'Is there a mobile version of the app?',
+    answer:
+      "The app isn't officially supported on mobile yet, so you might encounter bugs or layout issues. A mobile-friendly version is planned for future updates.",
   },
   {
-    question: 'Do I need my team/company to use this app?',
-    answer: 'No, EurekaLabs works great for individual users, but also offers powerful team collaboration features.',
+    question: 'Does the app work offline?',
+    answer:
+      'At this time, an internet connection is required. However, offline access is a highly requested feature and is on our development roadmap.',
   },
   {
     question: 'Can I sync EurekaLabs with other apps?',
@@ -33,8 +36,8 @@ export default function FAQ() {
           <h2 className="text-4xl font-bold mb-6 text-neutral-900">Frequently Asked Questions</h2>
           <p className="text-neutral-600 max-w-2xl mx-auto">
             More questions? Reach out at{' '}
-            <a href="mailto:hey@eurekalabs.dev" className="text-blue-600 hover:text-blue-700 underline">
-              hey@eurekalabs.dev
+            <a href="mailto:support@eurekapad.app" className="text-blue-600 hover:text-blue-700 underline">
+              support@eurekapad.app
             </a>
           </p>
         </div>

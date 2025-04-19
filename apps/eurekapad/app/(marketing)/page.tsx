@@ -1,6 +1,5 @@
 import CTA from './_components/cta'
 import DemoSection from './_components/demo-section'
-import FAQ from './_components/faq'
 import Features from './_components/features'
 import Footer from './_components/footer'
 import Hero from './_components/hero'
@@ -17,7 +16,7 @@ const MarketingPage = () => {
       <Features />
       <Testimonials />
       <DemoSection />
-      <FAQ />
+      {/* <FAQ /> */}
       <CTA />
       <Footer />
     </main>

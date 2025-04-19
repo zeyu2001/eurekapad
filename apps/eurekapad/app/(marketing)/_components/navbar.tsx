@@ -83,12 +83,12 @@ const Navbar = () => {
               >
                 Pricing
               </Link> */}
-              <Link
+              {/* <Link
                 href="#"
                 className="text-slate-700 px-2 py-1 text-sm font-medium hover:text-blue-600 transition-colors"
               >
                 Community
-              </Link>
+              </Link> */}
             </nav>
           </div>
 
