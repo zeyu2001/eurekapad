@@ -24,7 +24,7 @@ export const Logo = ({ className, darkMode }: { className?: string; darkMode?: b
         <Image src="/logo.svg" height="40" width="40" alt="Logo" />
       )}
 
-      <p className={cn('font-semibold', font.className, darkMode ? 'text-slate-700' : '')}>EurekaPad</p>
+      <p className={cn('font-semibold', font.className, darkMode ? '' : 'text-slate-900')}>EurekaPad</p>
     </div>
   )
 }
