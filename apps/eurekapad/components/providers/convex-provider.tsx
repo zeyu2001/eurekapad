@@ -23,6 +23,7 @@ export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       appearance={{
         baseTheme: themeMap[currentTheme],
+        variables: { colorPrimary: currentTheme === 'dark' ? '#60A5FA' : '#2563EB' },
         layout: {
           socialButtonsVariant: 'blockButton',
         },

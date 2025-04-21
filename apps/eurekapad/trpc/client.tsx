@@ -5,7 +5,7 @@ import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
 import { useState } from 'react'
 
-import type { AppRouter } from '@/server/trpc'
+import type { AppRouter } from '@/trpc'
 
 import { transformer } from './transformer'
 
@@ -25,7 +25,7 @@ function getBaseUrl() {
 
 export const trpc = createTRPCReact<AppRouter>()
 
-export function ClientProvider(props: { children: React.ReactNode }) {
+export function TRPCClientProvider(props: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
   const [trpcClient] = useState(() =>
     trpc.createClient({

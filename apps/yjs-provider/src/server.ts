@@ -56,9 +56,9 @@ export default class YjsServer implements Party.Server {
         const state = await trpcClientFactory(
           trpcApiUrl,
           vercelToken,
+          token,
         ).getYDocByDocumentId.query({
           documentId: documentId,
-          token: token,
         });
 
         const ydoc = new Y.Doc();

@@ -3,7 +3,7 @@
 import 'katex/dist/katex.min.css' // `rehype-katex` does not import the CSS for you
 
 import { useChat } from '@ai-sdk/react'
-import { Loader2, SendIcon, WrenchIcon } from 'lucide-react'
+import { Check, Loader2, SendIcon, Sparkles } from 'lucide-react'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
@@ -19,6 +19,25 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
+
+const toolDescriptions = {
+  createParagraph: {
+    pending: 'Creating paragraph block...',
+    success: 'Created paragraph block.',
+  },
+  createGraph: {
+    pending: 'Creating graph block...',
+    success: 'Created graph block.',
+  },
+  createMathBlock: {
+    pending: 'Creating math block...',
+    success: 'Created math block.',
+  },
+  createCodeBlock: {
+    pending: 'Creating code block...',
+    success: 'Created code block.',
+  },
+}
 
 const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatFormProps) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -42,6 +61,14 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
         role: 'system',
         content: `Current block: ${selectedBlock.id}\nDocument content: ${JSON.stringify(editor.document)}`,
       },
+      {
+        id: '2',
+        role: 'system',
+        content:
+          'Do not escape Markdown or LaTeX in your response. ' +
+          'For example, $$\\frac{1}{2}$$ is correct, not $$\\$\\frac{1}{2}\\$$$. ' +
+          'Keep your response to 3 sentences maximum. Do not repeat content you have already added through tool calls.',
+      },
     ],
 
     onFinish(message, { finishReason }) {
@@ -50,11 +77,19 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
           editor.insertBlocks(pendingBlocks.current, selectedBlock.id, 'after')
           pendingBlocks.current = []
         }, 0)
-
         setIsLoading(false)
+
         if (pendingBlocks.current.length > 0) {
           toast.success('Blocks inserted successfully.')
         }
+      } else if (finishReason === 'error') {
+        setTimeout(() => {
+          editor.insertBlocks(pendingBlocks.current, selectedBlock.id, 'after')
+          pendingBlocks.current = []
+        }, 0)
+        setIsLoading(false)
+
+        toast.error('There was an error in processing your request.')
       }
     },
 
@@ -80,7 +115,7 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
     },
   })
 
-  const messages = allMessages.slice(1)
+  const messages = allMessages.slice(2)
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -95,8 +130,8 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
       return
     }
 
-    handleSubmit(event)
     setIsLoading(true)
+    handleSubmit(event)
     update()
   }
 
@@ -167,8 +202,11 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
                               return (
                                 <div key={callId} className="my-2 space-y-2 text-xs">
                                   <div className="flex items-center text-sm font-semibold">
-                                    <Loader2 className=" mr-1 inline-block size-3 animate-spin" />
-                                    Calling {part.toolInvocation.toolName}...
+                                    <Loader2 className="mr-2 inline-block size-3 animate-spin" />
+                                    {
+                                      toolDescriptions[part.toolInvocation.toolName as keyof typeof toolDescriptions]
+                                        .pending
+                                    }
                                   </div>
                                 </div>
                               )
@@ -176,8 +214,11 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
                               return (
                                 <div key={callId} className="my-2 space-y-2 text-xs">
                                   <div className="flex items-center text-sm font-semibold">
-                                    <Loader2 className=" mr-1 inline-block size-3 animate-spin" />
-                                    Calling {part.toolInvocation.toolName}...
+                                    <Loader2 className="mr-2 inline-block size-3 animate-spin" />
+                                    {
+                                      toolDescriptions[part.toolInvocation.toolName as keyof typeof toolDescriptions]
+                                        .pending
+                                    }
                                   </div>
                                 </div>
                               )
@@ -185,12 +226,12 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
                               return (
                                 <div key={callId} className="my-2 space-y-2 text-xs">
                                   <div className="flex items-center text-sm font-semibold">
-                                    <WrenchIcon className="mr-1 inline-block" size={12} />
-                                    Called {part.toolInvocation.toolName}
+                                    <Check className="mr-2 inline-block text-green-500 dark:text-green-400" size={14} />
+                                    {
+                                      toolDescriptions[part.toolInvocation.toolName as keyof typeof toolDescriptions]
+                                        .success
+                                    }
                                   </div>
-                                  <pre className="overflow-x-auto rounded bg-gray-50 p-1 dark:bg-gray-800">
-                                    {part.toolInvocation.result}
-                                  </pre>
                                 </div>
                               )
                           }
@@ -198,8 +239,26 @@ const InlineChatForm = ({ refs, strategy, x, y, editor, update }: InlineChatForm
                         break
                     }
                   })}
+
+                  {isLoading &&
+                    message.role === 'assistant' &&
+                    message.parts[message.parts.length - 1]?.type !== 'text' && (
+                      <div className="my-2 flex animate-pulse items-center">
+                        <Sparkles size={14} className="mr-2 text-blue-500 dark:text-blue-400" />
+                        <span className="ml-2 text-sm text-gray-500 dark:text-gray-200">Thinking...</span>
+                      </div>
+                    )}
                 </div>
               ))}
+
+              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                <div className="my-2 flex flex-col gap-3 self-start">
+                  <div className="flex animate-pulse items-center">
+                    <Sparkles size={14} className="mr-2 text-blue-500 dark:text-blue-400" />
+                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-200">Thinking...</span>
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
         )}

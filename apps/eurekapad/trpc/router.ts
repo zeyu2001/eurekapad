@@ -1,5 +1,4 @@
 import { ServerBlockNoteEditor } from '@blocknote/server-util'
-import { initTRPC } from '@trpc/server'
 import { fetchMutation, fetchQuery } from 'convex/nextjs'
 import * as Y from 'yjs'
 import { z } from 'zod'
@@ -9,55 +8,38 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { inlineCompletion } from '@/server/ai/completions'
 
-import { transformer } from '../utils/transformer'
+import { protectedProcedure, publicProcedure, router } from './trpc'
 
-const t = initTRPC.create({
-  transformer,
-})
-
-const publicProcedure = t.procedure
-
-const router = t.router
-
-const editor = ServerBlockNoteEditor.create({
-  schema: serverCustomSchema,
-})
+const editor = ServerBlockNoteEditor.create({ schema: serverCustomSchema })
 
 export const appRouter = router({
   /**
    * Gets YDoc from a documentId and auth token
    * @param input.documentId - documentId to fetch
-   * @param input.token - auth token for the user with access to the document
    * @returns {Uint8Array} - YDoc state update, which when applied to a fresh YDoc
    *  will give the same state as the document
    */
-  getYDocByDocumentId: publicProcedure
-    .input(
-      z.object({
-        documentId: z.string().pipe(z.custom<Id<'documents'>>()),
-        token: z.string(),
-      }),
-    )
-    .query(async ({ input }) => {
-      const document = await fetchQuery(api.documents.getById, { documentId: input.documentId }, { token: input.token })
-      if (!document) {
-        throw new Error('Document not found')
-      }
+  getYDocByDocumentId: protectedProcedure
+    .input(z.object({ documentId: z.string().pipe(z.custom<Id<'documents'>>()) }))
+    .query(async ({ input, ctx }) => {
+      const document = await fetchQuery(
+        api.documents.getById,
+        { documentId: input.documentId },
+        {
+          token: ctx.token,
+        },
+      )
+      if (!document) throw new Error('Document not found')
 
       const contentUrl = await fetchQuery(
         api.documents.getContentUrl,
-        {
-          contentId: document.contentId,
-        },
-        { token: input.token },
+        { contentId: document.contentId },
+        { token: ctx.token },
       )
-      if (!contentUrl) {
-        return Y.encodeStateAsUpdate(new Y.Doc())
-      }
+      if (!contentUrl) return Y.encodeStateAsUpdate(new Y.Doc())
 
       const response = await fetch(contentUrl)
       const blocks = (await response.json()) as CustomBlock[]
-
       return Y.encodeStateAsUpdate(editor.blocksToYDoc(blocks))
     }),
 
@@ -89,10 +71,9 @@ export const appRouter = router({
         body: JSON.stringify(blocks),
         headers: { 'Content-Type': 'application/json' },
       })
-
       const { storageId } = await response.json()
 
-      return await fetchMutation(api.documents.updateDocumentFromYjs, {
+      return fetchMutation(api.documents.updateDocumentFromYjs, {
         documentId: input.documentId,
         contentId: storageId,
         yjsToken: input.yjsToken,
@@ -104,7 +85,7 @@ export const appRouter = router({
    * @param input - existing text in the node
    * @returns {string} - the suggestion to be shown
    */
-  inlineCompletion: publicProcedure
+  inlineCompletion: protectedProcedure
     .input(
       z.object({
         currText: z.string(),
@@ -119,10 +100,8 @@ export const appRouter = router({
       const nextBlockDescription = input.nextBlock
         ? `${input.nextBlock.type} - ${JSON.stringify(input.nextBlock)}`
         : 'No next block'
-      return await inlineCompletion(input.currText, prevBlockDescription, nextBlockDescription)
+      return inlineCompletion(input.currText, prevBlockDescription, nextBlockDescription)
     }),
 })
 
-// export only the type definition of the API
-// None of the actual implementation is exposed to the client
 export type AppRouter = typeof appRouter

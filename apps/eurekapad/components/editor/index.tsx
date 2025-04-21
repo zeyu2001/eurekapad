@@ -32,7 +32,7 @@ import { useDocumentId } from '@/hooks/use-documentId'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
 import { animalNames, cursorColors } from '@/lib/constants'
-import { trpc } from '@/utils/trpc'
+import { trpc } from '@/trpc/client'
 
 type EditorProps =
   | {

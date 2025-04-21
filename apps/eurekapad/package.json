@@ -2,18 +2,14 @@
   "name": "@eurekapad/app",
   "version": "0.1.0",
   "private": true,
-  "exports": {
-    "./trpc": {
-      "import": "./dist/trpc/server/trpc.d.ts"
-    }
-  },
+  "types": "dist/trpc/index.d.ts",
   "scripts": {
     "dev": "pnpm run build:trpc && npm-run-all --parallel dev:backend dev:frontend",
     "dev:backend": "convex dev",
     "dev:frontend": "next dev",
     "build": "npm-run-all build:next build:trpc",
     "build:next": "next build",
-    "build:trpc": "npx tsc --project tsconfig.trpc.json",
+    "build:trpc": "npx tsc --project trpc.tsconfig.json",
     "build:deploy": "convex deploy --cmd 'pnpm run build'",
     "start": "next start",
     "lint": "next lint",

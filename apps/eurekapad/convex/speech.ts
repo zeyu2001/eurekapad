@@ -1,6 +1,7 @@
 import { action } from './_generated/server'
 
 export const getToken = action({
+  args: {},
   handler: async ctx => {
     const identity = await ctx.auth.getUserIdentity()
 

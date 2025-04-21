@@ -9,6 +9,7 @@ const migration = makeMigration(internalMutation, {
 })
 
 export const getDocuments = internalQuery({
+  args: {},
   handler: async ctx => {
     return await ctx.db.query('documents').collect()
   },
@@ -27,6 +28,7 @@ export const updateContentStorageId = internalMutation({
 })
 
 export const migrateContentToFiles = internalAction({
+  args: {},
   handler: async ctx => {
     const documents = await ctx.runQuery(internal.migrations.getDocuments)
 
