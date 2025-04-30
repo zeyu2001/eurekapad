@@ -35,35 +35,35 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <TRPCClientProvider>
-      <html lang="en" suppressHydrationWarning>
-        <Scroll />
-        <Analytics />
-        <SpeedInsights />
-        <body className={clsx(inter.className, lexend.variable)}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            storageKey="eurekapad-theme-2"
-          >
-            <ConvexClientProvider>
+    <html lang="en" suppressHydrationWarning>
+      <Scroll />
+      <Analytics />
+      <SpeedInsights />
+      <body className={clsx(inter.className, lexend.variable)}>
+        <Script
+          src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
+          strategy="beforeInteractive"
+        />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="eurekapad-theme-2"
+        >
+          <ConvexClientProvider>
+            <TRPCClientProvider>
               <PostHogProvider>
-                <Script
-                  src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"
-                  strategy="beforeInteractive"
-                />
                 <TooltipProvider>
                   <Toaster position="bottom-center" />
                   <ModalProvider />
                   {children}
                 </TooltipProvider>
               </PostHogProvider>
-            </ConvexClientProvider>
-          </ThemeProvider>
-        </body>
-      </html>
-    </TRPCClientProvider>
+            </TRPCClientProvider>
+          </ConvexClientProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }

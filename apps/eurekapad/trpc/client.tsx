@@ -1,9 +1,10 @@
 'use client'
 
+import { useAuth } from '@clerk/nextjs'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { AppRouter } from '@/trpc'
 
@@ -27,19 +28,40 @@ export const trpc = createTRPCReact<AppRouter>()
 
 export function TRPCClientProvider(props: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        loggerLink({
-          enabled: () => true,
-        }),
-        httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
-      transformer,
-    }),
-  )
+  const { getToken, isSignedIn } = useAuth()
+  const [trpcClient, setTrpcClient] = useState<ReturnType<typeof trpc.createClient> | null>(null)
+
+  useEffect(() => {
+    async function createClient() {
+      const client = trpc.createClient({
+        links: [
+          loggerLink({
+            enabled: () => process.env.NODE_ENV === 'development',
+          }),
+          httpBatchLink({
+            url: `${getBaseUrl()}/api/trpc`,
+            headers: async () => {
+              const token = await getToken()
+              return {
+                Authorization: token ? `Bearer ${token}` : '',
+              }
+            },
+          }),
+        ],
+        transformer,
+      })
+
+      setTrpcClient(client)
+    }
+
+    createClient()
+  }, [getToken, isSignedIn])
+
+  if (!trpcClient) {
+    // Simple loading state
+    return <div className="flex h-screen w-full items-center justify-center">Loading...</div>
+  }
+
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
