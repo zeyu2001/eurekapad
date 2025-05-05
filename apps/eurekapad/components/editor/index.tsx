@@ -9,57 +9,30 @@ import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { locales as multiColumnLocales, multiColumnDropCursor } from '@blocknote/xl-multi-column'
 import { useUser } from '@clerk/nextjs'
-import { ArrowConversionExtension, InlineMathExtension } from '@eurekapad/tiptap-extensions'
+import {
+  ArrowConversionExtension,
+  InlineChatPlugin,
+  InlineCompletionExtension,
+  InlineMathExtension,
+} from '@eurekapad/tiptap-extensions'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import { langNames, LanguageName } from '@uiw/codemirror-extensions-langs'
 import { useAction, useConvexAuth } from 'convex/react'
 import { useTheme } from 'next-themes'
-import { type KeyboardEvent, useEffect } from 'react'
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import YPartyKitProvider from 'y-partykit/provider'
 import * as Y from 'yjs'
 
-import { customSchema } from '@/components/editor/schema'
+import InlineChatForm from '@/components/editor/ai/inline-chat-form'
+import { CustomEditor, customSchema } from '@/components/editor/schema'
 import { CustomSlashMenu } from '@/components/editor/slash-menu'
 import { api } from '@/convex/_generated/api'
 import { useDocumentId } from '@/hooks/use-documentId'
 import { useEditorContext } from '@/hooks/use-editor-context'
 import { upload } from '@/lib/client-uploads'
-
-const cursorColors = [
-  '#FF6B6B',
-  '#6BCB77',
-  '#4D96FF',
-  '#FFD93D',
-  '#FF6EC7',
-  '#6B8EFF',
-  '#FFB347',
-  '#8AFF80',
-  '#B388FF',
-  '#FF8A65',
-  '#64FFDA',
-  '#F06292',
-  '#7C4DFF',
-  '#A1887F',
-  '#00E676',
-]
-
-const animalNames = [
-  'Panda',
-  'Koala',
-  'Bunny',
-  'Otter',
-  'Fox',
-  'Hedgehog',
-  'Penguin',
-  'Kitten',
-  'Puppy',
-  'Lamb',
-  'Squirrel',
-  'Raccoon',
-  'Alpaca',
-  'Sloth',
-  'Chinchilla',
-]
+import { animalNames, cursorColors } from '@/lib/constants'
+import { trpc } from '@/trpc/client'
 
 type EditorProps =
   | {
@@ -81,7 +54,41 @@ type EditorProps =
 
 type CustomBlock = typeof customSchema.Block
 
+export type InlineChatFormProps = {
+  refs: ReturnType<typeof useFloating>['refs']
+  strategy: 'absolute' | 'fixed'
+  x: number | null
+  y: number | null
+  editor: CustomEditor
+  update: () => void
+}
+
 const Editor = ({ onChange, editable, savable, collab, initialContent, authToken }: EditorProps) => {
+  const [showMenu, setShowMenu] = useState(false)
+  const [refEl, setRefEl] = useState<HTMLElement | null>(null)
+  const editorWrapperRef = useRef<HTMLDivElement | null>(null)
+
+  const { x, y, refs, strategy, update } = useFloating({
+    placement: 'top',
+    middleware: [
+      offset(8),
+      flip(),
+      editorWrapperRef.current &&
+        shift({
+          boundary: editorWrapperRef.current,
+        }),
+    ],
+    whileElementsMounted: autoUpdate,
+  })
+
+  // Update the reference element for the floating menu when it's set by the InlineChatPlugin
+  useEffect(() => {
+    if (refEl) {
+      refs.setReference(refEl)
+      update()
+    }
+  }, [refEl, refs.setReference, update])
+
   const { resolvedTheme } = useTheme()
   const { isAuthenticated, isLoading } = useConvexAuth()
   const user = useUser()
@@ -92,6 +99,8 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     setAuthenticated(isAuthenticated && !isLoading)
     setSavable(savable ?? false)
   }, [isAuthenticated, isLoading, savable, setAuthenticated, setSavable])
+
+  const inlineCompletionMutation = trpc.inlineCompletion.useMutation()
 
   const getUploadUrl = useAction(api.uploads.getUploadUrl)
 
@@ -134,7 +143,35 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     // initialContent: initialContent ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     uploadFile: handleUpload,
     _tiptapOptions: {
-      extensions: [InlineMathExtension, ArrowConversionExtension],
+      extensions: [
+        InlineMathExtension,
+        ArrowConversionExtension,
+        InlineCompletionExtension.configure({
+          fetchAutocompletion: async (existingText: string) => {
+            return new Promise<string>((resolve, reject) => {
+              const prevBlock = editor.getTextCursorPosition().prevBlock
+              const nextBlock = editor.getTextCursorPosition().nextBlock
+              inlineCompletionMutation.mutate(
+                {
+                  currText: existingText,
+                  prevBlock: prevBlock ? (prevBlock as CustomBlock) : undefined,
+                  nextBlock: nextBlock ? (nextBlock as CustomBlock) : undefined,
+                },
+                {
+                  onSuccess: result => resolve(result),
+                  onError: error => reject(error),
+                },
+              )
+            })
+          },
+        }),
+        InlineChatPlugin.configure({
+          onTrigger: (target: HTMLElement | null) => {
+            setRefEl(target)
+            setShowMenu(true)
+          },
+        }),
+      ],
     },
     initialContent: initialContent && !collab ? (JSON.parse(initialContent) as CustomBlock[]) : undefined,
     collaboration: collab
@@ -296,8 +333,14 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
     }
   }
 
+  const handleEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setShowMenu(false)
+    }
+  }
+
   return (
-    <div>
+    <div ref={editorWrapperRef} className="relative">
       <BlockNoteView
         editor={editor}
         editable={editable}
@@ -308,10 +351,15 @@ const Editor = ({ onChange, editable, savable, collab, initialContent, authToken
           handleCodeBlockShortcut(event)
           handleBackspace(event)
           handleSelectAll(event)
+          handleEscape(event)
+        }}
+        onSelectionChange={() => {
+          setShowMenu(false)
         }}
       >
         <CustomSlashMenu editor={editor} />
       </BlockNoteView>
+      {showMenu && <InlineChatForm refs={refs} strategy={strategy} x={x} y={y} editor={editor} update={update} />}
     </div>
   )
 }

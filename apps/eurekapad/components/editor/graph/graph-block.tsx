@@ -45,6 +45,8 @@ export const GraphBlock: FC<ReactCustomBlockRenderProps<GraphBlockConfig, Inline
       ) {
         calculator.setState(editorStateResult.data) // this causes the calculator to lose focus
       }
+    } else {
+      console.error(editorStateResult.error.toString())
     }
   }, [block.props.state])
 

@@ -12,6 +12,7 @@ import {
 import { action } from './_generated/server'
 
 export const getUploadUrl = action({
+  args: {},
   handler: async ctx => {
     const identity = await ctx.auth.getUserIdentity()
 

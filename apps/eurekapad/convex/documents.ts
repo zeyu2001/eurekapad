@@ -94,6 +94,7 @@ export const create = mutation({
 })
 
 export const getTrash = query({
+  args: {},
   handler: async ctx => {
     const identity = await ctx.auth.getUserIdentity()
 
@@ -187,6 +188,7 @@ export const remove = mutation({
 })
 
 export const getSearch = query({
+  args: {},
   handler: async ctx => {
     const identity = await ctx.auth.getUserIdentity()
 

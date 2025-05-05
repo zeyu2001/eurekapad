@@ -3,10 +3,9 @@
   "compilerOptions": {
     "noEmit": false,
     "declaration": true,
-    "isolatedModules": false,
     "emitDeclarationOnly": true,
-    "outDir": "dist/trpc",
-    "moduleResolution": "node"
+    "isolatedModules": false,
+    "outDir": "dist"
   },
-  "include": ["pages/api/trpc/[trpc].ts"]
+  "include": ["trpc/index.ts"]
 }

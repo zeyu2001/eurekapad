@@ -28,4 +28,5 @@ export const customSchema = withMultiColumn(
 
 export type CustomEditor = typeof customSchema.BlockNoteEditor
 export type CustomBlock = typeof customSchema.Block
+export type CustomPartialBlock = typeof customSchema.PartialBlock
 export type CustomInlineContentSchema = typeof customSchema.inlineContentSchema
